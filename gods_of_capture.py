@@ -83,6 +83,7 @@ class Flag():
         # TODO: Initialize attributes like position, color
         self.position = x , y #should define the position based off of mouse position
         self.color = color #One basic color for each side of team
+        # has to be removeable
         pass
 
     def draw(self):
