@@ -79,8 +79,10 @@ class Teenie(Unit):
 
 class Flag():
     """ The flag class for the game"""
-    def __init__(self):
-        # TODO: Initialize attributes like . . . position?
+    def __init__(self, x, y, color):
+        # TODO: Initialize attributes like position, color
+        self.position = x , y #should define the position based off of mouse position
+        self.color = color #One basic color for each side of team
         pass
 
     def draw(self):
@@ -104,8 +106,8 @@ class Base():
         self.time = current_time # what time is it in the game?
             # i'm imagigining that theres a time module in python so this would
             # keep track of the seconds (ie: is it 5s or 6s)
-            
-        
+
+
 
     def draw(self):
         # TODO draw sprite at location
