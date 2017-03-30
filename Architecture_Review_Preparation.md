@@ -35,7 +35,9 @@ AI - Colvin and Connor
 How do people want to see the game go (2 AIs, players against AI) - Anika
 - If there are 2 AIs, the person playing the game will only interact at the beginning, setting up the board. The rest of the game will play out as two AIs.
 - If there is continuous input from the player, the AI will only apply to the opposing team and the way units move for the player. 
+
 List out pros and cons
+
 Pose questions
 - Path finding (Connor) vs Force system AI (Colvin)
   - Astar would need a tile based system and the program would need to remember where the tiles are
