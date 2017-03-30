@@ -71,6 +71,12 @@ class Controller(object):
 
         self.model = model
 
+    def generate_new_unit(time, unit_type):
+        #for each team, if time = 5s
+            #new_unit = Unit(x,y,team) => x, y would be set for each team
+            #new_unit.draw(x,y)
+            #team_base.unit_generation()
+        pass
 
 
 class Unit():  # TODO Make uninstantiable
@@ -111,8 +117,11 @@ class Heavie(Unit):
 
 class Flag():
     """ The flag class for the game"""
-    def __init__(self):
-        # TODO: Initialize attributes like . . . position?
+    def __init__(self, x, y, color):
+        # TODO: Initialize attributes like position, color
+        self.position = x , y #should define the position based off of mouse position
+        self.color = color #One basic color for each side of team
+        # has to be removeable
         pass
 
     def draw(self):
@@ -124,12 +133,32 @@ class Flag():
 
 class Base():
     """ The base class for the game"""
-    def __init__(self):
+    def __init__(self, x, y, color, current_time):
         # TODO: Initialize attributes like position, type of unit selected
-        pass
+        self.position = x, y #pixel position (idk if it's center or corner)
+            # would need to see about pygame shapes
+        self.color = color # pygame command (imagine that this would change depending
+            # on the type of unit being produced or could be a time indicator)
+        self.unit_type = unit_type #this is just a placeholder, I imagine that
+            # we'd pass this into a fxn or something like that rather than have it
+            # be an attribute
+        self.time = current_time # what time is it in the game?
+            # i'm imagigining that theres a time module in python so this would
+            # keep track of the seconds (ie: is it 5s or 6s)
+
+
 
     def draw(self):
         # TODO draw sprite at location
+
+        pass
+
+    def change_color():
+        # change the self.color depending on the unit type
+        pass
+
+    def unit_generation():
+        # when a unit is generated, have some visual effect
         pass
 
     # TODO more methods here!
