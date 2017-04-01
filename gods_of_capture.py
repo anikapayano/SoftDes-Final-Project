@@ -14,13 +14,14 @@ class CaptureGame():
     def __init__(self):
         pygame.init()                   # initialize pygame
         self.screen_size = [1840, 920]  # size of screen
-        self.screen = pygame.display.set_mode(self.screen_size)
-        self.screen_sprite = pygame
+        self.rect = pygame.Rect(self.x,self.y,xsize,ysize) # Makes collision rect for unit given pos and size
+        self.screen_sprite = pygame.image.load("sprites/background.png")
+        self.screen = pygame.display.set_mode(self.screen_sprite,self.screen_size)
         # Add background sprite
 
         # Initialize MVC classes
-        self.model = Model()
-        self.view = View(self.model)
+        self.model = Model(self.screen_size)
+        self.view = View(self.model, self.screen)
         self.control = Controller(self.model)
 
         self.running = True
@@ -37,6 +38,7 @@ class CaptureGame():
                     self.running = False
             # User Input May Eventually go here
             # AI Input WILL Go here
+            self.view.draw_all()
 
 
 class Model(object):
@@ -50,33 +52,56 @@ class Model(object):
             Initializes Model for initial game stages
             '''
 
-            # Lists of objects
-            self.unit_list = []
-            self.wall_list = []
-            self.flag_list = []
-            self.base_list = []
-            self.screen_size = screen_size # Need this to place obj rel. to screen
+        # Lists of objects
+        self.unit_list = []
+        self.wall_list = []
+        self.flag_list = []
+        self.base_list = []
+        self.screen_size = screen_size # Need this to place obj rel. to screen
 
-            # Sets up initial team positions
-            base_list.append(Base(Base.width/2, Base.height/2))
-            base_list.append(Base(screen_size[0]-Base.width/2, screen_size[1]-Base.height/2))
+        # Sets up initial team positions
+        self.base_list.append(Base((25,25),1))
+        self.base_list.append(Base((25,25),2))
 
 
 
 class View(object):
-    """Makes the draw methods for all of the classes with"""
+    """DOCSTRING
+        Class for viewing a model. Contains methods to draw single object and
+        to draw all objects
+        """
 
-    def __init__(self,model):
+    def __init__(self,model,screen):
         """DOCSTRING
-            Initializes View object to allow references to model"""
-        self.model = model
+            Given a model to show and a screen upon which to show it, creates
+            attributes for each
+            """
 
-    # Draw single object function (This is written wrong, I think)
-    def draw(self, object):
-        surface.blit(self.model.icon, (self.model.x, self.model.y))
+        self.model = model
+        self.screen = screen
+
+
+    def draw(self, thing):
+        """DOCSTRING
+            Given a thing, draws thing on screen
+            """
+
+        self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
 
     # Draw entire model function
+    def draw_all(self):
+        """DOCSTRING:
+            Draws all units, walls, flags, and bases in model
+            """
 
+        for unit in self.model.unit_list:
+            self.draw(unit)
+        for wall in self.model.wall_list:
+            self.draw(wall)
+        for flag in self.model.flag_list:
+            self.draw(flag)
+        for base in self.model.base_list:
+            self.draw(base)
 
 class Controller(object):
     """DOCSTRING
@@ -99,6 +124,7 @@ class Controller(object):
 
     def update():
         # Tells base class to update their personal timecounters
+        pass
 
 
 class Unit():  # TODO Make uninstantiable
@@ -117,9 +143,11 @@ class Unit():  # TODO Make uninstantiable
 
     def move(self):
         # TODO make unit move in force direction by speed stuff
+        pass
 
     def attack(self, unit):
         # TODO make unit attack other unit
+        pass
 
 # Example specific unit for later use
 class Teenie(Unit):
@@ -149,21 +177,25 @@ class Flag():
     def update(self):
         # TODO updates flag position to unit carrying position, or home position
         # if not carried
+        pass
 
     # TODO more methods here!
 
 
 class Base():
     """ The base class for the game"""
-    def __init__(self, x, y, color):
+    def __init__(self, position, team):
         # TODO: Initialize attributes like position, type of unit selected
-        self.position = x, y #pixel position (idk if it's center or corner)
+        self.position = x,y = position #pixel position (idk if it's center or corner)
             # would need to see about pygame shapes
-        self.color = color # pygame command (imagine that this would change depending
+        self.size = [50,50]
+        self.team = team
+        #self.color = color # pygame command (imagine that this would change depending
             # on the type of unit being produced or could be a time indicator)
-        self.unit_type = unit_type #this is just a placeholder, I imagine that
+        #self.unit_type = unit_type #this is just a placeholder, I imagine that
             # we'd pass this into a fxn or something like that rather than have it
             # be an attribute
+        self.sprite = pygame.image.load("sprites/base_"+str(team)+".png")
         # Add counter for unit generation
         # Add method that increments the counter and makes selected unit if applicable
 
