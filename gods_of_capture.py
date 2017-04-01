@@ -16,7 +16,7 @@ class CaptureGame():
         self.screen_size = [1840, 920]  # size of screen
         self.screen_sprite = pygame.image.load("sprites/background.png")
         self.screen = pygame.display.set_mode(self.screen_size)
-        # Add background sprite
+        pygame.display.update()
 
         # Initialize MVC classes
         self.model = Model(self.screen_size)
@@ -60,7 +60,6 @@ class Model(object):
 
         # Sets up initial team positions
         self.base_list.append(Base((25,25),1))
-        self.base_list.append(Base((25,25),2))
 
 
 
@@ -101,6 +100,7 @@ class View(object):
             self.draw(flag)
         for base in self.model.base_list:
             self.draw(base)
+        pygame.display.update()
 
 class Controller(object):
     """DOCSTRING
