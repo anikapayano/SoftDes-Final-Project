@@ -14,9 +14,8 @@ class CaptureGame():
     def __init__(self):
         pygame.init()                   # initialize pygame
         self.screen_size = [1840, 920]  # size of screen
-        self.rect = pygame.Rect(self.x,self.y,xsize,ysize) # Makes collision rect for unit given pos and size
         self.screen_sprite = pygame.image.load("sprites/background.png")
-        self.screen = pygame.display.set_mode(self.screen_sprite,self.screen_size)
+        self.screen = pygame.display.set_mode(self.screen_size)
         # Add background sprite
 
         # Initialize MVC classes
