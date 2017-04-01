@@ -13,7 +13,7 @@ class CaptureGame():
        Uses Model View Controller Architecture"""
     def __init__(self):
         pygame.init()                   # initialize pygame
-        self.screen_size = [1840, 920]  # size of screen
+        self.screen_size = [920,460] #[1840, 920]  # size of screen
         self.screen = pygame.display.set_mode(self.screen_size)
         # Add background sprite
 
