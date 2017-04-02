@@ -35,6 +35,12 @@ class CaptureGame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
                     self.running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    check_pos = pygame.mouse.get_pos()
+                    if (rect.collidepoint(check_pos)) == 1;
+
+
+
             # User Input May Eventually go here
             # AI Input WILL Go here
             self.view.draw_all()
@@ -60,6 +66,7 @@ class Model(object):
 
         # Sets up initial team positions
         self.base_list.append(Base((25,25),1))
+        self.flag_list.append(Flag((200,200),2))
 
 
 
@@ -165,10 +172,12 @@ class Heavie(Unit):
 
 class Flag():
     """ The flag class for the game"""
-    def __init__(self, x, y, color):
+    def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
-        self.position = x , y #should define the position based off of mouse position
-        self.color = color #One basic color for each side of team
+        self.position = x , y = position #should define the position based off of mouse position
+        self.team = team #One basic color for each side of team
+        self.sprite = pygame.image.load("sprites/team"+str(team)+"flag.png")
+        self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
         self.pickedup = False # Bool for flag picked up
         # has to be removeable
         pass
