@@ -5,6 +5,20 @@ AI.
          Emily Lepert, Anika Payano
          """
 import pygame
+import unittest
+
+
+# UNIT TESTS
+class TestModel():
+    def setUp(self):
+        self.model = Model()
+
+    def test_set_up(self):
+        starting_units = 5
+        self.model.set_up(starting_units=starting_units)
+        self.assertTrue(len(self.model.unit_list), starting_units*2)
+        self.assertTrue(len(self.model.flag_list), 2)
+        self.assertTrue(len(self.model.base_list), 2)
 
 
 class CaptureGame():
@@ -46,21 +60,25 @@ class Model(object):
         field"""
 
     def __init__(self, screen_size):
-        '''DOCSTRING
+        '''DOCSTRING:
             Initializes Model for initial game stages
             '''
+        # Lists of objects
+        self.unit_list = []
+        self.wall_list = []
+        self.flag_list = []
+        self.base_list = []
+        self.screen_size = screen_size  # Need this to place obj rel. to screen
 
-            # Lists of objects
-            self.unit_list = []
-            self.wall_list = []
-            self.flag_list = []
-            self.base_list = []
-            self.screen_size = screen_size # Need this to place obj rel. to screen
-
-            # Sets up initial team positions
-            base_list.append(Base(Base.width/2, Base.height/2))
-            base_list.append(Base(screen_size[0]-Base.width/2, screen_size[1]-Base.height/2))
-
+    def set_up(self, starting_units):
+        # Add units
+        for i in range(starting_units):
+            self.unit_list.append(Unit(Unit.width))
+        # Sets up initial team positions
+        self.base_list.append(Base(Base.width/2, Base.height/2))
+        self.base_list.append(Base(self.screen_size[0]-Base.width/2,
+                              self.screen_size[1]-Base.height/2))
+        pass
 
 
 class View(object):
@@ -99,9 +117,11 @@ class Controller(object):
 
     def update():
         # Tells base class to update their personal timecounters
+        pass
 
 
-class Unit():  # TODO Make uninstantiable
+class Unit():
+    # TODO Make uninstantiable
 
     def __init__(self, x, y, team, stats,sprite):  # TODO set to position of the base
         self.position = x, y
@@ -117,15 +137,19 @@ class Unit():  # TODO Make uninstantiable
 
     def move(self):
         # TODO make unit move in force direction by speed stuff
+        pass
 
     def attack(self, unit):
         # TODO make unit attack other unit
+        pass
+
 
 # Example specific unit for later use
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, x, y, team):
         Unit.__init__(self, x, y, team, [5,6,10,2,2], sprite)
+
 
 class Speedie(Unit):
     """ The fast unit in the game"""
@@ -135,6 +159,7 @@ class Speedie(Unit):
 
 class Heavie(Unit):
     """The strong unit in the game"""
+
 
 class Flag():
     """ The flag class for the game"""
@@ -149,6 +174,7 @@ class Flag():
     def update(self):
         # TODO updates flag position to unit carrying position, or home position
         # if not carried
+        pass
 
     # TODO more methods here!
 
@@ -180,3 +206,4 @@ class Base():
 if __name__ == "__main__":
     game = CaptureGame()
     game.run()
+    unittest.main()
