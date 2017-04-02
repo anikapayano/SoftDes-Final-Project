@@ -38,7 +38,7 @@ class CaptureGame(object):
                     self.running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     check_pos = pygame.mouse.get_pos()
-                    if (rect.collidepoint(check_pos)) == 1;
+                    self.control.click_object(check_pos)
 
 
 
@@ -122,6 +122,13 @@ class Controller(object):
 
         self.model = model
 
+    def click_object(self, mouse_pos):
+        for flag in self.model.flag_list:
+            value = flag.rect.collidepoint(mouse_pos)
+            if value == 1:
+                flag.select()
+                break
+
     def generate_new_unit(time, unit_type):
         #for each team, if time = 5s
             #new_unit = Unit(x,y,team) => x, y would be set for each team
@@ -180,10 +187,21 @@ class Flag(object):
         self.position = x , y = position #should define the position based off of mouse position
         self.team = team #One basic color for each side of team
         self.sprite = pygame.image.load("sprites/team"+str(team)+"flag.png")
+        self.oldsprite = self.sprite
+        self.is_selected = False
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
         self.pickedup = False # Bool for flag picked up
         # has to be removeable
         pass
+
+    def select(self):
+        if self.is_selected == False:
+            self.is_selected = True
+            self.sprite = pygame.image.load("sprites/yellowflag.png")
+        else:
+            self.is_selected = False
+            self.sprite = self.oldsprite
+
 
     def update(self):
         # TODO updates flag position to unit carrying position, or home position
