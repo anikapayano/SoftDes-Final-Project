@@ -13,6 +13,8 @@ class CaptureGame(object):
        Uses Model View Controller Architecture"""
     def __init__(self):
         pygame.init()                   # initialize pygame
+
+        # Initializes screen and places background on it
         self.screen_size = [1840, 920]  # size of screen
         self.screen_sprite = pygame.image.load("sprites/background.png")
         self.screen = pygame.display.set_mode(self.screen_size)
@@ -25,6 +27,7 @@ class CaptureGame(object):
         self.control = Controller(self.model)
 
         self.running = True
+        self.game_clock = 0 # Initializes world tick clock
 
     def run(self):
 
@@ -32,6 +35,7 @@ class CaptureGame(object):
 
         while self.running:
             """runs the game loop"""
+            self.game_clock += 1 # Increments world tick clock
             # TODO Check wincase (Controller)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
