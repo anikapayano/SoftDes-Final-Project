@@ -7,7 +7,7 @@ AI.
 import pygame
 
 
-class CaptureGame():
+class CaptureGame(object):
     """Class that defines a game of capture the flag.
        Creates instancese of other important classes,
        Uses Model View Controller Architecture"""
@@ -16,6 +16,7 @@ class CaptureGame():
         self.screen_size = [1840, 920]  # size of screen
         self.screen_sprite = pygame.image.load("sprites/background.png")
         self.screen = pygame.display.set_mode(self.screen_size)
+        self.screen.blit(self.screen_sprite, (0,0))
         pygame.display.update()
 
         # Initialize MVC classes
@@ -69,7 +70,6 @@ class Model(object):
         self.flag_list.append(Flag((200,200),2))
 
 
-
 class View(object):
     """DOCSTRING
         Class for viewing a model. Contains methods to draw single object and
@@ -93,7 +93,7 @@ class View(object):
 
         self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
 
-    # Draw entire model function
+
     def draw_all(self):
         """DOCSTRING:
             Draws all units, walls, flags, and bases in model
@@ -108,6 +108,7 @@ class View(object):
         for base in self.model.base_list:
             self.draw(base)
         pygame.display.update()
+
 
 class Controller(object):
     """DOCSTRING
@@ -133,7 +134,7 @@ class Controller(object):
         pass
 
 
-class Unit():  # TODO Make uninstantiable
+class Unit(object):  # TODO Make uninstantiable
 
     def __init__(self, x, y, team, stats,sprite):  # TODO set to position of the base
         self.position = x, y
@@ -155,11 +156,12 @@ class Unit():  # TODO Make uninstantiable
         # TODO make unit attack other unit
         pass
 
-# Example specific unit for later use
+
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, x, y, team):
         Unit.__init__(self, x, y, team, [5,6,10,2,2], sprite)
+
 
 class Speedie(Unit):
     """ The fast unit in the game"""
@@ -170,7 +172,8 @@ class Speedie(Unit):
 class Heavie(Unit):
     """The strong unit in the game"""
 
-class Flag():
+
+class Flag(object):
     """ The flag class for the game"""
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
@@ -190,7 +193,7 @@ class Flag():
     # TODO more methods here!
 
 
-class Base():
+class Base(object):
     """ The base class for the game"""
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, type of unit selected
