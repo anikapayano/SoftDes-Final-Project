@@ -23,7 +23,7 @@ class CaptureGame(object):
 
         # Initialize MVC classes
         self.model = Model(self.screen_size)
-        self.view = View(self.model, self.screen)
+        self.view = View(self.model, self.screen, self.screen_sprite)
         self.control = Controller(self.model)
 
         self.running = True
@@ -87,7 +87,7 @@ class View(object):
         to draw all objects
         """
 
-    def __init__(self,model,screen):
+    def __init__(self,model,screen, sprite):
         """DOCSTRING
             Given a model to show and a screen upon which to show it, creates
             attributes for each
@@ -95,6 +95,7 @@ class View(object):
 
         self.model = model
         self.screen = screen
+        self.screen_sprite = sprite
 
 
     def draw(self, thing):
@@ -109,7 +110,7 @@ class View(object):
         """DOCSTRING:
             Draws all units, walls, flags, and bases in model
             """
-
+        self.screen.blit(self.screen_sprite, (0,0))
         for unit in self.model.unit_list:
             self.draw(unit)
         for wall in self.model.wall_list:
