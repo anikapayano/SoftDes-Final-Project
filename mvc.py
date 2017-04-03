@@ -109,7 +109,9 @@ class Controller(object):
             value = flag.rect.collidepoint(mouse_pos)
             if value == 1:
                 flag.select()
-                break
+                return
+        for unit in self.model.unit_list:
+            value = unit.rect.collidepoint(mouse_pos)
 
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
