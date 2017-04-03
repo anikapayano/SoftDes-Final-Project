@@ -43,12 +43,19 @@ class CaptureGame(object):
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     check_pos = pygame.mouse.get_pos()
                     self.control.click_object(check_pos)
+                elif event.type == pygame.MOUSEMOTION:
+                    new_pos = (event.pos[0], event.pos[1])
+                    self.control.move_object(new_pos)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    new_pos = pygame.mouse.get_pos()
+                    self.control.place_object(new_pos)
 
 
 
             # User Input May Eventually go here
             # AI Input WILL Go here
             self.view.draw_all()
+            pygame.display.update()
 
 
 class Model(object):
@@ -133,6 +140,12 @@ class Controller(object):
                 flag.select()
                 break
 
+    def move_object(self, mouse_pos):
+        for flag in self.model.flag_list:
+            if flag.is_selected == True:
+                flag.move(mouse_pos)
+                pygame.display.update(flag.rect)
+
     def generate_new_unit(time, unit_type):
         #for each team, if time = 5s
             #new_unit = Unit(x,y,team) => x, y would be set for each team
@@ -206,6 +219,9 @@ class Flag(object):
             self.is_selected = False
             self.sprite = self.oldsprite
 
+    def move(self,mouse_pos):
+        self.position = (mouse_pos[0], mouse_pos[1])
+        self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
 
     def update(self):
         # TODO updates flag position to unit carrying position, or home position
