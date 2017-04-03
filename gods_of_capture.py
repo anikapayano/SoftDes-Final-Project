@@ -81,7 +81,7 @@ class CaptureGame(object):
     def run(self):
 
         # Eventually add pre-game setup stuff somewhere here
-        self.model.set_up(8)
+     
         while self.running:
             """runs the game loop"""
             self.game_clock += 1 # Increments world tick clock
@@ -139,8 +139,8 @@ class Model(object):
         self.base_list.append(Base((self.screen_size[0]-10,
                               self.screen_size[1]-10), 2))
         # Sets up flag positions
-        self.flag_list.append(Flag((10, self.screen_size[0]-10), 1))
-        self.flag_list.append(Flag((self.screen_size[0]-10, 10), 2))
+        self.flag_list.append(Flag((10, self.screen_size[0]-500), 1))
+        self.flag_list.append(Flag((self.screen_size[0]-500, 10), 2))
 
 
 class View(object):
@@ -225,7 +225,6 @@ class Controller(object):
                 pass
             else:
                 self.model.unit_list.append(unit)
-        print(self.model.unit_list)
 
 
 class Unit(object):  # TODO Make uninstantiable
