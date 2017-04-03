@@ -13,17 +13,18 @@ class CaptureGame():
        Uses Model View Controller Architecture"""
     def __init__(self):
         pygame.init()                   # initialize pygame
-        self.screen_size = [920,460] #[1840, 920]  # size of screen
+        self.screen_size = [920,460] # [1840, 920]  # size of screen
         self.screen = pygame.display.set_mode(self.screen_size)
         self.screen_sprite = pygame
         # Add background sprite
 
         # Initialize MVC classes
-        self.model = Model()
+        self.model = Model(self.screen_size)
         self.view = View(self.model)
         self.control = Controller(self.model)
 
         self.running = True
+        self.tick = 0
 
     def run(self):
 
@@ -38,6 +39,10 @@ class CaptureGame():
             # User Input May Eventually go here
             # AI Input WILL Go here
 
+            self.control.update_base(self.tick)
+
+            self.tick += 1
+
 
 class Model(object):
     """DOCSTRING:
@@ -47,20 +52,22 @@ class Model(object):
 
     def __init__(self, screen_size):
         '''DOCSTRING
-            Initializes Model for initial game stages
-            '''
+        Initializes Model for initial game stages
+        '''
+        self.tick = 0
+        # Lists of objects
+        self.unit_list = []
+        self.wall_list = []
+        self.flag_list = []
+        self.base_list = []
+        self.screen_size = screen_size # Need this to place obj rel. to screen
 
-            # Lists of objects
-            self.unit_list = []
-            self.wall_list = []
-            self.flag_list = []
-            self.base_list = []
-            self.screen_size = screen_size # Need this to place obj rel. to screen
+        base_width = 50
+        base_height = 50
 
-            # Sets up initial team positions
-            base_list.append(Base(Base.width/2, Base.height/2))
-            base_list.append(Base(screen_size[0]-Base.width/2, screen_size[1]-Base.height/2))
-
+        # Sets up initial team positions
+        self.base_list.append(Base(base_width/2, base_height/2, 1))
+        self.base_list.append(Base(screen_size[0]-base_width/2, screen_size[1]-base_height/2, 2))
 
 
 class View(object):
@@ -90,15 +97,23 @@ class Controller(object):
 
         self.model = model
 
-    def generate_new_unit(time, unit_type):
+    def generate_new_unit(self, time, unit_type):
         #for each team, if time = 5s
             #new_unit = Unit(x,y,team) => x, y would be set for each team
             #new_unit.draw(x,y)
             #team_base.unit_generation()
         pass
 
-    def update():
+    def update_base(self, tick):
         # Tells base class to update their personal timecounters
+        for base in self.model.base_list:
+            unit = base.update(tick, 0)
+        if unit == False:
+            pass
+        else:
+            self.model.unit_list.append(unit)
+        print(self.model.unit_list)
+        
 
 
 class Unit():  # TODO Make uninstantiable
@@ -113,19 +128,21 @@ class Unit():  # TODO Make uninstantiable
         self.attack = stats[3]
         self.cooldown = stats[4]
         self.sprite = sprite
-        self.rect = pygame.Rect(self.x,self.y,xsize,ysize) # Makes collision rect for unit given pos and size
+        self.rect = pygame.Rect(self.position[0],self.position[1],45,45) # Makes collision rect for unit given pos and size
 
     def move(self):
         # TODO make unit move in force direction by speed stuff
+        pass
 
     def attack(self, unit):
         # TODO make unit attack other unit
+        pass
 
 # Example specific unit for later use
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, x, y, team):
-        Unit.__init__(self, x, y, team, [5,6,10,2,2], sprite)
+        Unit.__init__(self, x, y, team, [5,6,10,2,2], 'sprite')
 
 class Speedie(Unit):
     """ The fast unit in the game"""
@@ -149,29 +166,52 @@ class Flag():
     def update(self):
         # TODO updates flag position to unit carrying position, or home position
         # if not carried
-
+        pass
     # TODO more methods here!
 
 
 class Base():
     """ The base class for the game"""
-    def __init__(self, x, y, color):
+    def __init__(self, x, y, team):
         # TODO: Initialize attributes like position, type of unit selected
-        self.position = x, y #pixel position (idk if it's center or corner)
-            # would need to see about pygame shapes
-        self.color = color # pygame command (imagine that this would change depending
-            # on the type of unit being produced or could be a time indicator)
-        self.unit_type = unit_type #this is just a placeholder, I imagine that
+        self.position = x, y #pixel position 
+        self.cycle_count = 0 #initial cycle count
+        if team == 1:
+            self.color = 'red' 
+        elif team == 2:
+            self.color = 'blue'
+
+        #self.unit_type = unit_type #this is just a placeholder, I imagine that
             # we'd pass this into a fxn or something like that rather than have it
             # be an attribute
         # Add counter for unit generation
         # Add method that increments the counter and makes selected unit if applicable
+        self.width = 20
+        self.height = 20
+        self.unit_cycles = [30, 50] #number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.current_unit_cycle = 30
+        self.unit_type = 0
 
+    def update(self, tick, unit_type):
+        self.cycle_count +=1
+        self.unit_type = unit_type
+        self.current_unit_cycle = self.unit_cycles[self.unit_type]
+        if self.cycle_count == self.current_unit_cycle:
+            new_unit = self.unit_generation(self.unit_type)
+            self.cycle_count = 0
+            return(new_unit)
+        else:
+            return(False)
 
     #TODO has to do with animations
-    def unit_generation():
-        # when a unit is generated, have some visual effect
-        pass
+    def unit_generation(self, unit_type):
+        new_unit = Teenie(self.position[0], self.position[1], self.color)
+        return(new_unit)
+
+        #if self.cycle_count == self.current_unit_cycle:
+
+
+
 
     # TODO more methods here!
 
