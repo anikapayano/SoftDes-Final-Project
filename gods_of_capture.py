@@ -7,24 +7,29 @@ AI.
 import pygame
 
 
-class CaptureGame():
+class CaptureGame(object):
     """Class that defines a game of capture the flag.
        Creates instancese of other important classes,
        Uses Model View Controller Architecture"""
     def __init__(self):
         pygame.init()                   # initialize pygame
-        self.screen_size = [920,460] # [1840, 920]  # size of screen
+
+        # Initializes screen and places background on it
+        self.screen_size = [1840, 920]  # size of screen
+        self.screen_sprite = pygame.image.load("sprites/background.png")
         self.screen = pygame.display.set_mode(self.screen_size)
-        self.screen_sprite = pygame
-        # Add background sprite
+        self.screen.blit(self.screen_sprite, (0,0))
+        pygame.display.update()
 
         # Initialize MVC classes
         self.model = Model(self.screen_size)
-        self.view = View(self.model)
+
+        self.view = View(self.model, self.screen)
         self.control = Controller(self.model)
 
         self.running = True
-        self.tick = 0
+        self.game_clock = 0 # Initializes world tick clock
+
 
     def run(self):
 
@@ -32,16 +37,29 @@ class CaptureGame():
 
         while self.running:
             """runs the game loop"""
+            self.game_clock += 1 # Increments world tick clock
             # TODO Check wincase (Controller)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
                     self.running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    check_pos = pygame.mouse.get_pos()
+                    self.control.click_object(check_pos)
+                elif event.type == pygame.MOUSEMOTION:
+                    new_pos = (event.pos[0], event.pos[1])
+                    self.control.move_object(new_pos)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    new_pos = pygame.mouse.get_pos()
+                    self.control.place_object(new_pos)
+
+
+
             # User Input May Eventually go here
             # AI Input WILL Go here
+            self.view.draw_all()
+            pygame.display.update()
 
-            self.control.update_base(self.tick)
-
-            self.tick += 1
+            self.control.update_base(self.game_clock)
 
 
 class Model(object):
@@ -62,27 +80,50 @@ class Model(object):
         self.base_list = []
         self.screen_size = screen_size # Need this to place obj rel. to screen
 
-        base_width = 50
-        base_height = 50
-
         # Sets up initial team positions
-        self.base_list.append(Base(base_width/2, base_height/2, 1))
-        self.base_list.append(Base(screen_size[0]-base_width/2, screen_size[1]-base_height/2, 2))
+        self.base_list.append(Base((25,25),1))
+        self.flag_list.append(Flag((200,200),2))
 
 
 class View(object):
-    """Makes the draw methods for all of the classes with"""
+    """DOCSTRING
+        Class for viewing a model. Contains methods to draw single object and
+        to draw all objects
+        """
 
-    def __init__(self,model):
+    def __init__(self,model,screen):
         """DOCSTRING
-            Initializes View object to allow references to model"""
+            Given a model to show and a screen upon which to show it, creates
+            attributes for each
+            """
+
         self.model = model
+        self.screen = screen
+      
 
-    # Draw single object function (This is written wrong, I think)
-    def draw(self, object):
-        surface.blit(self.model.icon, (self.model.x, self.model.y))
 
-    # Draw entire model function
+    def draw(self, thing):
+        """DOCSTRING
+            Given a thing, draws thing on screen
+            """
+
+        self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
+
+
+    def draw_all(self):
+        """DOCSTRING:
+            Draws all units, walls, flags, and bases in model
+            """
+
+        for unit in self.model.unit_list:
+            self.draw(unit)
+        for wall in self.model.wall_list:
+            self.draw(wall)
+        for flag in self.model.flag_list:
+            self.draw(flag)
+        for base in self.model.base_list:
+            self.draw(base)
+        pygame.display.update()
 
 
 class Controller(object):
@@ -97,7 +138,20 @@ class Controller(object):
 
         self.model = model
 
-    def generate_new_unit(self, time, unit_type):
+    def click_object(self, mouse_pos):
+        for flag in self.model.flag_list:
+            value = flag.rect.collidepoint(mouse_pos)
+            if value == 1:
+                flag.select()
+                break
+
+    def move_object(self, mouse_pos):
+        for flag in self.model.flag_list:
+            if flag.is_selected == True:
+                flag.move(mouse_pos)
+                pygame.display.update(flag.rect)
+
+    def generate_new_unit(time, unit_type):
         #for each team, if time = 5s
             #new_unit = Unit(x,y,team) => x, y would be set for each team
             #new_unit.draw(x,y)
@@ -116,7 +170,7 @@ class Controller(object):
         
 
 
-class Unit():  # TODO Make uninstantiable
+class Unit(object):  # TODO Make uninstantiable
 
     def __init__(self, x, y, team, stats,sprite):  # TODO set to position of the base
         self.position = x, y
@@ -138,11 +192,11 @@ class Unit():  # TODO Make uninstantiable
         # TODO make unit attack other unit
         pass
 
-# Example specific unit for later use
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, x, y, team):
         Unit.__init__(self, x, y, team, [5,6,10,2,2], 'sprite')
+
 
 class Speedie(Unit):
     """ The fast unit in the game"""
@@ -153,37 +207,59 @@ class Speedie(Unit):
 class Heavie(Unit):
     """The strong unit in the game"""
 
-class Flag():
+
+class Flag(object):
     """ The flag class for the game"""
-    def __init__(self, x, y, color):
+    def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
-        self.position = x , y #should define the position based off of mouse position
-        self.color = color #One basic color for each side of team
+        self.position = x , y = position #should define the position based off of mouse position
+        self.team = team #One basic color for each side of team
+        self.sprite = pygame.image.load("sprites/team"+str(team)+"flag.png")
+        self.oldsprite = self.sprite
+        self.is_selected = False
+        self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
         self.pickedup = False # Bool for flag picked up
         # has to be removeable
         pass
+
+    def select(self):
+        if self.is_selected == False:
+            self.is_selected = True
+            self.sprite = pygame.image.load("sprites/yellowflag.png")
+        else:
+            self.is_selected = False
+            self.sprite = self.oldsprite
+
+    def move(self,mouse_pos):
+        self.position = (mouse_pos[0], mouse_pos[1])
+        self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
 
     def update(self):
         # TODO updates flag position to unit carrying position, or home position
         # if not carried
         pass
+
     # TODO more methods here!
 
 
-class Base():
+class Base(object):
     """ The base class for the game"""
-    def __init__(self, x, y, team):
+
+    def __init__(self, position, team):
         # TODO: Initialize attributes like position, type of unit selected
-        self.position = x, y #pixel position 
+        self.position = x, y = position#pixel position 
         self.cycle_count = 0 #initial cycle count
-        if team == 1:
+        self.size = [50,50]
+        self.team = team
+        if self.team == 1:
             self.color = 'red' 
-        elif team == 2:
+        elif self.team == 2:
             self.color = 'blue'
 
         #self.unit_type = unit_type #this is just a placeholder, I imagine that
             # we'd pass this into a fxn or something like that rather than have it
             # be an attribute
+        self.sprite = pygame.image.load("sprites/base_"+str(team)+".png")
         # Add counter for unit generation
         # Add method that increments the counter and makes selected unit if applicable
         self.width = 20
