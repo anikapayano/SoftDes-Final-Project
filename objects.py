@@ -26,7 +26,7 @@ class TestUnit(unittest.TestCase):
         self.red_unit.attack(self.blue_unit, 41)
         self.assertTrue(self.blue_unit.health, health)
 
-        
+
 class Unit(object):  # TODO Make uninstantiable
     def __init__(self, position, team, stats):  # TODO set to position of the base
         """
@@ -45,9 +45,9 @@ class Unit(object):  # TODO Make uninstantiable
 
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = pygame.image.load("sprites/redunit.png")
+            self.sprite = pygame.image.load("sprites/redunit1.png")
         elif team == 2:
-            self.sprite = pygame.image.load("sprites/blueunit.png")
+            self.sprite = pygame.image.load("sprites/blueunit1.png")
         else:
             self.sprite = pgyame.image.load("sprites/unitradius.png")
 
