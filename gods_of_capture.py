@@ -139,8 +139,8 @@ class Model(object):
         self.base_list.append(Base((self.screen_size[0]-10,
                               self.screen_size[1]-10), 2))
         # Sets up flag positions
-        self.flag_list.append(Flag((10, self.screen_size[0]-10), 1))
-        self.flag_list.append(Flag((self.screen_size[0]-10, 10), 2))
+        self.flag_list.append(Flag((100, 500), 1))
+        self.flag_list.append(Flag((self.screen_size[0]-100, 500), 2))
 
 
 class View(object):
