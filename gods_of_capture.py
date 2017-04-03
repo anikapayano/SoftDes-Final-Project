@@ -24,7 +24,8 @@ class CaptureGame(object):
         # Initialize MVC classes
         self.model = Model(self.screen_size)
 
-        self.view = View(self.model, self.screen)
+        self.view = View(self.model, self.screen, self.screen_sprite)
+
         self.control = Controller(self.model)
 
         self.running = True
@@ -59,7 +60,7 @@ class CaptureGame(object):
             self.view.draw_all()
             pygame.display.update()
 
-            self.control.update_base(self.game_clock)
+            #self.control.update_base(self.game_clock)
 
 
 class Model(object):
@@ -91,7 +92,7 @@ class View(object):
         to draw all objects
         """
 
-    def __init__(self,model,screen):
+    def __init__(self,model,screen, sprite):
         """DOCSTRING
             Given a model to show and a screen upon which to show it, creates
             attributes for each
@@ -99,7 +100,8 @@ class View(object):
 
         self.model = model
         self.screen = screen
-      
+        self.screen_sprite = sprite
+
 
 
     def draw(self, thing):
@@ -114,7 +116,7 @@ class View(object):
         """DOCSTRING:
             Draws all units, walls, flags, and bases in model
             """
-
+        self.screen.blit(self.screen_sprite, (0,0))
         for unit in self.model.unit_list:
             self.draw(unit)
         for wall in self.model.wall_list:
@@ -281,7 +283,7 @@ class Base(object):
 
     #TODO has to do with animations
     def unit_generation(self, unit_type):
-        new_unit = Teenie(self.position[0], self.position[1], self.color)
+        new_unit = Teenie(self.position[0]+20, self.position[1]+20, self.color)
         return(new_unit)
 
         #if self.cycle_count == self.current_unit_cycle:
