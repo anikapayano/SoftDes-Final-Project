@@ -62,9 +62,13 @@ class CaptureGame(object):
         pygame.display.update()
 
         # Initialize MVC classes
+
         self.model = Model(self.screen_size)
 
+
         self.model.set_up(2)
+
+        self.view = View(self.model, self.screen, self.screen_sprite)
 
         self.view = View(self.model, self.screen, self.screen_sprite)
 
@@ -115,11 +119,12 @@ class Model(object):
         '''DOCSTRING:
             Initializes Model for initial game stages
             '''
-        # Lists of objects
+
         self.unit_list = []
         self.wall_list = []
         self.flag_list = []
         self.base_list = []
+
         self.screen_size = screen_size  # Need this to place obj rel. to screen
 
     def set_up(self, starting_units):
@@ -128,6 +133,7 @@ class Model(object):
             self.unit_list.append(Teenie((10, 20 + i*10), 1))
             self.unit_list.append(Teenie((self.screen_size[0]-10,
                                   self.screen_size[1]-(20 + i*10)), 2))
+
         # Sets up initial team positions
         self.base_list.append(Base((10, 10), 1))
         self.base_list.append(Base((self.screen_size[0]-10,
@@ -212,6 +218,7 @@ class Controller(object):
 
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
+
         for base in self.model.base_list:
             unit = base.update(tick, 0)
             if unit == False:
@@ -219,7 +226,6 @@ class Controller(object):
             else:
                 self.model.unit_list.append(unit)
         print(self.model.unit_list)
-
 
 
 class Unit(object):  # TODO Make uninstantiable
