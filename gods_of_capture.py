@@ -17,9 +17,9 @@ class TestModel(unittest.TestCase):
     def test_set_up(self):
         starting_units = 5
         self.model.set_up(starting_units=starting_units)
-        self.assertTrue(len(self.model.unit_list), starting_units*2)
-        self.assertTrue(len(self.model.flag_list), 2)
-        self.assertTrue(len(self.model.base_list), 2)
+        self.assertTrue(len(self.model.unit_list) == starting_units*2)
+        self.assertTrue(len(self.model.flag_list) == 2)
+        self.assertTrue(len(self.model.base_list) == 2)
 
 
 class TestUnit(unittest.TestCase):
@@ -34,17 +34,25 @@ class TestUnit(unittest.TestCase):
     def test_move_direction(self):
         self.red_unit.move_direction(math.sqrt(3), 1)
         x, y = self.red_unit.position
-        self.assertTrue(x, 13)
-        self.assertTrue(y, 3*math.sqrt(3) + 10)
+        self.assertTrue(x == 10 + 3*math.sqrt(3))
+        self.assertTrue(y == 10 + 3)
 
     def test_attack(self):
         health = self.blue_unit.health
         self.red_unit.attack(self.blue_unit, 40)
-        self.assertTrue(self.blue_unit.health,
+        self.assertTrue(self.blue_unit.health ==
                         health - self.red_unit.attack_/4)
         health = self.blue_unit.health
         self.red_unit.attack(self.blue_unit, 41)
-        self.assertTrue(self.blue_unit.health, health)
+        self.assertTrue(self.blue_unit.health == health)
+
+    def test_pick_up_flag(self):
+        flag = Flag(100, 100, 2)
+        self.red_unit.pick_up_flag(flag)
+        self.assertTrue(self.red_unit.position == flag.position)
+        self.red_unit.move(80, 80)
+        self.assertTrue(self.red_unit.position == (80, 80) and
+                        flag.position == (80, 80))
 
 
 class CaptureGame():
@@ -152,6 +160,7 @@ class Controller(object):
 
 class Unit():
     # TODO Make uninstantiable
+    # TODO Rescale unit sprites
 
     def __init__(self, x, y, team, stats):  # TODO set to position of the base
         """
@@ -182,13 +191,17 @@ class Unit():
     def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
         x, y = self.position
-        theta = math.asin(y_d/x_d)
-        x = x + self.speed*math.cos(theta)
-        y = y + self.speed*math.sin(theta)
+        mag = math.sqrt(x_d**2 + y_d**2)
+        x = x + (x_d*self.speed)/mag
+        y = y + (y_d*self.speed)/mag
+        self.position = x, y
 
     def attack(self, unit, tick):
         if (tick % self.cooldown) == 0:
             unit.health = unit.health - self.attack_/4
+
+    def pick_up_flag(self, flag):
+        pass
 
 
 # Example specific unit for later use
@@ -251,6 +264,6 @@ class Base():
 
 # The Big Cheese, the main loop!
 if __name__ == "__main__":
-    game = CaptureGame()
-    game.run()
+    #game = CaptureGame()
+    #game.run()
     unittest.main()
