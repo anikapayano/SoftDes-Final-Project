@@ -75,7 +75,7 @@ class CaptureGame(object):
     def run(self):
 
         # Eventually add pre-game setup stuff somewhere here
-
+        self.model.set_up(8)
         while self.running:
             """runs the game loop"""
             self.game_clock += 1 # Increments world tick clock
@@ -208,7 +208,7 @@ class Controller(object):
             unit = base.update(tick, 0)
             if unit == False:
                 pass
-            else:
+            else:        
                 self.model.unit_list.append(unit)
         print(self.model.unit_list)
         
@@ -235,8 +235,8 @@ class Unit(object):  # TODO Make uninstantiable
         self.range_sprite = "sprite/unitradius.png"
         if team == 1:
             self.sprite = "sprites/redunit.png"
-        elif team == 'team2':
-            self.sprite = "sprites/blueuuit.png"
+        elif team == 2:
+            self.sprite = "sprites/blueunit.png"
         else:
             self.sprite = "sprite/unitradius.png"
 
