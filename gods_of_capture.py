@@ -60,7 +60,7 @@ class CaptureGame(object):
             self.view.draw_all()
             pygame.display.update()
 
-            #self.control.update_base(self.game_clock)
+            self.control.update_base(self.game_clock)
 
 
 class Model(object):
@@ -94,9 +94,9 @@ class View(object):
 
     def __init__(self,model,screen, sprite):
         """DOCSTRING
-            Given a model to show and a screen upon which to show it, creates
-            attributes for each
-            """
+        Given a model to show and a screen upon which to show it, creates
+        attributes for each
+        """
 
         self.model = model
         self.screen = screen
@@ -106,16 +106,17 @@ class View(object):
 
     def draw(self, thing):
         """DOCSTRING
-            Given a thing, draws thing on screen
-            """
+        Given a thing, draws thing on screen
+        """
 
         self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
 
 
     def draw_all(self):
         """DOCSTRING:
-            Draws all units, walls, flags, and bases in model
-            """
+        Draws all units, walls, flags, and bases in model
+        """
+
         self.screen.blit(self.screen_sprite, (0,0))
         for unit in self.model.unit_list:
             self.draw(unit)
@@ -130,13 +131,13 @@ class View(object):
 
 class Controller(object):
     """DOCSTRING
-        Holds functions for manipulating the model
-        """
+    Holds functions for manipulating the model
+    """
 
     def __init__(self, model):
         """DOCSTRING
-            Initializes Controller object to allow manipulation of Model
-            """
+        Initializes Controller object to allow manipulation of Model
+        """
 
         self.model = model
 
@@ -153,21 +154,14 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
-    def generate_new_unit(time, unit_type):
-        #for each team, if time = 5s
-            #new_unit = Unit(x,y,team) => x, y would be set for each team
-            #new_unit.draw(x,y)
-            #team_base.unit_generation()
-        pass
-
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
             unit = base.update(tick, 0)
-        if unit == False:
-            pass
-        else:
-            self.model.unit_list.append(unit)
+            if unit == False:
+                pass
+            else:
+                self.model.unit_list.append(unit)
         print(self.model.unit_list)
         
 
