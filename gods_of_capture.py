@@ -24,17 +24,27 @@ class TestModel(unittest.TestCase):
 
 class TestUnit(unittest.TestCase):
     def setUp(self):
-        self.red_unit = Unit()
+        self.red_unit = Teenie(10, 10, 'team1')
+        self.blue_unit = Teenie(50, 50, 'team2')
 
     def test_move(self):
         self.red_unit.move((10, 20))
         self.assertTrue(self.red_unit.position, (10, 20))
 
     def test_move_direction(self):
-        pass
+        self.red_unit.move_direction(math.sqrt(3), 1)
+        x, y = self.red_unit.position
+        self.assertTrue(x, 13)
+        self.assertTrue(y, 3*math.sqrt(3) + 10)
 
     def test_attack(self):
-        pass
+        health = self.blue_unit.health
+        self.red_unit.attack(self.blue_unit, 40)
+        self.assertTrue(self.blue_unit.health,
+                        health - self.red_unit.attack_/4)
+        health = self.blue_unit.health
+        self.red_unit.attack(self.blue_unit, 41)
+        self.assertTrue(self.blue_unit.health, health)
 
 
 class CaptureGame():
@@ -93,10 +103,12 @@ class Model(object):
             self.unit_list.append(Teenie(self.screen_size[0]-10,
                                   self.screen_size[1]-(20 + i*10), 'team2'))
         # Sets up initial team positions
-        self.base_list.append(Base(10, 10), 'team1')
+        self.base_list.append(Base(10, 10, 'team1'))
         self.base_list.append(Base(self.screen_size[0]-10,
-                              self.screen_size[1]-10), 'team2')
-        # TODO: set up flag positions
+                              self.screen_size[1]-10, 'team2'))
+        # Sets up flag positions
+        self.flag_list.append(Flag(10, self.screen_size[0]-10, 'team1'))
+        self.flag_list.append(Flag(self.screen_size[0]-10, 10, 'team2'))
 
 
 class View(object):
@@ -153,7 +165,7 @@ class Unit():
         self.strength = stats[0]
         self.speed = stats[1]
         self.health = stats[2]
-        self.attack = stats[3]
+        self.attack_ = stats[3]
         self.cooldown = stats[4]
         self.range_sprite = "sprite/unitradius.png"
         if team == 'team1':
@@ -167,15 +179,16 @@ class Unit():
         """moves unit to pos = x, y"""
         self.position = pos
 
-    def move_direction(self, direction):
+    def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
         x, y = self.position
-        x_2, y_2 = direction
-        # new_x
+        theta = math.asin(y_d/x_d)
+        x = x + self.speed*math.cos(theta)
+        y = y + self.speed*math.sin(theta)
 
-    def attack(self, unit):
-        # TODO make unit attack other unit
-        pass
+    def attack(self, unit, tick):
+        if (tick % self.cooldown) == 0:
+            unit.health = unit.health - self.attack_/4
 
 
 # Example specific unit for later use
@@ -221,7 +234,7 @@ class Base():
             # would need to see about pygame shapes
         self.color = color # pygame command (imagine that this would change depending
             # on the type of unit being produced or could be a time indicator)
-        self.unit_type = unit_type #this is just a placeholder, I imagine that
+        #self.unit_type = unit_type #this is just a placeholder, I imagine that
             # we'd pass this into a fxn or something like that rather than have it
             # be an attribute
         # Add counter for unit generation
@@ -238,6 +251,6 @@ class Base():
 
 # The Big Cheese, the main loop!
 if __name__ == "__main__":
-    # game = CaptureGame()
-    # game.run()
+    game = CaptureGame()
+    game.run()
     unittest.main()
