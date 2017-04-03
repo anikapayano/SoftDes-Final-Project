@@ -63,6 +63,7 @@ class CaptureGame(object):
 
         # Initialize MVC classes
         self.model = Model(self.screen_size)
+        self.model.set_up(2)
         self.view = View(self.model, self.screen, self.screen_sprite)
         self.control = Controller(self.model)
 
@@ -221,13 +222,13 @@ class Unit(object):  # TODO Make uninstantiable
         self.health = stats[2]
         self.attack_ = stats[3]
         self.cooldown = stats[4]
-        self.range_sprite = "sprite/unitradius.png"
+        self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = "sprites/redunit.png"
-        elif team == 'team2':
-            self.sprite = "sprites/blueuuit.png"
+            self.sprite = pygame.image.load("sprites/redunit.png")
+        elif team == 2:
+            self.sprite = pygame.image.load("sprites/blueunit.png")
         else:
-            self.sprite = "sprite/unitradius.png"
+            self.sprite = pgyame.image.load("sprites/unitradius.png")
 
     def move(self, pos):
         """moves unit to pos = x, y"""
@@ -305,6 +306,7 @@ class Base(object):
         # would need to see about pygame shapes
         self.size = [50, 50]
         self.team = team
+        self.sprite = pygame.image.load('sprites/base_'+str(team)+'.png')
         # self.color = color # pygame command (imagine that this would change
         # depending on the type of unit being produced or could be a time
         # indicator)
