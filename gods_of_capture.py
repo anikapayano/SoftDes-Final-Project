@@ -5,6 +5,46 @@ AI.
          Emily Lepert, Anika Payano
          """
 import pygame
+import unittest
+import math
+
+
+# UNIT TESTS
+class TestModel(unittest.TestCase):
+    def setUp(self):
+        self.model = Model([1840, 920])
+
+    def test_set_up(self):
+        starting_units = 5
+        self.model.set_up(starting_units=starting_units)
+        self.assertTrue(len(self.model.unit_list), starting_units*2)
+        self.assertTrue(len(self.model.flag_list), 2)
+        self.assertTrue(len(self.model.base_list), 2)
+
+
+class TestUnit(unittest.TestCase):
+    def setUp(self):
+        self.red_unit = Teenie((10, 10), 1)
+        self.blue_unit = Teenie((50, 50), 2)
+
+    def test_move(self):
+        self.red_unit.move((10, 20))
+        self.assertTrue(self.red_unit.position, (10, 20))
+
+    def test_move_direction(self):
+        self.red_unit.move_direction(math.sqrt(3), 1)
+        x, y = self.red_unit.position
+        self.assertTrue(x, 13)
+        self.assertTrue(y, 3*math.sqrt(3) + 10)
+
+    def test_attack(self):
+        health = self.blue_unit.health
+        self.red_unit.attack(self.blue_unit, 40)
+        self.assertTrue(self.blue_unit.health,
+                        health - self.red_unit.attack_/4)
+        health = self.blue_unit.health
+        self.red_unit.attack(self.blue_unit, 41)
+        self.assertTrue(self.blue_unit.health, health)
 
 
 class CaptureGame(object):
@@ -18,7 +58,7 @@ class CaptureGame(object):
         self.screen_size = [1840, 920]  # size of screen
         self.screen_sprite = pygame.image.load("sprites/background.png")
         self.screen = pygame.display.set_mode(self.screen_size)
-        self.screen.blit(self.screen_sprite, (0,0))
+        self.screen.blit(self.screen_sprite, (0, 0))
         pygame.display.update()
 
         # Initialize MVC classes
@@ -70,20 +110,30 @@ class Model(object):
         field"""
 
     def __init__(self, screen_size):
-        '''DOCSTRING
-        Initializes Model for initial game stages
-        '''
-        self.tick = 0
+        '''DOCSTRING:
+            Initializes Model for initial game stages
+            '''
+
         # Lists of objects
         self.unit_list = []
         self.wall_list = []
         self.flag_list = []
         self.base_list = []
-        self.screen_size = screen_size # Need this to place obj rel. to screen
+        self.screen_size = screen_size  # Need this to place obj rel. to screen
 
+    def set_up(self, starting_units):
+        # Add units
+        for i in range(starting_units):
+            self.unit_list.append(Teenie((10, 20 + i*10), 1))
+            self.unit_list.append(Teenie((self.screen_size[0]-10,
+                                  self.screen_size[1]-(20 + i*10)), 2))
         # Sets up initial team positions
-        self.base_list.append(Base((25,25),1))
-        self.flag_list.append(Flag((200,200),2))
+        self.base_list.append(Base((10, 10), 1))
+        self.base_list.append(Base((self.screen_size[0]-10,
+                              self.screen_size[1]-10), 2))
+        # Sets up flag positions
+        self.flag_list.append(Flag((10, self.screen_size[0]-10), 1))
+        self.flag_list.append(Flag((self.screen_size[0]-10, 10), 2))
 
 
 class View(object):
@@ -92,7 +142,7 @@ class View(object):
         to draw all objects
         """
 
-    def __init__(self,model,screen, sprite):
+    def __init__(self, model, screen, sprite):
         """DOCSTRING
         Given a model to show and a screen upon which to show it, creates
         attributes for each
@@ -102,8 +152,6 @@ class View(object):
         self.screen = screen
         self.screen_sprite = sprite
 
-
-
     def draw(self, thing):
         """DOCSTRING
         Given a thing, draws thing on screen
@@ -111,13 +159,13 @@ class View(object):
 
         self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
 
-
     def draw_all(self):
         """DOCSTRING:
         Draws all units, walls, flags, and bases in model
         """
 
         self.screen.blit(self.screen_sprite, (0,0))
+
         for unit in self.model.unit_list:
             self.draw(unit)
         for wall in self.model.wall_list:
@@ -167,31 +215,53 @@ class Controller(object):
 
 
 class Unit(object):  # TODO Make uninstantiable
-
-    def __init__(self, x, y, team, stats,sprite):  # TODO set to position of the base
-        self.position = x, y
+    def __init__(self, position, team, stats):  # TODO set to position of the base
+        """
+        DOCSTRING:
+        attributes:
+        TEAM: 1 or 2
+        """
+        self.position = x, y = position
         self.team = team
         self.is_selected = False
         self.strength = stats[0]
         self.speed = stats[1]
         self.health = stats[2]
-        self.attack = stats[3]
+        self.attack_ = stats[3]
         self.cooldown = stats[4]
-        self.sprite = sprite
+
         self.rect = pygame.Rect(self.position[0],self.position[1],45,45) # Makes collision rect for unit given pos and size
 
-    def move(self):
-        # TODO make unit move in force direction by speed stuff
-        pass
+        self.range_sprite = "sprite/unitradius.png"
+        if team == 1:
+            self.sprite = "sprites/redunit.png"
+        elif team == 'team2':
+            self.sprite = "sprites/blueuuit.png"
+        else:
+            self.sprite = "sprite/unitradius.png"
 
-    def attack(self, unit):
-        # TODO make unit attack other unit
-        pass
+
+    def move(self, pos):
+        """moves unit to pos = x, y"""
+        self.position = pos
+
+    def move_direction(self, x_d, y_d):
+        """moves unit at self.speed in direction = x, y"""
+        x, y = self.position
+        theta = math.asin(y_d/x_d)
+        x = x + self.speed*math.cos(theta)
+        y = y + self.speed*math.sin(theta)
+
+    def attack(self, unit, tick):
+        if (tick % self.cooldown) == 0:
+            unit.health = unit.health - self.attack_/4
 
 class Teenie(Unit):
     """ The base unit in the game"""
-    def __init__(self, x, y, team):
-        Unit.__init__(self, x, y, team, [5,6,10,2,2], 'sprite')
+
+    def __init__(self, position, team):
+        Unit.__init__(self, position, team, [5, 6, 10, 2, 2])
+
 
 
 class Speedie(Unit):
@@ -208,25 +278,26 @@ class Flag(object):
     """ The flag class for the game"""
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
-        self.position = x , y = position #should define the position based off of mouse position
-        self.team = team #One basic color for each side of team
+        # should define the position based off of mouse position
+        self.position = x, y = position
+        # One basic color for each side of team
+        self.team = team
         self.sprite = pygame.image.load("sprites/team"+str(team)+"flag.png")
         self.oldsprite = self.sprite
         self.is_selected = False
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
-        self.pickedup = False # Bool for flag picked up
+        self.pickedup = False  # Bool for flag picked up
         # has to be removeable
-        pass
 
     def select(self):
-        if self.is_selected == False:
+        if self.is_selected is False:
             self.is_selected = True
             self.sprite = pygame.image.load("sprites/yellowflag.png")
         else:
             self.is_selected = False
             self.sprite = self.oldsprite
 
-    def move(self,mouse_pos):
+    def move(self, mouse_pos):
         self.position = (mouse_pos[0], mouse_pos[1])
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
 
@@ -247,14 +318,8 @@ class Base(object):
         self.cycle_count = 0 #initial cycle count
         self.size = [50,50]
         self.team = team
-        if self.team == 1:
-            self.color = 'red' 
-        elif self.team == 2:
-            self.color = 'blue'
 
-        #self.unit_type = unit_type #this is just a placeholder, I imagine that
-            # we'd pass this into a fxn or something like that rather than have it
-            # be an attribute
+    
         self.sprite = pygame.image.load("sprites/base_"+str(team)+".png")
         # Add counter for unit generation
         # Add method that increments the counter and makes selected unit if applicable
@@ -277,11 +342,10 @@ class Base(object):
 
     #TODO has to do with animations
     def unit_generation(self, unit_type):
-        new_unit = Teenie(self.position[0]+20, self.position[1]+20, self.color)
+        new_unit = Teenie(self.position[0]+20, self.position[1]+20, self.team)
         return(new_unit)
 
         #if self.cycle_count == self.current_unit_cycle:
-
 
 
 
@@ -292,3 +356,4 @@ class Base(object):
 if __name__ == "__main__":
     game = CaptureGame()
     game.run()
+    #unittest.main()
