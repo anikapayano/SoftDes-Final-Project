@@ -147,6 +147,12 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+    def pickup_object(self):
+        for unit in self.model.unit_list:
+            unit_pos = unit.position
+            flag.pickedup(unit_pos)
+        pass
+
     def generate_new_unit(time, unit_type):
         #for each team, if time = 5s
             #new_unit = Unit(x,y,team) => x, y would be set for each team
@@ -208,9 +214,7 @@ class Flag(object):
         self.oldsprite = self.sprite
         self.is_selected = False
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
-        self.pickedup = False # Bool for flag picked up
-        # has to be removeable
-        pass
+        self.pickedup = False
 
     def select(self):
         if self.is_selected == False:
@@ -224,9 +228,13 @@ class Flag(object):
         self.position = (mouse_pos[0], mouse_pos[1])
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
 
-    def update(self):
-        # TODO updates flag position to unit carrying position, or home position
-        # if not carried
+    def update(self, unit_pos):
+        if self.pickedup == False:
+            self.pickedup = True
+            self.position = (unit_pos[0], unit_pos[1])
+            self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
+        else:
+            self.is_pickedup = False
         pass
 
     # TODO more methods here!
