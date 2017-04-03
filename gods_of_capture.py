@@ -64,6 +64,8 @@ class CaptureGame(object):
         # Initialize MVC classes
         self.model = Model(self.screen_size)
 
+        self.model.set_up(2)
+
         self.view = View(self.model, self.screen, self.screen_sprite)
 
         self.control = Controller(self.model)
@@ -113,7 +115,6 @@ class Model(object):
         '''DOCSTRING:
             Initializes Model for initial game stages
             '''
-
         # Lists of objects
         self.unit_list = []
         self.wall_list = []
@@ -230,20 +231,29 @@ class Unit(object):  # TODO Make uninstantiable
         self.attack_ = stats[3]
         self.cooldown = stats[4]
 
-        self.rect = pygame.Rect(self.position[0],self.position[1],45,45) # Makes collision rect for unit given pos and size
-
-        self.range_sprite = "sprite/unitradius.png"
+        self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = "sprites/redunit.png"
+            self.sprite = pygame.image.load("sprites/redunit.png")
         elif team == 2:
-            self.sprite = "sprites/blueunit.png"
+            self.sprite = pygame.image.load("sprites/blueunit.png")
         else:
-            self.sprite = "sprite/unitradius.png"
-
+            self.sprite = pgyame.image.load("sprites/unitradius.png")
 
     def move(self, pos):
         """moves unit to pos = x, y"""
         self.position = pos
+
+    def move_direction(self, x_d, y_d):
+        """moves unit at self.speed in direction = x, y"""
+        x, y = self.position
+        theta = math.asin(y_d/x_d)
+        x = x + self.speed*math.cos(theta)
+        y = y + self.speed*math.sin(theta)
+
+    def attack(self, unit, tick):
+        if (tick % self.cooldown) == 0:
+            unit.health = unit.health - self.attack_/4
+
 
     def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
@@ -261,7 +271,6 @@ class Teenie(Unit):
 
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [5, 6, 10, 2, 2])
-
 
 
 class Speedie(Unit):
@@ -314,6 +323,7 @@ class Base(object):
 
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, type of unit selected
+
         self.position = x, y = position#pixel position 
         self.cycle_count = 0 #initial cycle count
         self.size = [50,50]
@@ -342,11 +352,8 @@ class Base(object):
 
     #TODO has to do with animations
     def unit_generation(self, unit_type):
-        new_unit = Teenie(self.position[0]+20, self.position[1]+20, self.team)
+        new_unit = Teenie((self.position[0]+70, self.position[1]+20), self.team)
         return(new_unit)
-
-        #if self.cycle_count == self.current_unit_cycle:
-
 
 
     # TODO more methods here!
@@ -356,4 +363,5 @@ class Base(object):
 if __name__ == "__main__":
     game = CaptureGame()
     game.run()
-    #unittest.main()
+    unittest.main()
+
