@@ -6,12 +6,13 @@ AI.
          """
 import pygame
 import unittest
+import math
 
 
 # UNIT TESTS
-class TestModel():
+class TestModel(unittest.TestCase):
     def setUp(self):
-        self.model = Model()
+        self.model = Model([1840, 920])
 
     def test_set_up(self):
         starting_units = 5
@@ -19,6 +20,21 @@ class TestModel():
         self.assertTrue(len(self.model.unit_list), starting_units*2)
         self.assertTrue(len(self.model.flag_list), 2)
         self.assertTrue(len(self.model.base_list), 2)
+
+
+class TestUnit(unittest.TestCase):
+    def setUp(self):
+        self.red_unit = Unit()
+
+    def test_move(self):
+        self.red_unit.move((10, 20))
+        self.assertTrue(self.red_unit.position, (10, 20))
+
+    def test_move_direction(self):
+        pass
+
+    def test_attack(self):
+        pass
 
 
 class CaptureGame():
@@ -33,7 +49,7 @@ class CaptureGame():
         # Add background sprite
 
         # Initialize MVC classes
-        self.model = Model()
+        self.model = Model(self.screen_size)
         self.view = View(self.model)
         self.control = Controller(self.model)
 
@@ -73,18 +89,20 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(Unit(Unit.width))
+            self.unit_list.append(Teenie(10, 20 + i*10, 'team1'))
+            self.unit_list.append(Teenie(self.screen_size[0]-10,
+                                  self.screen_size[1]-(20 + i*10), 'team2'))
         # Sets up initial team positions
-        self.base_list.append(Base(Base.width/2, Base.height/2))
-        self.base_list.append(Base(self.screen_size[0]-Base.width/2,
-                              self.screen_size[1]-Base.height/2))
-        pass
+        self.base_list.append(Base(10, 10), 'team1')
+        self.base_list.append(Base(self.screen_size[0]-10,
+                              self.screen_size[1]-10), 'team2')
+        # TODO: set up flag positions
 
 
 class View(object):
     """Makes the draw methods for all of the classes with"""
 
-    def __init__(self,model):
+    def __init__(self, model):
         """DOCSTRING
             Initializes View object to allow references to model"""
         self.model = model
@@ -123,7 +141,12 @@ class Controller(object):
 class Unit():
     # TODO Make uninstantiable
 
-    def __init__(self, x, y, team, stats,sprite):  # TODO set to position of the base
+    def __init__(self, x, y, team, stats):  # TODO set to position of the base
+        """
+        DOCSTRING:
+        attributes:
+        TEAM: 'team1' or 'team2'
+        """
         self.position = x, y
         self.team = team
         self.is_selected = False
@@ -132,12 +155,23 @@ class Unit():
         self.health = stats[2]
         self.attack = stats[3]
         self.cooldown = stats[4]
-        self.sprite = sprite
-        self.rect = pygame.Rect(self.x,self.y,xsize,ysize) # Makes collision rect for unit given pos and size
+        self.range_sprite = "sprite/unitradius.png"
+        if team == 'team1':
+            self.sprite = "sprites/redunit.png"
+        elif team == 'team2':
+            self.sprite = "sprites/blueuuit.png"
+        else:
+            self.sprite = "sprite/unitradius.png"
 
-    def move(self):
-        # TODO make unit move in force direction by speed stuff
-        pass
+    def move(self, pos):
+        """moves unit to pos = x, y"""
+        self.position = pos
+
+    def move_direction(self, direction):
+        """moves unit at self.speed in direction = x, y"""
+        x, y = self.position
+        x_2, y_2 = direction
+        # new_x
 
     def attack(self, unit):
         # TODO make unit attack other unit
@@ -148,7 +182,7 @@ class Unit():
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, x, y, team):
-        Unit.__init__(self, x, y, team, [5,6,10,2,2], sprite)
+        Unit.__init__(self, x, y, team, [5, 6, 10, 2, 2])
 
 
 class Speedie(Unit):
@@ -204,6 +238,6 @@ class Base():
 
 # The Big Cheese, the main loop!
 if __name__ == "__main__":
-    game = CaptureGame()
-    game.run()
+    # game = CaptureGame()
+    # game.run()
     unittest.main()
