@@ -59,9 +59,9 @@ class Unit(object):  # TODO Make uninstantiable
         # TODO: make sure this picture is here
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit1.png"), 10, 10)
+            self.sprite = pygame.image.load("sprites/redunit1.png")
         elif team == 2:
-            self.sprite = pygame.transform.scale(pygame.image.load("sprites/blueunit1.png"), 10, 10)
+            self.sprite = pygame.image.load("sprites/blueunit1.png")
         else:
             self.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), 10, 10)
 
