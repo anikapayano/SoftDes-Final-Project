@@ -46,11 +46,11 @@ class Unit(object):  # TODO Make uninstantiable
         self.rect = pygame.Rect(self.position[0], self.position[1], 50, 50)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit.png"), 10, 10)
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit1.png"), 10, 10)
         elif team == 2:
-            self.sprite = pygame.image.load("sprites/blueunit.png")
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/blueunit1.png"), 10, 10)
         else:
-            self.sprite = pgyame.image.load("sprites/unitradius.png")
+            elf.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), 10, 10)
 
     def move(self, pos):
         """moves unit to pos = x, y"""
