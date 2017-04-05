@@ -27,7 +27,12 @@ class TestUnit(unittest.TestCase):
         self.red_unit.attack(self.blue_unit, 41)
         self.assertTrue(self.blue_unit.health == health)
 
-    def test_pick_up_flag(self):
+
+class TestFlag(unittest.TestCase):
+    def setUp(self):
+        self.flag = Flag(())
+
+    def test_be_picked_up(self):
         flag = Flag((300, 300), 2)
         self.red_unit.pick_up_flag(flag)
         self.assertTrue(flag.position == self.red_unit.position)
