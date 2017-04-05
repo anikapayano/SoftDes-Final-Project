@@ -130,7 +130,7 @@ class Flag(object):
         self.position = (mouse_pos[0], mouse_pos[1])
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
 
-    def update(self):
+    def be_picked_up(self, unit):
         # TODO updates flag position to unit carrying position, or home position
         # if not carried
         pass
