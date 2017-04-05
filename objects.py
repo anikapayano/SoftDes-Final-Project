@@ -26,6 +26,7 @@ class TestUnit(unittest.TestCase):
         health = self.blue_unit.health
         self.red_unit.attack(self.blue_unit, 41)
         self.assertTrue(self.blue_unit.health == health)
+<<<<<<< HEAD
 
     def test_pick_up_flag(self):
         flag = Flag((300, 300), 2)
@@ -33,6 +34,8 @@ class TestUnit(unittest.TestCase):
         self.assertTrue(flag.position == self.red_unit.position)
         self.red_unit.move(400, 400)
         self.assertTrue(flag.position == self.red_unit.position)
+=======
+>>>>>>> master
 
 
 class Unit(object):  # TODO Make uninstantiable
@@ -51,14 +54,22 @@ class Unit(object):  # TODO Make uninstantiable
         self.attack_ = stats[3]
         self.cooldown = stats[4]
         self.rect = pygame.Rect(self.position[0], self.position[1], 50, 50)
+<<<<<<< HEAD
         # TODO: make sure this picture is here
         # self.range_sprite = pygame.image.load("sprites/unitradius.png")
+=======
+        self.range_sprite = pygame.image.load("sprites/unitradius.png")
+>>>>>>> master
         if team == 1:
             self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit1.png"), 10, 10)
         elif team == 2:
             self.sprite = pygame.transform.scale(pygame.image.load("sprites/blueunit1.png"), 10, 10)
         else:
+<<<<<<< HEAD
             self.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), 10, 10)
+=======
+            elf.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), 10, 10)
+>>>>>>> master
 
     def move(self, pos):
         """moves unit to pos = x, y"""
@@ -79,7 +90,10 @@ class Unit(object):  # TODO Make uninstantiable
     def pick_up_flag(self, flag):
         pass
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 class Teenie(Unit):
     """ The base unit in the game"""
 
