@@ -35,9 +35,9 @@ class TestFlag(unittest.TestCase):
     def test_be_picked_up(self):
         red_unit = Teenie((10, 10), 1)
         self.flag.be_picked_up(red_unit)
-        self.assertTrue(flag.position == self.red_unit.position)
+        self.assertTrue(self.flag.position == self.red_unit.position)
         self.red_unit.move(400, 400)
-        self.assertTrue(flag.position == self.red_unit.position)
+        self.assertTrue(self.flag.position == self.red_unit.position)
 
 
 class Unit(object):  # TODO Make uninstantiable
