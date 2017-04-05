@@ -30,11 +30,11 @@ class TestUnit(unittest.TestCase):
 
 class TestFlag(unittest.TestCase):
     def setUp(self):
-        self.flag = Flag(())
+        self.flag = Flag((300, 300), 2)
 
     def test_be_picked_up(self):
-        flag = Flag((300, 300), 2)
-        self.red_unit.pick_up_flag(flag)
+        red_unit = Teenie((10, 10), 1)
+        self.flag.be_picked_up(red_unit)
         self.assertTrue(flag.position == self.red_unit.position)
         self.red_unit.move(400, 400)
         self.assertTrue(flag.position == self.red_unit.position)
