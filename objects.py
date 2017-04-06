@@ -2,31 +2,32 @@ import pygame
 import unittest
 import math
 
+
 class TestUnit(unittest.TestCase):
     def setUp(self):
-        self.red_unit = obj.Teenie((10, 10), 1)
-        self.blue_unit = obj.Teenie((50, 50), 2)
+        self.red_unit = Teenie((10, 10), 1)
+        self.blue_unit = Teenie((50, 50), 2)
 
     def test_move(self):
         self.red_unit.move((10, 20))
-        self.assertTrue(self.red_unit.position, (10, 20))
+        self.assertTrue(self.red_unit.position == (10, 20))
 
     def test_move_direction(self):
         self.red_unit.move_direction(math.sqrt(3), 1)
         x, y = self.red_unit.position
-        self.assertTrue(x, 13)
-        self.assertTrue(y, 3*math.sqrt(3) + 10)
+        self.assertTrue(x == 10 + 3*math.sqrt(3))
+        self.assertTrue(y == 10 + 3)
 
     def test_attack(self):
         health = self.blue_unit.health
         self.red_unit.attack(self.blue_unit, 40)
-        self.assertTrue(self.blue_unit.health,
+        self.assertTrue(self.blue_unit.health ==
                         health - self.red_unit.attack_/4)
         health = self.blue_unit.health
         self.red_unit.attack(self.blue_unit, 41)
-        self.assertTrue(self.blue_unit.health, health)
+        self.assertTrue(self.blue_unit.health == health)
 
-        
+
 class Unit(object):  # TODO Make uninstantiable
     def __init__(self, position, team, stats):  # TODO set to position of the base
         """
@@ -42,14 +43,14 @@ class Unit(object):  # TODO Make uninstantiable
         self.health = stats[2]
         self.attack_ = stats[3]
         self.cooldown = stats[4]
-
+        self.rect = pygame.Rect(self.position[0], self.position[1], 50, 50)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = pygame.image.load("sprites/redunit.png")
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit1.png"), [10, 10])
         elif team == 2:
-            self.sprite = pygame.image.load("sprites/blueunit.png")
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/blueunit1.png"), [10, 10])
         else:
-            self.sprite = pgyame.image.load("sprites/unitradius.png")
+            elf.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), [10, 10])
 
     def move(self, pos):
         """moves unit to pos = x, y"""
@@ -58,25 +59,15 @@ class Unit(object):  # TODO Make uninstantiable
     def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
         x, y = self.position
-        theta = math.asin(y_d/x_d)
-        x = x + self.speed*math.cos(theta)
-        y = y + self.speed*math.sin(theta)
+        mag = math.sqrt(x_d**2 + y_d**2)
+        x = x + (x_d*self.speed)/mag
+        y = y + (y_d*self.speed)/mag
+        self.position = x, y
 
     def attack(self, unit, tick):
         if (tick % self.cooldown) == 0:
             unit.health = unit.health - self.attack_/4
 
-
-    def move_direction(self, x_d, y_d):
-        """moves unit at self.speed in direction = x, y"""
-        x, y = self.position
-        theta = math.asin(y_d/x_d)
-        x = x + self.speed*math.cos(theta)
-        y = y + self.speed*math.sin(theta)
-
-    def attack(self, unit, tick):
-        if (tick % self.cooldown) == 0:
-            unit.health = unit.health - self.attack_/4
 
 class Teenie(Unit):
     """ The base unit in the game"""
@@ -156,6 +147,7 @@ class Base(object):
         self.current_unit_cycle = self.unit_cycles[self.unit_type]
         if self.cycle_count == self.current_unit_cycle:
             new_unit = self.unit_generation()
+
             self.cycle_count = 0
             return(new_unit)
         else:
@@ -170,9 +162,10 @@ class Base(object):
     #TODO has to do with animations
     def unit_generation(self):
         if self.unit_type == 0:
-            new_unit = Teenie((self.position[0]+70, self.position[1]+20), self.team)
+            new_unit = Teenie((self.position[0]+300, self.position[1]+300), self.team)
+            print(new_unit)
         elif self.unit_type == 1:
-            new_unit = Speedie((self.position[0]+100, self.position[1]+30), self.team)
+            new_unit = Speedie((self.position[0]+200, self.position[1]+200), self.team)
         return(new_unit)
 
 
