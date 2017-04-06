@@ -116,6 +116,7 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
 
