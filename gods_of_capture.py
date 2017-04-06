@@ -36,7 +36,7 @@ class CaptureGame(object):
         self.control = mvc.Controller(self.model)
 
         self.running = True
-        self.game_clock = 0 # Initializes world tick clock
+        self.tick = 0 # Initializes world tick clock
 
 
     def run(self):
@@ -44,7 +44,7 @@ class CaptureGame(object):
         # Eventually add pre-game setup stuff somewhere here
         while self.running:
             """runs the game loop"""
-            self.game_clock += 1 # Increments world tick clock
+            self.tick += 1 # Increments world tick clock
             # TODO Check wincase (Controller)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
@@ -72,7 +72,7 @@ class CaptureGame(object):
             self.view.draw_all()
             pygame.display.update()
 
-            self.control.update_base(self.game_clock)
+            self.control.update_base(self.tick)
 
 
 
