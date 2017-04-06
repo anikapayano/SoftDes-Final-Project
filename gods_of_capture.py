@@ -58,8 +58,15 @@ class CaptureGame(object):
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     new_pos = pygame.mouse.get_pos()
                     self.control.place_object(new_pos)
-
-
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        self.control.update_unit_type('1')
+                    elif event.key == pygame.K_2:
+                        self.control.update_unit_type('2')
+                    elif event.key == pygame.K_q:
+                        self.control.update_unit_type('q')
+                    elif event.key == pygame.K_w:
+                        self.control.update_unit_type('w')
             # User Input May Eventually go here
             # AI Input WILL Go here
             self.view.draw_all()
