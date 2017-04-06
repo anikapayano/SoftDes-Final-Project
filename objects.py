@@ -46,11 +46,11 @@ class Unit(object):  # TODO Make uninstantiable
         self.rect = pygame.Rect(self.position[0], self.position[1], 50, 50)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
-            self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit1.png"), 10, 10)
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/redunit1.png"), [10, 10])
         elif team == 2:
-            self.sprite = pygame.transform.scale(pygame.image.load("sprites/blueunit1.png"), 10, 10)
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/blueunit1.png"), [10, 10])
         else:
-            elf.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), 10, 10)
+            elf.sprite = pygame.transform.scale(pygame.image.load("sprites/unitradius.png"), [10, 10])
 
     def move(self, pos):
         """moves unit to pos = x, y"""
@@ -78,8 +78,8 @@ class Teenie(Unit):
 
 class Speedie(Unit):
     """ The fast unit in the game"""
-    def __init__(self, x, y, team):
-        Unit.__init__(self, x, y, team, [])
+    def __init__(self, position, team):
+        Unit.__init__(self, position, team, [5, 6, 10, 2, 2])
 
 
 class Heavie(Unit):
@@ -142,20 +142,30 @@ class Base(object):
         self.current_unit_cycle = 30
         self.unit_type = 0
 
-    def update(self, tick, unit_type):
+    def update(self, tick):
         self.cycle_count +=1
-        self.unit_type = unit_type
         self.current_unit_cycle = self.unit_cycles[self.unit_type]
         if self.cycle_count == self.current_unit_cycle:
-            new_unit = self.unit_generation(self.unit_type)
+            new_unit = self.unit_generation()
+
             self.cycle_count = 0
             return(new_unit)
         else:
             return(False)
 
+    def update_unit(self, key):
+        if key == '1' or key =='q':
+            self.unit_type = 0
+        elif key == '2' or key == 'w':
+            self.unit_type = 1
+
     #TODO has to do with animations
-    def unit_generation(self, unit_type):
-        new_unit = Teenie((self.position[0]+70, self.position[1]+20), self.team)
+    def unit_generation(self):
+        if self.unit_type == 0:
+            new_unit = Teenie((self.position[0]+300, self.position[1]+300), self.team)
+            print(new_unit)
+        elif self.unit_type == 1:
+            new_unit = Speedie((self.position[0]+200, self.position[1]+200), self.team)
         return(new_unit)
 
 

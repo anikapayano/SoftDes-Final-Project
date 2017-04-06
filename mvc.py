@@ -116,11 +116,17 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+    def update_unit_type(self, key):
+        if key == '1' or key == '2':
+            self.model.base_list[0].update_unit(key)
+        elif key == 'q' or key == 'w':
+            self.model.base_list[1].update_unit(key)
+
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
 
         for base in self.model.base_list:
-            unit = base.update(tick, 0)
+            unit = base.update(tick)
             if unit == False:
                 pass
             else:
