@@ -38,9 +38,8 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((10, 20 + i*10), 1))
-            self.unit_list.append(obj.Teenie((self.screen_size[0]-10,
-                                  self.screen_size[1]-(20 + i*10)), 2))
+            self.unit_list.append(obj.Teenie((500, 500), 1))
+            self.unit_list.append(obj.Teenie((500, 600), 2))
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))

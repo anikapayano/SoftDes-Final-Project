@@ -68,7 +68,7 @@ class CaptureGame(object):
             self.control.update_base(self.game_clock)
 
 
-# The Big Cheese, the main loop!
+
 if __name__ == "__main__":
     game = CaptureGame()
     game.run()
