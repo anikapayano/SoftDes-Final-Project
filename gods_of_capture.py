@@ -63,10 +63,14 @@ class CaptureGame(object):
                         self.control.update_unit_type('1')
                     elif event.key == pygame.K_2:
                         self.control.update_unit_type('2')
+                    elif event.key == pygame.K_3:
+                        self.control.update_unit_type('3')
                     elif event.key == pygame.K_q:
                         self.control.update_unit_type('q')
                     elif event.key == pygame.K_w:
                         self.control.update_unit_type('w')
+                    elif event.key == pygame.K_e:
+                        self.control.update_unit_type('e')
             # User Input May Eventually go here
             # AI Input WILL Go here
             self.view.draw_all()
