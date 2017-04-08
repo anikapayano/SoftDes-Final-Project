@@ -106,19 +106,24 @@ class Controller(object):
         self.selected_obj = [] # Keeps track of currently selected objects
 
     def click_object(self, mouse_pos):
-        for flag in self.model.flag_list:
+        for flag in self.model.flag_list: # Loop through flags
             value = flag.rect.collidepoint(mouse_pos)
             # If flag clicked on and no other flag selected
-            if value == 1 and not any(isinstance(x, obj.Flag) for x in self.selected_obj):
+            if value == 1:
+                if not any(isinstance(x, obj.Flag) for x in self.selected_obj):
 
-                flag.select()
-                self.selected_obj.append(flag)
-                break
-            elif any(isinstance(x, obj.Flag) for x in self.selected_obj):
-                flag = next(thing for thing in self.selected_obj if type(thing)==obj.Flag)
-                flag.select()
-                self.selected_obj.pop(self.selected_obj.index(flag))
-        for unit in self.model.unit_list:
+                    # Select flag; add to selected obj list; stop searching
+                    flag.select()
+                    self.selected_obj.append(flag)
+                    break
+
+                else:
+                    flag = next(thing for thing in self.selected_obj if type(thing)==obj.Flag)
+                    flag.select()
+                    self.selected_obj.pop(self.selected_obj.index(flag))
+                    break
+
+        for unit in self.model.unit_list: # Loop through units
             value = unit.rect.collidepoint(mouse_pos)
             if value == 1:
                 unit.select()
