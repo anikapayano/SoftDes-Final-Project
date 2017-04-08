@@ -94,9 +94,8 @@ class Unit(object):  # TODO Make uninstantiable
     def pick_up_flag(self, flag):
         pass
 
-
+class Teenie(Unit):
     """ The base unit in the game"""
-
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [5, 6, 10, 2, 2, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
