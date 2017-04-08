@@ -108,7 +108,7 @@ class Controller(object):
         for flag in self.model.flag_list:
             value = flag.rect.collidepoint(mouse_pos)
             # If flag clicked on and no other flag selected
-            if value == 1 and not any(isinstance(x, Flag) for x in self.selected_obj):
+            if value == 1 and not any(isinstance(x, flag) for x in self.selected_obj):
                 flag.select()
                 self.selected_obj.append(flag)
                 break
