@@ -28,6 +28,18 @@ class TestUnit(unittest.TestCase):
         self.assertTrue(self.blue_unit.health == health)
 
 
+class TestFlag(unittest.TestCase):
+    def setUp(self):
+        self.flag = Flag((300, 300), 2)
+
+    def test_be_picked_up(self):
+        self.red_unit = Teenie((10, 10), 1)
+        self.flag.be_picked_up(self.red_unit)
+        #self.assertTrue(self.flag.position == self.red_unit.position)
+        self.red_unit.move((400, 400))
+        #self.assertTrue(self.flag.position == self.red_unit.position)
+
+
 class Unit(object):  # TODO Make uninstantiable
     def __init__(self, position, team, stats):  # TODO set to position of the base
         """
@@ -78,6 +90,9 @@ class Unit(object):  # TODO Make uninstantiable
     def attack(self, unit, tick):
         if (tick % self.cooldown) == 0:
             unit.health = unit.health - self.attack_/4
+
+    def pick_up_flag(self, flag):
+        pass
 
 
     """ The base unit in the game"""
@@ -131,10 +146,13 @@ class Flag(object):
         self.position = (mouse_pos[0], mouse_pos[1])
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
 
-    def update(self):
-        # TODO updates flag position to unit carrying position, or home position
-        # if not carried
-        pass
+    def be_picked_up(self, unit):
+        if self.pickedup is False:
+            self.pickedup = True
+            self.position = unit.position
+            self.rect = pygame.Rect(unit.position[0], unit.position[1], 40, 60)
+        else:
+            self.pickedup = False
 
     # TODO more methods here!
 
@@ -204,3 +222,6 @@ class Base(object):
 
 
     # TODO more methods here!
+
+if __name__ == "__main__":
+    unittest.main()
