@@ -55,9 +55,6 @@ class CaptureGame(object):
                 elif event.type == pygame.MOUSEMOTION:
                     new_pos = (event.pos[0], event.pos[1])
                     self.control.move_object(new_pos)
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    new_pos = pygame.mouse.get_pos()
-                    self.control.place_object(new_pos)
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_1:
                         self.control.update_unit_type('1')
