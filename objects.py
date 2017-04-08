@@ -118,7 +118,6 @@ class Flag(object):
         self.pickedup = False  # Bool for flag picked up
         # has to be removeable
 
-
     def select(self):
         if self.is_selected is False:
             self.is_selected = True
