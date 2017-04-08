@@ -36,7 +36,7 @@ class CaptureGame(object):
         self.control = mvc.Controller(self.model)
 
         self.running = True
-        self.game_clock = 0 # Initializes world tick clock
+        self.tick = 0 # Initializes world tick clock
 
 
     def run(self):
@@ -44,7 +44,7 @@ class CaptureGame(object):
         # Eventually add pre-game setup stuff somewhere here
         while self.running:
             """runs the game loop"""
-            self.game_clock += 1 # Increments world tick clock
+            self.tick += 1 # Increments world tick clock
             # TODO Check wincase (Controller)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
@@ -58,14 +58,25 @@ class CaptureGame(object):
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     new_pos = pygame.mouse.get_pos()
                     self.control.place_object(new_pos)
-
-
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        self.control.update_unit_type('1')
+                    elif event.key == pygame.K_2:
+                        self.control.update_unit_type('2')
+                    elif event.key == pygame.K_3:
+                        self.control.update_unit_type('3')
+                    elif event.key == pygame.K_q:
+                        self.control.update_unit_type('q')
+                    elif event.key == pygame.K_w:
+                        self.control.update_unit_type('w')
+                    elif event.key == pygame.K_e:
+                        self.control.update_unit_type('e')
             # User Input May Eventually go here
             # AI Input WILL Go here
             self.view.draw_all()
             pygame.display.update()
 
-            self.control.update_base(self.game_clock)
+            self.control.update_base(self.tick)
 
 
 

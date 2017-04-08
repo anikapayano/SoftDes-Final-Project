@@ -102,12 +102,21 @@ class Controller(object):
         """
 
         self.model = model
+        self.selected_obj = [] # Keeps track of currently selected objects
 
     def click_object(self, mouse_pos):
         for flag in self.model.flag_list:
             value = flag.rect.collidepoint(mouse_pos)
-            if value == 1:
+            # If flag clicked on and no other flag selected
+            if value == 1 and not any(isinstance(x, Flag) for x in self.selected_obj):
                 flag.select()
+                self.selected_obj.append(flag)
+                break
+        for unit in self.model.unit_list:
+            value = unit.rect.collidepoint(mouse_pos)
+            if value == 1:
+                unit.select()
+                self.selected_obj.append(unit)
                 break
 
     def move_object(self, mouse_pos):
@@ -116,12 +125,17 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+    def update_unit_type(self, key):
+        if key == '1' or key == '2' or key == '3':
+            self.model.base_list[0].update_unit(key)
+        elif key == 'q' or key == 'w' or key == 'e':
+            self.model.base_list[1].update_unit(key)
 
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
 
         for base in self.model.base_list:
-            unit = base.update(tick, 0)
+            unit = base.update(tick)
             if unit == False:
                 pass
             else:
