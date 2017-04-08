@@ -108,10 +108,15 @@ class Controller(object):
         for flag in self.model.flag_list:
             value = flag.rect.collidepoint(mouse_pos)
             # If flag clicked on and no other flag selected
-            if value == 1 and not any(isinstance(x, flag) for x in self.selected_obj):
+            if value == 1 and not any(isinstance(x, obj.Flag) for x in self.selected_obj):
+
                 flag.select()
                 self.selected_obj.append(flag)
                 break
+            elif any(isinstance(x, obj.Flag) for x in self.selected_obj):
+                flag = next(thing for thing in self.selected_obj if type(thing)==obj.Flag)
+                flag.select()
+                self.selected_obj.pop(self.selected_obj.index(flag))
         for unit in self.model.unit_list:
             value = unit.rect.collidepoint(mouse_pos)
             if value == 1:
