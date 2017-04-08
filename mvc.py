@@ -117,12 +117,57 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+    def updates(self, tick):
+        self.update_flags()
+        self.update_base(tick)
+        self.check_collisions()
+
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
-
         for base in self.model.base_list:
             unit = base.update(tick, 0)
-            if unit == False:
+            if unit is False:
                 pass
             else:
                 self.model.unit_list.append(unit)
+
+    def update_flags(self):
+        # moves flag. (flag is already picked up)
+        for flag in self.model.flag_list:
+                if flag.picked_up:
+                    flag.position = flag.unit.position
+
+    def check_attacks(self, tick, unit):
+        """checks if attack range collides with body sprite of opposing units"""
+        # initiates attacks
+        for sec_unit in self.model.unit_list:
+
+
+    def check_unit_bumps(self, unit):
+        """Optional! checks if unit is bumping into any other units"""
+        pass
+
+    def check_wall_bump(self, unit):
+        """checks if unit is trying to go through a wall, and
+        changes position accordingly"""
+        pass
+
+    def check_flag_pickup(self, unit):
+        """checks whether an offensive unit is touching the flag"""
+        for flag in self.model.flag_list:
+            if unit.team != flag.team:
+                if if flag.rect.collide_rect(unit.rect):
+                    flag.be_picked_up(unit)
+
+    def check_map_bump(self, unit):
+        """checks if unit is trying to go off the screen and
+        changes position accordingly"""
+        pass
+
+    def check_collisions(self, tick):
+        for unit in self.model.unit_list:
+            self.check_unit_bumps(unit)
+            self.check_attacks(tick, unit)
+            self.check_flag_pickup(unit)
+            self.check_wall_bump(unit)
+            self.check_map_bump(unit)
