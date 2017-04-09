@@ -2,7 +2,6 @@ import pygame
 import unittest
 import math
 
-
 class TestUnit(unittest.TestCase):
     def setUp(self):
         self.red_unit = obj.Teenie((10, 10), 1)
@@ -15,8 +14,8 @@ class TestUnit(unittest.TestCase):
     def test_move_direction(self):
         self.red_unit.move_direction(math.sqrt(3), 1)
         x, y = self.red_unit.position
-        self.assertTrue(x == 10 + 3*math.sqrt(3))
-        self.assertTrue(y == 10 + 3)
+        self.assertTrue(x, 13)
+        self.assertTrue(y, 3*math.sqrt(3) + 10)
 
     def test_attack(self):
         health = self.blue_unit.health
@@ -26,10 +25,6 @@ class TestUnit(unittest.TestCase):
         health = self.blue_unit.health
         self.red_unit.attack(self.blue_unit, 41)
         self.assertTrue(self.blue_unit.health, health)
-
-    def run_tests(self):
-        """runs the above tests for object classes"""
-        unittest.main()
 
 
 class Unit(object):  # TODO Make uninstantiable
@@ -54,7 +49,7 @@ class Unit(object):  # TODO Make uninstantiable
         elif team == 2:
             self.sprite = pygame.image.load("sprites/blueunit.png")
         else:
-            self.sprite = pgyame.image.load("sprites/unitradius.png")
+            self.sprite = pygame.image.load("sprites/unitradius.png")
 
     def move(self, pos):
         """moves unit to pos = x, y"""
@@ -63,10 +58,9 @@ class Unit(object):  # TODO Make uninstantiable
     def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
         x, y = self.position
-        mag = math.sqrt(x_d**2 + y_d**2)
-        x = x + (x_d*self.speed)/mag
-        y = y + (y_d*self.speed)/mag
-        self.position = x, y
+        theta = math.asin(y_d/x_d)
+        x = x + self.speed*math.cos(theta)
+        y = y + self.speed*math.sin(theta)
 
     def attack(self, unit, tick):
         if (tick % self.cooldown) == 0:
@@ -83,7 +77,6 @@ class Unit(object):  # TODO Make uninstantiable
     def attack(self, unit, tick):
         if (tick % self.cooldown) == 0:
             unit.health = unit.health - self.attack_/4
-
 
 class Teenie(Unit):
     """ The base unit in the game"""
@@ -143,9 +136,9 @@ class Base(object):
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, type of unit selected
 
-        self.position = x, y = position  # pixel position
-        self.cycle_count = 0  # initial cycle count
-        self.size = [50, 50]
+        self.position = x, y = position#pixel position
+        self.cycle_count = 0 #initial cycle count
+        self.size = [50,50]
         self.team = team
 
 
@@ -154,12 +147,12 @@ class Base(object):
         # Add method that increments the counter and makes selected unit if applicable
         self.width = 20
         self.height = 20
-        self.unit_cycles = [30, 50]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.unit_cycles = [30, 50] #number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
 
     def update(self, tick, unit_type):
-        self.cycle_count += 1
+        self.cycle_count +=1
         self.unit_type = unit_type
         self.current_unit_cycle = self.unit_cycles[self.unit_type]
         if self.cycle_count == self.current_unit_cycle:
@@ -169,9 +162,10 @@ class Base(object):
         else:
             return(False)
 
-    # TODO has to do with animations
+    #TODO has to do with animations
     def unit_generation(self, unit_type):
         new_unit = Teenie((self.position[0]+70, self.position[1]+20), self.team)
         return(new_unit)
+
 
     # TODO more methods here!
