@@ -137,32 +137,41 @@ class Controller(object):
                 if flag.picked_up:
                     flag.position = flag.unit.position
 
-    def check_attacks(self, tick):
-        """checks if attack range collides with body sprite of opposing units"""
-        #initiates attacks
+    def check_attacks(self, tick, unit):
+        """checks if attack range collides with body sprite of opposing units
+            """
+        # TODO Make attack range sprite
+        # initiates attacks
+        for sec_unit in self.model.unit_list:
+            if pygame.sprite.spritecollide(unit, sec_unit, False,
+                                           pygame.sprite.collide_circle):
+                unit.attack(sec_unit, tick)
 
-    def check_unit_bumps():
+    def check_unit_bumps(self, unit):
         """Optional! checks if unit is bumping into any other units"""
         pass
 
-    def check_wall_bump():
+    def check_wall_bump(self, unit):
         """checks if unit is trying to go through a wall, and
         changes position accordingly"""
         pass
 
-    def check_flag_pickup():
+    def check_flag_pickup(self, unit):
         """checks whether an offensive unit is touching the flag"""
-        pass
+        for flag in self.model.flag_list:
+            if unit.team != flag.team:
+                if flag.rect.collide_rect(unit.rect):
+                    flag.be_picked_up(unit)
 
-    def check_map_bump():
+    def check_map_bump(self, unit):
         """checks if unit is trying to go off the screen and
         changes position accordingly"""
         pass
 
     def check_collisions(self, tick):
         for unit in self.model.unit_list:
-            self.check_unit_bumps()
-            self.check_attacks(tick)
-            self.check_flag_pickup()
-            self.check_wall_bump()
-            self.check_map_bump()
+            self.check_unit_bumps(unit)
+            self.check_attacks(tick, unit)
+            self.check_flag_pickup(unit)
+            self.check_wall_bump(unit)
+            self.check_map_bump(unit)
