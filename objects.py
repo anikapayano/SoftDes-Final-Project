@@ -69,8 +69,7 @@ class Unit(object):  # TODO Make uninstantiable
             """
         if self.is_selected is False:
             self.is_selected = True
-            self.sprite = pygame.image.load("sprites/unit_3.png")
-            self.sprite = pygame.transform.scale(self.sprite, self.size)
+            self.sprite = pygame.transform.scale(pygame.image.load("sprites/unit_3.png"), self.size)
         else:
             self.is_selected = False
             self.sprite = self.old_sprite
