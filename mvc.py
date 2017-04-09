@@ -38,17 +38,17 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((10, 20 + i*10), 1))
-            self.unit_list.append(obj.Teenie((self.screen_size[0]-10,
-                                  self.screen_size[1]-(20 + i*10)), 2))
+            self.unit_list.append(obj.Teenie((500, 500), 1))
+            self.unit_list.append(obj.Teenie((500, 600), 2))
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-10,
-                              self.screen_size[1]-10), 2))
+            self.screen_size[1]-10), 2))
         # Sets up flag positions
-        self.flag_list.append(obj.Flag((300, 300), 2))
         self.flag_list.append(obj.Flag((200, 200), 1))
+        self.flag_list.append(obj.Flag((300, 300), 2))
+
 
 
 class View(object):
@@ -103,13 +103,39 @@ class Controller(object):
         """
 
         self.model = model
+        self.selected_obj = [] # Keeps track of currently selected objects
 
     def click_object(self, mouse_pos):
-        for flag in self.model.flag_list:
+        for flag in self.model.flag_list: # Loop through flags
             value = flag.rect.collidepoint(mouse_pos)
+            # If flag clicked on and no other flag selected
             if value == 1:
-                flag.select()
-                break
+                if self.selected_obj == []:
+
+                    # Select flag; add to selected obj list; stop searching
+                    flag.select()
+                    self.selected_obj.append(flag)
+                    return
+
+                else:
+                    for thing in self.selected_obj:
+                        thing.select()
+                    self.selected_obj = []
+                    return
+
+        for unit in self.model.unit_list: # Loop through units
+            value = unit.rect.collidepoint(mouse_pos)
+            if value == 1:
+                if not any(isinstance(x, obj.Unit) for x in self.selected_obj):
+                    unit.select()
+                    self.selected_obj.append(unit)
+                    return
+                else:
+                    print(type(unit))
+                    unit = next(thing for thing in self.selected_obj if type(thing) == obj.Teenie or type(thing) == obj.Speedie or type(thing) == obj.Heavie)
+                    unit.select()
+                    self.selected_obj.pop(self.selected_obj.index(unit))
+                    return
 
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
@@ -122,10 +148,17 @@ class Controller(object):
         self.update_base(tick)
         self.check_collisions()
 
+    def update_unit_type(self, key):
+        if key == '1' or key == '2' or key == '3':
+            self.model.base_list[0].update_unit(key)
+        elif key == 'q' or key == 'w' or key == 'e':
+            self.model.base_list[1].update_unit(key)
+
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-            unit = base.update(tick, 0)
+
+            unit = base.update(tick)
             if unit is False:
                 pass
             else:
