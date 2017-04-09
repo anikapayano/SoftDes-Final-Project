@@ -110,25 +110,32 @@ class Controller(object):
             value = flag.rect.collidepoint(mouse_pos)
             # If flag clicked on and no other flag selected
             if value == 1:
-                if not any(isinstance(x, obj.Flag) for x in self.selected_obj):
+                if self.selected_obj == []:
 
                     # Select flag; add to selected obj list; stop searching
                     flag.select()
                     self.selected_obj.append(flag)
-                    break
+                    return
 
                 else:
-                    flag = next(thing for thing in self.selected_obj if type(thing)==obj.Flag)
-                    flag.select()
-                    self.selected_obj.pop(self.selected_obj.index(flag))
-                    break
+                    for thing in self.selected_obj:
+                        thing.select()
+                    self.selected_obj = []
+                    return
 
         for unit in self.model.unit_list: # Loop through units
             value = unit.rect.collidepoint(mouse_pos)
             if value == 1:
-                unit.select()
-                self.selected_obj.append(unit)
-                break
+                if not any(isinstance(x, obj.Unit) for x in self.selected_obj):
+                    unit.select()
+                    self.selected_obj.append(unit)
+                    return
+                else:
+                    print(type(unit))
+                    unit = next(thing for thing in self.selected_obj if type(thing) == obj.Teenie or type(thing) == obj.Speedie or type(thing) == obj.Heavie)
+                    unit.select()
+                    self.selected_obj.pop(self.selected_obj.index(unit))
+                    return
 
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
