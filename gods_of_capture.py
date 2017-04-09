@@ -40,7 +40,7 @@ class CaptureGame(object):
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
-        self.tick = 0
+
 
 
     def run(self):
@@ -59,18 +59,33 @@ class CaptureGame(object):
                 elif event.type == pygame.MOUSEMOTION:
                     new_pos = (event.pos[0], event.pos[1])
                     self.control.move_object(new_pos)
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    new_pos = pygame.mouse.get_pos()
-                    self.control.place_object(new_pos)
 
-            # User Input May Eventually go here
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        self.control.update_unit_type('1')
+                    elif event.key == pygame.K_2:
+                        self.control.update_unit_type('2')
+                    elif event.key == pygame.K_3:
+                        self.control.update_unit_type('3')
+                    elif event.key == pygame.K_q:
+                        self.control.update_unit_type('q')
+                    elif event.key == pygame.K_w:
+                        self.control.update_unit_type('w')
+                    elif event.key == pygame.K_e:
+                        self.control.update_unit_type('e')
+
+                    # User Input May Eventually go here
+                    self.control.drive_unit(event)
+
             # AI Input WILL Go here
             self.view.draw_all()
             pygame.display.update()
 
-            self.control.update_base(self.tick)
 
-# The Big Cheese, the main loop!
+            self.control.updates(self.tick)
+
+
+
 if __name__ == "__main__":
     game = CaptureGame()
     game.run()
