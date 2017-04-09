@@ -72,6 +72,5 @@ class CaptureGame(object):
 
 # The Big Cheese, the main loop!
 if __name__ == "__main__":
-    #game = CaptureGame()
-    #game.run()
-    TestUnit().run_tests()
+    game = CaptureGame()
+    game.run()
