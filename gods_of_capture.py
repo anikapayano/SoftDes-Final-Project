@@ -73,7 +73,7 @@ class CaptureGame(object):
             self.view.draw_all()
             pygame.display.update()
 
-            self.control.update_base(self.tick)
+            self.control.updates(self.tick)
 
 
 

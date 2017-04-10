@@ -74,6 +74,7 @@ class Unit(object):  # TODO Make uninstantiable
             self.is_selected = False
             self.sprite = self.old_sprite
 
+
     def move(self, pos):
         """moves unit to pos = x, y"""
         self.position = pos
@@ -131,6 +132,7 @@ class Flag(object):
         self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
         self.pickedup = False  # Bool for flag picked up
         # has to be removeable
+        self.unit = None     # remembers which unit is carying the flag
 
     def select(self):
         if self.is_selected is False:
@@ -147,6 +149,7 @@ class Flag(object):
     def be_picked_up(self, unit):
         if self.pickedup is False:
             self.pickedup = True
+            self.unit = unit
             self.position = unit.position
             self.rect = pygame.Rect(unit.position[0], unit.position[1], 40, 60)
         else:

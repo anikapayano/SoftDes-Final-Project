@@ -103,10 +103,10 @@ class Controller(object):
         """
 
         self.model = model
-        self.selected_obj = [] # Keeps track of currently selected objects
+        self.selected_obj = []  # Keeps track of currently selected objects
 
     def click_object(self, mouse_pos):
-        for flag in self.model.flag_list: # Loop through flags
+        for flag in self.model.flag_list:  # Loop through flags
             value = flag.rect.collidepoint(mouse_pos)
             # If flag clicked on and no other flag selected
             if value == 1:
@@ -123,7 +123,7 @@ class Controller(object):
                     self.selected_obj = []
                     return
 
-        for unit in self.model.unit_list: # Loop through units
+        for unit in self.model.unit_list:  # Loop through units
             value = unit.rect.collidepoint(mouse_pos)
             if value == 1:
                 if not any(isinstance(x, obj.Unit) for x in self.selected_obj):
@@ -139,9 +139,14 @@ class Controller(object):
 
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
-            if flag.is_selected == True:
+            if flag.is_selected is True:
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
+
+    def updates(self, tick):
+        self.update_flags()
+        self.update_base(tick)
+        self.check_collisions(tick)
 
     def update_unit_type(self, key):
         if key == '1' or key == '2' or key == '3':
@@ -151,10 +156,51 @@ class Controller(object):
 
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
-
         for base in self.model.base_list:
+
             unit = base.update(tick)
-            if unit == False:
+            if unit is False:
                 pass
             else:
                 self.model.unit_list.append(unit)
+
+    def update_flags(self):
+        # moves flag. (flag is already picked up)
+        for flag in self.model.flag_list:
+                if flag.pickedup is True:
+                    flag.position = flag.unit.position
+
+    def check_attacks(self, tick, unit):
+        """checks if attack range collides with body sprite of opposing units"""
+        # initiates attacks
+        for sec_unit in self.model.unit_list:
+            pass
+
+    def check_unit_bumps(self, unit):
+        """Optional! checks if unit is bumping into any other units"""
+        pass
+
+    def check_wall_bump(self, unit):
+        """checks if unit is trying to go through a wall, and
+        changes position accordingly"""
+        pass
+
+    def check_flag_pickup(self, unit):
+        """checks whether an offensive unit is touching the flag"""
+        for flag in self.model.flag_list:
+            if flag.is_selected is False and unit.team == flag.team:
+                if pygame.sprite.collide_rect(flag, unit):
+                    flag.be_picked_up(unit)
+
+    def check_map_bump(self, unit):
+        """checks if unit is trying to go off the screen and
+        changes position accordingly"""
+        pass
+
+    def check_collisions(self, tick):
+        for unit in self.model.unit_list:
+            self.check_unit_bumps(unit)
+            self.check_attacks(tick, unit)
+            self.check_flag_pickup(unit)
+            self.check_wall_bump(unit)
+            self.check_map_bump(unit)
