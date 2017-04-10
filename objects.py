@@ -70,6 +70,9 @@ class Unit(object):  # TODO Make uninstantiable
             updates unit attributes/methods that take more than one tick to run
             """
 
+        # Sets rect pos to unit pos
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+
         # If there is goal and unit isn't there, move towards goal
         if self.goal_pos != [None,None] and self.pos != self.goal_pos:
             self.move_direction(self.goal_pos[0] - self.pos[0], self.goal_pos[1]-self.pos[1])
@@ -168,6 +171,7 @@ class Flag(object):
             self.unit = unit
             self.pos = unit.pos
             self.rect = pygame.Rect(unit.pos[0], unit.pos[1], 40, 60)
+            print(unit.pos)
         else:
             self.pickedup = False
 

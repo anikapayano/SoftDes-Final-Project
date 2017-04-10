@@ -154,10 +154,6 @@ class Controller(object):
         self.check_collisions(tick)
         self.update_units()
 
-    def update_units(self):
-        for unit in self.model.unit_list:
-            unit.rect = pygame.Rect(unit.position[0], unit.position[1], unit.size[0], unit.size[1])
-
     def update_unit_type(self, key):
         if key == '1' or key == '2' or key == '3':
             self.model.base_list[0].update_unit(key)
@@ -226,8 +222,8 @@ class Controller(object):
     def drive_unit(self, event):
         # Moves selected object with arow keys
         unit = self.model.unit_list[1]
-        x = unit.position[0]
-        y = unit.position[1]
+        x = unit.pos[0]
+        y = unit.pos[1]
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
             x += 5
@@ -238,5 +234,5 @@ class Controller(object):
         if keys[pygame.K_DOWN]:
             y += 5
 
-        self.model.unit_list[1].position = x, y
+        self.model.unit_list[1].pos = x, y
         pass
