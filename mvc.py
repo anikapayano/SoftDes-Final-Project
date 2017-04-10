@@ -72,7 +72,7 @@ class View(object):
         Given a thing, draws thing on screen
         """
 
-        self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
+        self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
 
     def draw_all(self):
         """DOCSTRING:
@@ -137,6 +137,11 @@ class Controller(object):
                     self.selected_obj.pop(self.selected_obj.index(unit))
                     return
 
+        for thing in self.selected_obj:
+            if isinstance(thing, obj.Unit):
+                thing.goal_pos = mouse_pos
+
+
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
             if flag.is_selected is True:
@@ -146,6 +151,7 @@ class Controller(object):
     def updates(self, tick):
         self.update_flags()
         self.update_base(tick)
+        self.update_units()
         self.check_collisions(tick)
 
     def update_unit_type(self, key):
@@ -168,7 +174,11 @@ class Controller(object):
         # moves flag. (flag is already picked up)
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
-                    flag.position = flag.unit.position
+                    flag.pos = flag.unit.pos
+
+    def update_units(self):
+        for unit in self.model.unit_list:
+            unit.update()
 
     def check_attacks(self, tick, unit):
         """checks if attack range collides with body sprite of opposing units"""
