@@ -147,6 +147,11 @@ class Controller(object):
         self.update_flags()
         #self.update_base(tick)
         self.check_collisions(tick)
+        self.update_units()
+
+    def update_units(self):
+        for unit in self.model.unit_list:
+            unit.rect = pygame.Rect(unit.position[0], unit.position[1], unit.size[0], unit.size[1])
 
     def update_unit_type(self, key):
         if key == '1' or key == '2' or key == '3':
@@ -224,5 +229,5 @@ class Controller(object):
         if event.key == pygame.K_DOWN:
             y += 5
 
-        unit.position = x, y
+        self.model.unit_list[1].position = x, y
         pass
