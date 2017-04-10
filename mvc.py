@@ -174,7 +174,7 @@ class Controller(object):
         # moves flag. (flag is already picked up)
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
-                    flag.pos = flag.unit.pos
+                    flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
 
     def update_units(self):
         for unit in self.model.unit_list:

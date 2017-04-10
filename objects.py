@@ -169,8 +169,8 @@ class Flag(object):
         if self.pickedup is False:
             self.pickedup = True
             self.unit = unit
-            self.pos = unit.pos
-            self.rect = pygame.Rect(unit.pos[0], unit.pos[1], 40, 60)
+            self.pos = (unit.pos[0] + 10, unit.pos[1] - 50)
+            self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
             print(unit.pos)
         else:
             self.pickedup = False
