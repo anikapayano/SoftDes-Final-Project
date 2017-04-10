@@ -38,17 +38,17 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((10, 20 + i*10), 1))
-            self.unit_list.append(obj.Teenie((self.screen_size[0]-10,
-                                  self.screen_size[1]-(20 + i*10)), 2))
+            self.unit_list.append(obj.Teenie((500, 500), 1))
+            self.unit_list.append(obj.Teenie((500, 600), 2))
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-10,
-                              self.screen_size[1]-10), 2))
+            self.screen_size[1]-10), 2))
         # Sets up flag positions
-        self.flag_list.append(obj.Flag((300, 300), 2))
         self.flag_list.append(obj.Flag((200, 200), 1))
+        self.flag_list.append(obj.Flag((300, 300), 2))
+
 
 
 class View(object):
@@ -103,29 +103,62 @@ class Controller(object):
         """
 
         self.model = model
+        self.selected_obj = []  # Keeps track of currently selected objects
 
     def click_object(self, mouse_pos):
-        for flag in self.model.flag_list:
+        for flag in self.model.flag_list:  # Loop through flags
             value = flag.rect.collidepoint(mouse_pos)
+            # If flag clicked on and no other flag selected
             if value == 1:
-                flag.select()
-                break
+                if self.selected_obj == []:
+
+                    # Select flag; add to selected obj list; stop searching
+                    flag.select()
+                    self.selected_obj.append(flag)
+                    return
+
+                else:
+                    for thing in self.selected_obj:
+                        thing.select()
+                    self.selected_obj = []
+                    return
+
+        for unit in self.model.unit_list:  # Loop through units
+            value = unit.rect.collidepoint(mouse_pos)
+            if value == 1:
+                if not any(isinstance(x, obj.Unit) for x in self.selected_obj):
+                    unit.select()
+                    self.selected_obj.append(unit)
+                    return
+                else:
+                    print(type(unit))
+                    unit = next(thing for thing in self.selected_obj if type(thing) == obj.Teenie or type(thing) == obj.Speedie or type(thing) == obj.Heavie)
+                    unit.select()
+                    self.selected_obj.pop(self.selected_obj.index(unit))
+                    return
 
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
-            if flag.is_selected == True:
+            if flag.is_selected is True:
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
     def updates(self, tick):
         self.update_flags()
-        self.update_base(tick)
-        self.check_collisions()
+        #self.update_base(tick)
+        self.check_collisions(tick)
+
+    def update_unit_type(self, key):
+        if key == '1' or key == '2' or key == '3':
+            self.model.base_list[0].update_unit(key)
+        elif key == 'q' or key == 'w' or key == 'e':
+            self.model.base_list[1].update_unit(key)
+
 
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-            unit = base.update(tick, 0)
+            unit = base.update(tick)
             if unit is False:
                 pass
             else:
@@ -134,35 +167,62 @@ class Controller(object):
     def update_flags(self):
         # moves flag. (flag is already picked up)
         for flag in self.model.flag_list:
-                if flag.picked_up:
+                if flag.pickedup is True:
                     flag.position = flag.unit.position
 
-    def check_attacks(self, tick):
-        """checks if attack range collides with body sprite of opposing units"""
-        #initiates attacks
+    def check_attacks(self, tick, unit):
+        """checks if attack range collides with body sprite of opposing units
+            """
+        # TODO Make attack range sprite
+        for sec_unit in self.model.unit_list:
+            if unit.team != sec_unit.team:
+                if pygame.sprite.collide_rect(unit, sec_unit):
+                    unit.attack(sec_unit, tick)  # initiates attack
+                    print("YARRRRR!!!")
 
-    def check_unit_bumps():
+    def check_unit_bumps(self, unit):
         """Optional! checks if unit is bumping into any other units"""
         pass
 
-    def check_wall_bump():
+    def check_wall_bump(self, unit):
         """checks if unit is trying to go through a wall, and
         changes position accordingly"""
         pass
 
-    def check_flag_pickup():
+    def check_flag_pickup(self, unit):
         """checks whether an offensive unit is touching the flag"""
-        pass
+        for flag in self.model.flag_list:
+            if flag.is_selected is False and unit.team == flag.team:
+                if pygame.sprite.collide_rect(flag, unit):
+                    flag.be_picked_up(unit)
 
-    def check_map_bump():
+    def check_map_bump(self, unit):
         """checks if unit is trying to go off the screen and
         changes position accordingly"""
         pass
 
     def check_collisions(self, tick):
         for unit in self.model.unit_list:
-            self.check_unit_bumps()
-            self.check_attacks(tick)
-            self.check_flag_pickup()
-            self.check_wall_bump()
-            self.check_map_bump()
+            self.check_unit_bumps(unit)
+            self.check_attacks(tick, unit)
+            self.check_flag_pickup(unit)
+            self.check_wall_bump(unit)
+            self.check_map_bump(unit)
+
+    def drive_unit(self, event):
+        # Moves selected object with arow keys
+        unit = self.model.unit_list[1]
+        x = unit.position[0]
+        y = unit.position[1]
+
+        if event.key == pygame.K_RIGHT:
+            x += 5
+        if event.key == pygame.K_LEFT:
+            x -= 5
+        if event.key == pygame.K_UP:
+            y -= 5
+        if event.key == pygame.K_DOWN:
+            y += 5
+
+        unit.position = x, y
+        pass
