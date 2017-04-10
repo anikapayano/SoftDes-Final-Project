@@ -72,7 +72,7 @@ class View(object):
         Given a thing, draws thing on screen
         """
 
-        self.screen.blit(thing.sprite, (thing.position[0], thing.position[1]))
+        self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
 
     def draw_all(self):
         """DOCSTRING:
@@ -137,6 +137,11 @@ class Controller(object):
                     self.selected_obj.pop(self.selected_obj.index(unit))
                     return
 
+        for thing in self.selected_obj:
+            if isinstance(thing, obj.Unit):
+                thing.goal_pos = mouse_pos
+
+
     def move_object(self, mouse_pos):
         for flag in self.model.flag_list:
             if flag.is_selected is True:
@@ -147,6 +152,7 @@ class Controller(object):
         self.update_flags()
         self.update_base(tick)
         self.check_collisions(tick)
+        self.update_units()
 
     def update_unit_type(self, key):
         if key == '1' or key == '2' or key == '3':
@@ -154,10 +160,10 @@ class Controller(object):
         elif key == 'q' or key == 'w' or key == 'e':
             self.model.base_list[1].update_unit(key)
 
+
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-
             unit = base.update(tick)
             if unit is False:
                 pass
@@ -168,13 +174,21 @@ class Controller(object):
         # moves flag. (flag is already picked up)
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
-                    flag.position = flag.unit.position
+                    flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
+
+    def update_units(self):
+        for unit in self.model.unit_list:
+            unit.update()
 
     def check_attacks(self, tick, unit):
-        """checks if attack range collides with body sprite of opposing units"""
-        # initiates attacks
+        """checks if attack range collides with body sprite of opposing units
+            """
+        # TODO Make attack range sprite
         for sec_unit in self.model.unit_list:
-            pass
+            if unit.team != sec_unit.team:
+                if pygame.sprite.collide_rect(unit, sec_unit):
+                    unit.attack(sec_unit, tick)  # initiates attack
+                    print("YARRRRR!!!")
 
     def check_unit_bumps(self, unit):
         """Optional! checks if unit is bumping into any other units"""
@@ -204,3 +218,21 @@ class Controller(object):
             self.check_flag_pickup(unit)
             self.check_wall_bump(unit)
             self.check_map_bump(unit)
+
+    def drive_unit(self, event):
+        # Moves selected object with arow keys
+        unit = self.model.unit_list[1]
+        x = unit.pos[0]
+        y = unit.pos[1]
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            x += unit.speed
+        if keys[pygame.K_LEFT]:
+            x -= unit.speed
+        if keys[pygame.K_UP]:
+            y -= unit.speed
+        if keys[pygame.K_DOWN]:
+            y += unit.speed
+
+        self.model.unit_list[1].pos = x, y
+        pass
