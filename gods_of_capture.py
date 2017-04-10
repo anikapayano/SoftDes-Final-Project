@@ -75,7 +75,7 @@ class CaptureGame(object):
                         self.control.update_unit_type('e')
 
                     # User Input May Eventually go here
-                    self.control.drive_unit(event)
+            self.control.drive_unit(event)
 
             # AI Input WILL Go here
             self.view.draw_all()

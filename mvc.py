@@ -214,14 +214,14 @@ class Controller(object):
         unit = self.model.unit_list[1]
         x = unit.position[0]
         y = unit.position[1]
-
-        if event.key == pygame.K_RIGHT:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
             x += 5
-        if event.key == pygame.K_LEFT:
+        if keys[pygame.K_LEFT]:
             x -= 5
-        if event.key == pygame.K_UP:
+        if keys[pygame.K_UP]:
             y -= 5
-        if event.key == pygame.K_DOWN:
+        if keys[pygame.K_DOWN]:
             y += 5
 
         unit.position = x, y
