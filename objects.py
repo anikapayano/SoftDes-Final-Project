@@ -56,6 +56,7 @@ class Unit(object):  # TODO Make uninstantiable
         self.attack_ = stats[3]
         self.cooldown = stats[4]
         self.size = stats[5]
+        self.radius = float(stats[5][1]/2)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
             self.sprite = pygame.image.load("sprites/redunit1.png")
