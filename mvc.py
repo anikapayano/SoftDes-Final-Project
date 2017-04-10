@@ -151,8 +151,12 @@ class Controller(object):
     def updates(self, tick):
         self.update_flags()
         self.update_base(tick)
-        self.update_units()
         self.check_collisions(tick)
+        self.update_units()
+
+    def update_units(self):
+        for unit in self.model.unit_list:
+            unit.rect = pygame.Rect(unit.position[0], unit.position[1], unit.size[0], unit.size[1])
 
     def update_unit_type(self, key):
         if key == '1' or key == '2' or key == '3':
@@ -160,10 +164,10 @@ class Controller(object):
         elif key == 'q' or key == 'w' or key == 'e':
             self.model.base_list[1].update_unit(key)
 
+
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-
             unit = base.update(tick)
             if unit is False:
                 pass
@@ -181,10 +185,14 @@ class Controller(object):
             unit.update()
 
     def check_attacks(self, tick, unit):
-        """checks if attack range collides with body sprite of opposing units"""
-        # initiates attacks
+        """checks if attack range collides with body sprite of opposing units
+            """
+        # TODO Make attack range sprite
         for sec_unit in self.model.unit_list:
-            pass
+            if unit.team != sec_unit.team:
+                if pygame.sprite.collide_rect(unit, sec_unit):
+                    unit.attack(sec_unit, tick)  # initiates attack
+                    print("YARRRRR!!!")
 
     def check_unit_bumps(self, unit):
         """Optional! checks if unit is bumping into any other units"""
@@ -214,3 +222,21 @@ class Controller(object):
             self.check_flag_pickup(unit)
             self.check_wall_bump(unit)
             self.check_map_bump(unit)
+
+    def drive_unit(self, event):
+        # Moves selected object with arow keys
+        unit = self.model.unit_list[1]
+        x = unit.position[0]
+        y = unit.position[1]
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            x += 5
+        if keys[pygame.K_LEFT]:
+            x -= 5
+        if keys[pygame.K_UP]:
+            y -= 5
+        if keys[pygame.K_DOWN]:
+            y += 5
+
+        self.model.unit_list[1].position = x, y
+        pass

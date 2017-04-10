@@ -9,8 +9,11 @@ import unittest
 import math
 import objects as obj
 import mvc
+from objects import TestUnit
+
 
 class CaptureGame(object):
+
     """Class that defines a game of capture the flag.
        Creates instancese of other important classes,
        Uses Model View Controller Architecture"""
@@ -39,9 +42,10 @@ class CaptureGame(object):
         self.tick = 0 # Initializes world tick clock
 
 
+
     def run(self):
 
-        # Eventually add pre-game setup stuff somewhere here
+        """ Eventually add pre-game setup stuff somewhere here"""
         while self.running:
             """runs the game loop"""
             self.tick += 1 # Increments world tick clock
@@ -55,6 +59,7 @@ class CaptureGame(object):
                 elif event.type == pygame.MOUSEMOTION:
                     new_pos = (event.pos[0], event.pos[1])
                     self.control.move_object(new_pos)
+
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_1:
                         self.control.update_unit_type('1')
@@ -68,7 +73,10 @@ class CaptureGame(object):
                         self.control.update_unit_type('w')
                     elif event.key == pygame.K_e:
                         self.control.update_unit_type('e')
-            # User Input May Eventually go here
+
+                    # User Input May Eventually go here
+            self.control.drive_unit(event)
+
             # AI Input WILL Go here
             self.view.draw_all()
             pygame.display.update()
@@ -80,4 +88,5 @@ class CaptureGame(object):
 if __name__ == "__main__":
     game = CaptureGame()
     game.run()
-    unittest.main()
+
+    #TestUnit().run_tests()
