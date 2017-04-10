@@ -152,7 +152,6 @@ class Flag(object):
             self.pickedup = True
             self.unit = unit
             self.position = unit.position
-            print(self.position, unit.position)
             self.rect = pygame.Rect(unit.position[0], unit.position[1], 40, 60)
         else:
             self.pickedup = False
