@@ -81,14 +81,14 @@ class View(object):
 
         self.screen.blit(self.screen_sprite, (0,0))
 
+        for base in self.model.base_list:
+            self.draw(base)
         for unit in self.model.unit_list:
             self.draw(unit)
         for wall in self.model.wall_list:
             self.draw(wall)
         for flag in self.model.flag_list:
             self.draw(flag)
-        for base in self.model.base_list:
-            self.draw(base)
         pygame.display.update()
 
 
