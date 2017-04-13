@@ -10,11 +10,11 @@ class TestUnit(unittest.TestCase):
 
     def test_move(self):
         self.red_unit.move((10, 20))
-        self.assertTrue(self.red_unit.position == (10, 20))
+        self.assertTrue(self.red_unit.pos == (10, 20))
 
     def test_move_direction(self):
         self.red_unit.move_direction(math.sqrt(3), 1)
-        x, y = self.red_unit.position
+        x, y = self.red_unit.pos
         self.assertTrue(x == 10 + 3*math.sqrt(3))
         self.assertTrue(y == 10 + 3)
 
@@ -35,9 +35,9 @@ class TestFlag(unittest.TestCase):
     def test_be_picked_up(self):
         self.red_unit = Teenie((10, 10), 1)
         self.flag.be_picked_up(self.red_unit)
-        #self.assertTrue(self.flag.position == self.red_unit.position)
+        #self.assertTrue(self.flag.pos == self.red_unit.pos)
         self.red_unit.move((400, 400))
-        #self.assertTrue(self.flag.position == self.red_unit.position)
+        #self.assertTrue(self.flag.pos == self.red_unit.pos)
 
 
 class Unit(object):  # TODO Make uninstantiable
@@ -47,7 +47,8 @@ class Unit(object):  # TODO Make uninstantiable
         attributes:
         TEAM: 1 or 2
         """
-        self.position = x, y = position
+        self.pos = x, y = position
+        self.goal_pos = [None,None]
         self.team = team
         self.is_selected = False
         self.strength = stats[0]
@@ -64,6 +65,23 @@ class Unit(object):  # TODO Make uninstantiable
             self.sprite = pygame.image.load("sprites/blueunit1.png")
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
+    def update(self):
+        """DOCSTRING:
+            updates unit attributes/methods that take more than one tick to run
+            """
+
+        # Sets rect pos to unit pos
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+        # If there is goal and unit isn't there, move towards goal
+        if self.goal_pos != [None,None] and self.pos != self.goal_pos:
+            self.move_direction(self.goal_pos[0] - self.pos[0], self.goal_pos[1]-self.pos[1])
+
+            # If unit arrived at goal, turn off goal
+            if abs(math.sqrt((self.pos[0]-self.goal_pos[0])**2 + (self.pos[1]-self.goal_pos[1])**2)) < self.speed:
+                self.goal_pos = [None,None]
+
+
     def select(self):
         """DOCSTRING:
             flips selection state of unit and changes sprite
@@ -78,15 +96,15 @@ class Unit(object):  # TODO Make uninstantiable
 
     def move(self, pos):
         """moves unit to pos = x, y"""
-        self.position = pos
+        self.pos = pos
 
     def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
-        x, y = self.position
+        x, y = self.pos
         mag = math.sqrt(x_d**2 + y_d**2)
         x = x + (x_d*self.speed)/mag
         y = y + (y_d*self.speed)/mag
-        self.position = x, y
+        self.pos = x, y
 
     def attack(self, unit, tick):
         if (tick % self.cooldown) == 0:
@@ -100,7 +118,7 @@ class Teenie(Unit):
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [5, 6, 10, 2, 2, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
-        self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
 class Speedie(Unit):
@@ -108,7 +126,7 @@ class Speedie(Unit):
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [5, 6, 10, 2, 2, [30,30]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
-        self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
 class Heavie(Unit):
@@ -116,7 +134,7 @@ class Heavie(Unit):
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [5, 6, 10, 2, 2, [40,40]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
-        self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
 class Flag(object):
@@ -124,13 +142,13 @@ class Flag(object):
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
         # should define the position based off of mouse position
-        self.position = x, y = position
+        self.pos = x, y = position
         # One basic color for each side of team
         self.team = team
         self.sprite = pygame.image.load("sprites/team"+str(team)+"flag.png")
         self.oldsprite = self.sprite
         self.is_selected = False
-        self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
         self.pickedup = False  # Bool for flag picked up
         # has to be removeable
         self.unit = None     # remembers which unit is carying the flag
@@ -144,15 +162,16 @@ class Flag(object):
             self.sprite = self.oldsprite
 
     def move(self, mouse_pos):
-        self.position = (mouse_pos[0], mouse_pos[1])
-        self.rect = pygame.Rect(self.position[0], self.position[1], 40, 60)
+        self.pos = (mouse_pos[0], mouse_pos[1])
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
 
     def be_picked_up(self, unit):
         if self.pickedup is False:
             self.pickedup = True
             self.unit = unit
-            self.position = unit.position
-            self.rect = pygame.Rect(unit.position[0], unit.position[1], 40, 60)
+            self.pos = (unit.pos[0] + 10, unit.pos[1] - 50)
+            self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
+            print(unit.pos)
         else:
             self.pickedup = False
 
@@ -165,7 +184,7 @@ class Base(object):
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, type of unit selected
 
-        self.position = x, y = position#pixel position
+        self.pos = x, y = position#pixel position
         self.cycle_count = 0 #initial cycle count
         self.size = [50,50]
         self.team = team
@@ -212,14 +231,14 @@ class Base(object):
             Checks unit type to spawn, creates new unit of current type
             close to self, then passes message if verbose is true (TODO)"""
         if self.unit_type == 0:
-            new_unit = Teenie((self.position[0]+300, self.position[1]+300), self.team)
-            print("MSG: New Teenie Unit on base " + str(self.team))
+            new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
+            #print("MSG: New Teenie Unit on base " + str(self.team))
         elif self.unit_type == 1:
-            new_unit = Speedie((self.position[0]+200, self.position[1]+200), self.team)
-            print("MSG: New Speedie Unit on base " + str(self.team))
+            new_unit = Speedie((self.pos[0]+200, self.pos[1]+200), self.team)
+            #print("MSG: New Speedie Unit on base " + str(self.team))
         else:
-            new_unit = Heavie((self.position[0]+200, self.position[1]+200), self.team)
-            print("MSG: New Heavie Unit on base " + str(self.team))
+            new_unit = Heavie((self.pos[0]+200, self.pos[1]+200), self.team)
+            #print("MSG: New Heavie Unit on base " + str(self.team))
         return(new_unit)
 
 
