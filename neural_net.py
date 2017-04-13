@@ -21,21 +21,35 @@ def single_list(lists):
 		"""
 	return([item for sublist in lists for item in sublist])
 
+
 def sigmoid(x):
 	""" DOCSTRING
 		Takes dot product of two vectors; rtrns result from passing value into
 		sigmoid function
+		Video: https://www.youtube.com/watch?v=h3l4qz76JhQ&vl=en
 		"""
     return(1/(1 + np.exp(-x)))
 # derivative of sigmoid
 # sigmoid(y) * (1.0 - sigmoid(y))
 # the way we use this y is already sigmoided
 
+
 def dsigmoid(y, deriv=True):
+	""" DOCSTRING
+		Takes dot product of two vectors & boolean; returns sigmoid / derivative
+		 of sigmoid dependend on inputs
+		 TODO: More Research
+		"""
 	y = sigmoid(y)
 	return(y * (1 - y))
 
+
 def nonlin(x,deriv=False):
+	""" DOCSTRING
+		Takes dot product of two vectors; returns sigmoid; breaks down into
+		sigmoid() & dsigmoid
+		TODO: More Research
+		"""
 	if deriv == True:
 		return(x*(1-x))
 
