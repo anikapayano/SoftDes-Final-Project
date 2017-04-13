@@ -83,10 +83,10 @@ class View(object):
 
         for base in self.model.base_list:
             self.draw(base)
-        for unit in self.model.unit_list:
-            self.draw(unit)
         for wall in self.model.wall_list:
             self.draw(wall)
+        for unit in self.model.unit_list:
+            self.draw(unit)
         for flag in self.model.flag_list:
             self.draw(flag)
         pygame.display.update()
@@ -178,7 +178,10 @@ class Controller(object):
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
-
+                    for base in self.model.base_list:
+                        if pygame.sprite.collide_rect(flag.unit, base):
+                            if base.team != flag.unit.team:
+                                print('I WOOONNNN!!!!')
     def update_units(self):
         """ KILLs units that have no health
             Updates the collision rectangle for those that are alive"""
