@@ -137,6 +137,7 @@ class Controller(object):
                     self.selected_obj.pop(self.selected_obj.index(unit))
                     return
 
+        # If no object is clicked, set mouse pos as goal for all selected units
         for thing in self.selected_obj:
             if isinstance(thing, obj.Unit):
                 thing.goal_pos = mouse_pos
