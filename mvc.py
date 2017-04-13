@@ -43,8 +43,8 @@ class Model(object):
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
-        self.base_list.append(obj.Base((self.screen_size[0]-110,
-            self.screen_size[1]-110), 2))
+        self.base_list.append(obj.Base((self.screen_size[0]-10,
+            self.screen_size[1]-10), 2))
         # Sets up flag positions
         self.flag_list.append(obj.Flag((200, 200), 1))
         self.flag_list.append(obj.Flag((300, 300), 2))
@@ -83,10 +83,10 @@ class View(object):
 
         for base in self.model.base_list:
             self.draw(base)
-        for unit in self.model.unit_list:
-            self.draw(unit)
         for wall in self.model.wall_list:
             self.draw(wall)
+        for unit in self.model.unit_list:
+            self.draw(unit)
         for flag in self.model.flag_list:
             self.draw(flag)
         pygame.display.update()
