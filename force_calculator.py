@@ -1,5 +1,5 @@
 import numpy as np
-from itertools import chain
+from itertools import chain #library that changes list of tuples to list of lists
 
 
 class Calculator():
@@ -42,14 +42,14 @@ class Calculator():
 		# Calculates forces exerted by flags
 		for flag in information[-2:]:
 			# checks if flag and unit are on same team
-			# if on same team, 
+			# if on same team,
 			if current_unit[2] != flag[2]:
 				forces = self.single_force(unit[0], unit[1], current_unit[0], current_unit[1])
 				force_x += forces[0]
 				force_y += forces[1]
 
 		return force_x, force_y
-		
+
 
 	def sum_forces_all(self, information):
 		'''information is list of lists'''
@@ -60,4 +60,3 @@ class Calculator():
 
 		final_forces = list(chain(*final_forces))
 		return(final_forces)
-

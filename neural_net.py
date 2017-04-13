@@ -6,7 +6,7 @@ calc = fc.Calculator()
 screen_x = 1840
 screen_y = 920
 
-# information stored as [x, y, team (1 or 2), discovered (0 undiscovered, 1 discovered), exists (0 does not, 1 does)]
+# information stored as [x, y, team (1 or 2), discovered (0 undiscovered, 1 discovered), exists (0 does not, 1 does)] per unit
 information_sample1 = [[screen_x-1500, screen_y - 750, 1, 1, 1], [screen_x-1500, screen_y - 550, 1, 1, 1], [screen_x-1500, screen_y - 350, 1, 1, 1],
 			 [screen_x-300, screen_y - 750, 2, 1, 1], [screen_x-300, screen_y - 550, 2, 1, 1], [screen_x-300, screen_y - 350, 2, 1, 1],
 			 [screen_x-1700, screen_y/2, 1, 1, 1], [screen_x-140, screen_y/2, 2, 1, 1]]
@@ -33,7 +33,7 @@ y = np.array([calc.sum_forces_all(information_sample1),
 
 np.random.seed(1)
 
-syn0 = 2*np.random.random((40,4)) -1 
+syn0 = 2*np.random.random((40,4)) -1
 syn1 = 2*np.random.random((4,12)) -1
 
 for j in range(50000):
@@ -55,4 +55,3 @@ for j in range(50000):
 
 
 print(l2)
-
