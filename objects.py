@@ -56,6 +56,7 @@ class Unit(object):  # TODO Make uninstantiable
         self.health = stats[2]
         self.attack_ = stats[3]
         self.cooldown = stats[4]
+        self.cooled = 0       # tick at which unit's attack is enabled again
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
@@ -107,8 +108,9 @@ class Unit(object):  # TODO Make uninstantiable
         self.pos = x, y
 
     def attack(self, unit, tick):
-        if (tick % self.cooldown) == 0:
-            unit.health = unit.health - self.attack_/4
+        if tick > self.cooled:
+            unit.health = unit.health - self.attack_
+            self.cooled = tick + self.cooldown
 
     def pick_up_flag(self, flag):
         pass
@@ -171,7 +173,6 @@ class Flag(object):
             self.unit = unit
             self.pos = (unit.pos[0] + 10, unit.pos[1] - 50)
             self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
-            print(unit.pos)
         else:
             self.pickedup = False
 

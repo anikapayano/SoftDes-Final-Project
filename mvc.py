@@ -188,7 +188,6 @@ class Controller(object):
             if unit.team != sec_unit.team:
                 if pygame.sprite.collide_rect(unit, sec_unit):
                     unit.attack(sec_unit, tick)  # initiates attack
-                    print("YARRRRR!!!")
 
     def check_unit_bumps(self, unit):
         """Optional! checks if unit is bumping into any other units"""
