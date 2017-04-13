@@ -183,25 +183,21 @@ class Base(object):
     """ The base class for the game"""
 
     def __init__(self, position, team):
-        # TODO: Initialize attributes like position, type of unit selected
-
-        self.pos = x, y = position#pixel position
-        self.cycle_count = 0 #initial cycle count
-        self.size = [50,50]
+        self.pos = x, y = position  # pixel position
+        self.cycle_count = 0  # initial cycle count
+        self.size = [50, 50]
         self.team = team
-
 
         self.sprite = pygame.image.load("sprites/base_"+str(team)+".png")
         # Add counter for unit generation
-        # Add method that increments the counter and makes selected unit if applicable
         self.width = 20
         self.height = 20
-        self.unit_cycles = [30, 50, 80] #number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.unit_cycles = [30, 50, 80]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
 
     def update(self, tick):
-        self.cycle_count +=1
+        self.cycle_count += 1
         self.current_unit_cycle = self.unit_cycles[self.unit_type]
         if self.cycle_count == self.current_unit_cycle:
             new_unit = self.unit_generation()
