@@ -196,6 +196,7 @@ class Base(object):
         self.unit_cycles = [30, 50, 80]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], 80, 80)
 
     def update(self, tick):
         self.cycle_count += 1

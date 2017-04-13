@@ -178,7 +178,8 @@ class Controller(object):
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
-
+                    if pygame.sprite.collide_rect(flag, self.model.base_list[0]):
+                        print('I WOOONNNN!!!!')
     def update_units(self):
         """ KILLs units that have no health
             Updates the collision rectangle for those that are alive"""
