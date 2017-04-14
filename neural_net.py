@@ -28,7 +28,7 @@ def sigmoid(x):
 		sigmoid function
 		Video: https://www.youtube.com/watch?v=h3l4qz76JhQ&vl=en
 		"""
-    return(1/(1 + np.exp(-x)))
+	return(1/(1 + np.exp(-x)))
 # derivative of sigmoid
 # sigmoid(y) * (1.0 - sigmoid(y))
 # the way we use this y is already sigmoided
