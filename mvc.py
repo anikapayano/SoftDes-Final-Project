@@ -126,19 +126,16 @@ class Controller(object):
         for unit in self.model.unit_list:  # Loop through units
             value = unit.rect.collidepoint(mouse_pos)
             if value == 1:
-                if not any(isinstance(x, obj.Unit) for x in self.selected_obj):
-                    unit.select()
-                    self.selected_obj.append(unit)
-                    return
-                else:
-                    print(type(unit))
-                    unit = next(thing for thing in self.selected_obj
-                                if type(thing) == obj.Teenie
-                                or type(thing) == obj.Speedie
-                                or type(thing) == obj.Heavie)
+                if unit in self.selected_obj:
                     unit.select()
                     self.selected_obj.pop(self.selected_obj.index(unit))
                     return
+                else:
+                    if not any(unit.team != u.team for u in self.selected_obj):
+                        print(unit.team for u in self.selected_obj)
+                        unit.select()
+                        self.selected_obj.append(unit)
+                        return
 
         # If no object is clicked, set mouse pos as goal for all selected units
         for thing in self.selected_obj:
