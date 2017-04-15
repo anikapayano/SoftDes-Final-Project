@@ -4,7 +4,7 @@ def nonlin(x,deriv=False):
 	if(deriv==True):
 		return x*(1-x)
 
-	return 1/(1+np.exp(-x))
+	return 1/(1+np.exp(-x))t
 
 #input data
 X = np.array([[0,0,1],
@@ -20,7 +20,7 @@ y = np.array([[0],
 
 np.random.seed(1)
 
-syn0 = 2*np.random.random((3,4)) -1 
+syn0 = 2*np.random.random((3,4)) -1
 syn1 = 2*np.random.random((4,1)) -1
 
 for j in range(50000):
