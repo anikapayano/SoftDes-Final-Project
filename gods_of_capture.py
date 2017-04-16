@@ -40,8 +40,10 @@ class CaptureGame(object):
         self.control = mvc.Controller(self.model)
 
         # Creates ai; passes in first info about board
-        self.ai = ai_rule.AIRule([])
-        self.ai.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+        self.ai1 = ai_rule.AIRule(1,[])
+        self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+        self.ai2 = ai_rule.AIRule(2,[])
+        self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
@@ -81,15 +83,25 @@ class CaptureGame(object):
 
                     # User Input May Eventually go here
             self.control.drive_unit(event)
-            self.ai.unit_command()
+            self.ai1.unit_command()
+            self.ai2.unit_command()
 
             # AI Input WILL Go here
             self.view.draw_all()
             pygame.display.update()
 
             self.control.updates(self.tick)
-            self.ai.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
+            if self.control.check_win() is True:
+                self.running = False
+                self.winning = True
+
+        while self.winning:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
+                    self.winning = False
 
 
 if __name__ == "__main__":

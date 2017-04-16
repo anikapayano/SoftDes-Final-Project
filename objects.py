@@ -119,21 +119,21 @@ class Unit(object):  # TODO Make uninstantiable
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [20,20]])
+        Unit.__init__(self, position, team, [4, 2, 10, 2, 50, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 6, 10, 2, 50, [30,30]])
+        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [30,30]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 class Heavie(Unit):
     """The strong unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [8, 2, 14, 4, 75, [40,40]])
+        Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [40,40]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
@@ -195,7 +195,7 @@ class Base(object):
         # Add counter for unit generation
         self.width = 20
         self.height = 20
-        self.unit_cycles = [30, 50, 80]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.unit_cycles = [300, 500, 800]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 100, 100)
