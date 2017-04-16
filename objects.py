@@ -42,7 +42,7 @@ class TestFlag(unittest.TestCase):
 
 class Unit(object):  # TODO Make uninstantiable
 
-    def __init__(self, position, team, stats):  # TODO set to position of the base
+    def __init__(self, position, team, stats):
         """ DOCSTRING:
             Given pos, team, & stat list, provides init template for more specific
             units such as Teenie, Speedie, & Heavie.
@@ -51,14 +51,18 @@ class Unit(object):  # TODO Make uninstantiable
         self.goal_pos = [None,None]
         self.team = team
         self.is_selected = False
+
+        # Sets stats
         self.strength = stats[0]
         self.speed = stats[1]
         self.health = stats[2]
         self.attack_ = stats[3]
         self.cooldown = stats[4]
-        self.cooled = 0       # tick at which unit's attack is enabled again
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
+        self.cooled = 0       # tick at which unit's attack is enabled again
+
+        # Sets sprite(s)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
             self.sprite = pygame.image.load("sprites/redunit1.png")
@@ -111,8 +115,6 @@ class Unit(object):  # TODO Make uninstantiable
             self.cooled = tick + self.cooldown
             print(unit.health)
 
-    def pick_up_flag(self, flag):
-        pass
 
 class Teenie(Unit):
     """ The base unit in the game"""
@@ -137,7 +139,9 @@ class Heavie(Unit):
 
 
 class Flag(object):
-    """ The flag class for the game"""
+    """ DOCSTRING:
+        Contains attributes and methods for Flag obj of Capture the Flag
+        """
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
         # should define the position based off of mouse position
@@ -177,8 +181,10 @@ class Flag(object):
 
 
 class Base(object):
-    """ The base class for the game"""
-
+    """ DOCSTRING:
+        Contains attributes and methods for Base object in Capture the Flag
+        (spawns units, need to get flag to base to win)
+        """
     def __init__(self, position, team):
         self.pos = x, y = position  # pixel position
         self.cycle_count = 0  # initial cycle count

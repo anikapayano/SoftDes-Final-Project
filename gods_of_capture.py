@@ -39,8 +39,9 @@ class CaptureGame(object):
 
         self.control = mvc.Controller(self.model)
 
+        # Creates ai; passes in first info about board
         self.ai = ai_rule.AIRule([])
-        self.ai.update(self.model.unit_list,self.model.flag_list)
+        self.ai.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
@@ -87,7 +88,7 @@ class CaptureGame(object):
             pygame.display.update()
 
             self.control.updates(self.tick)
-            self.ai.update(self.model.unit_list,self.model.flag_list)
+            self.ai.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
 
 

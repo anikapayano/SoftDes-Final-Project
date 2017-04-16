@@ -50,7 +50,6 @@ class Model(object):
         self.flag_list.append(obj.Flag((300, 300), 2))
 
 
-
 class View(object):
     """DOCSTRING
         Class for viewing a model. Contains methods to draw single object and
@@ -93,9 +92,9 @@ class View(object):
 
 
 class Controller(object):
-    """DOCSTRING
-    Holds functions for manipulating the model
-    """
+    """ DOCSTRING:
+        Holds functions for manipulating model
+        """
 
     def __init__(self, model):
         """DOCSTRING
@@ -148,6 +147,7 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+
     def updates(self, tick):
         self.update_flags()
         self.update_base(tick)
@@ -155,11 +155,13 @@ class Controller(object):
         self.update_units()
 
     def update_unit_type(self, key):
+        """ DOCSTRING:
+            Given key btw 1-3 or q-e, changes unit type spawned at base 1 or 2.
+            """
         if key == '1' or key == '2' or key == '3':
             self.model.base_list[0].update_unit(key)
         elif key == 'q' or key == 'w' or key == 'e':
             self.model.base_list[1].update_unit(key)
-
 
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
@@ -175,10 +177,13 @@ class Controller(object):
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
+
+                    # Checks win case
                     for base in self.model.base_list:
                         if pygame.sprite.collide_rect(flag.unit, base):
                             if base.team != flag.unit.team:
                                 print('I WOOONNNN!!!!')
+
     def update_units(self):
         """ KILLs units that have no health
             Updates the collision rectangle for those that are alive"""
@@ -230,6 +235,7 @@ class Controller(object):
             self.check_flag_pickup(unit)
             self.check_wall_bump(unit)
             self.check_map_bump(unit)
+
 
     def drive_unit(self, event):
         # Moves selected object with arow keys
