@@ -9,6 +9,7 @@ import unittest
 import math
 import objects as obj
 import mvc
+import ai_rule
 from objects import TestUnit
 
 
@@ -37,6 +38,9 @@ class CaptureGame(object):
         self.view = mvc.View(self.model, self.screen, self.screen_sprite)
 
         self.control = mvc.Controller(self.model)
+
+        self.ai = ai_rule.AIRule([])
+        self.ai.update(self.model.unit_list,self.model.flag_list)
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
@@ -76,12 +80,14 @@ class CaptureGame(object):
 
                     # User Input May Eventually go here
             self.control.drive_unit(event)
+            self.ai.unit_command()
 
             # AI Input WILL Go here
             self.view.draw_all()
             pygame.display.update()
 
             self.control.updates(self.tick)
+            self.ai.update(self.model.unit_list,self.model.flag_list)
 
 
 

@@ -82,7 +82,6 @@ class Unit(object):  # TODO Make uninstantiable
             if abs(math.sqrt((self.pos[0]-self.goal_pos[0])**2 + (self.pos[1]-self.goal_pos[1])**2)) < self.speed:
                 self.goal_pos = [None,None]
 
-
     def select(self):
         """DOCSTRING:
             flips selection state of unit and changes sprite
@@ -93,7 +92,6 @@ class Unit(object):  # TODO Make uninstantiable
         else:
             self.is_selected = False
             self.sprite = self.old_sprite
-
 
     def move(self, pos):
         """moves unit to pos = x, y"""
@@ -123,14 +121,12 @@ class Teenie(Unit):
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
-
 class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [4, 6, 10, 2, 50, [30,30]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
-
 
 class Heavie(Unit):
     """The strong unit in the game"""
