@@ -8,7 +8,6 @@ import unittest
 import math
 import objects as obj
 import mvc
-from objects import TestUnit
 
 class AIRule(object):
     """ DOCSTRING:
@@ -20,7 +19,6 @@ class AIRule(object):
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = 1
-        self.other_team = 2
         self.weights = weights
 
     def update(self, units, flags):
@@ -28,10 +26,12 @@ class AIRule(object):
             Updates info that AI knows of game
             """
         self.all_units = units
-        self.units = [unit if unit.team == self.team for unit in self.all_units]
-        self.other_units = [unit if unit.team == self.other_team for unit in self.all_units]
-        self.flag = [flag if flag.team == self.team for flag in self.flags]
-        self.other_flag = [flag if flag.team == self.other_team for flag in self.flags]
+        self.units = [unit for unit in self.all_units if unit.team == self.team]
+        self.other_units = [unit for unit in self.all_units if unit.team != self.team]
+        self.flag = [flag for flag in flags if flag.team == self.team]
+        self.flag = self.flag[0]
+        self.other_flag = [flag for flag in flags if flag.team != self.team]
+        self.other_flag = self.other_flag[0]
 
     def unit_command(self):
         """ DOCSTRING:
@@ -40,4 +40,4 @@ class AIRule(object):
             """
 
         for unit in self.units:
-            unit.move_direction(flag.position[0] - unit.position[0],flag.position[1] - unit.position[1])
+            unit.move_direction(self.flag.pos[0] - unit.pos[0],self.flag.pos[1] - unit.pos[1])

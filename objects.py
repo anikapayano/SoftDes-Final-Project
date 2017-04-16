@@ -41,12 +41,12 @@ class TestFlag(unittest.TestCase):
 
 
 class Unit(object):  # TODO Make uninstantiable
+
     def __init__(self, position, team, stats):  # TODO set to position of the base
-        """
-        DOCSTRING:
-        attributes:
-        TEAM: 1 or 2
-        """
+        """ DOCSTRING:
+            Given pos, team, & stat list, provides init template for more specific
+            units such as Teenie, Speedie, & Heavie.
+            """
         self.pos = x, y = position
         self.goal_pos = [None,None]
         self.team = team
@@ -67,7 +67,7 @@ class Unit(object):  # TODO Make uninstantiable
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
     def update(self):
-        """DOCSTRING:
+        """ DOCSTRING:
             updates unit attributes/methods that take more than one tick to run
             """
 
@@ -117,7 +117,7 @@ class Unit(object):  # TODO Make uninstantiable
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 6, 10, 2, 50, [20,20]])
+        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
@@ -131,7 +131,7 @@ class Speedie(Unit):
 class Heavie(Unit):
     """The strong unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [8, 4, 14, 4, 75, [40,40]])
+        Unit.__init__(self, position, team, [8, 2, 14, 4, 75, [40,40]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
