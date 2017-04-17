@@ -4,6 +4,7 @@ If-tree based Artificial Intelligence designed to play capture the flag
 @author Connor Novak
          """
 import pygame
+import numpy as np
 import unittest
 import math
 import objects as obj
@@ -14,7 +15,7 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team,weights):
+    def __init__(self,team,weights=[1,0.8,1,1,1]):
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
@@ -46,13 +47,36 @@ class AIRule(object):
             """
 
         for unit in self.units: # Orders for all units
+
+            # Weights based on enemy flag position
             if (self.flag.pickedup == True): # If flag is obtained
                 if unit == self.flag.unit: # Flag unit returns to base
-                    direction = [self.base.pos[0] - unit.pos[0],self.base.pos[1] - unit.pos[1]]
+                    dir_1 = self.get_direction(self.base.pos,unit.pos,True)
                 else: # Other units follow flag unit
-                    direction = [self.flag.unit.pos[0] - unit.pos[0],self.flag.unit.pos[1] - unit.pos[1]]
+                    dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
             else: # All units go for flag
-                direction = [self.flag.pos[0] - unit.pos[0],self.flag.pos[1] - unit.pos[1]]
+                dir_1 = self.get_direction(self.flag.pos,unit.pos,True)
+
+            # Weights based on team flag position
+            dir_2 = self.get_direction([0,0],[0,0])
+            for other_unit in self.other_units:
+                distance = np.linalg.norm(self.get_direction(other_unit.pos,self.flag.pos))
+                if distance < 500:
+                    dir_2 = self.get_direction(self.other_flag.pos,unit.pos,True)
+                    break
+
+            # Adds and weights all vectors; calculates movement vector
+            print(unit.pos)
+            direction = self.weights[0] * dir_1 + self.weights[1] * dir_2
 
             # Moves unit
             unit.move_direction(direction[0],direction[1])
+
+    def get_direction(self,pt1,pt2,norm=False):
+        """ DOCSTRING:
+            Given two points, returns normalized vector from pt1 towards pt2
+            """
+
+        direction = np.array([pt1[0]-pt2[0],pt1[1]-pt2[1]]) # Build vector
+        if norm: direction = direction/np.linalg.norm(direction) # normalize
+        return direction

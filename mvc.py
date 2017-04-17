@@ -150,7 +150,7 @@ class Controller(object):
 
     def updates(self, tick):
         self.update_flags()
-        self.update_base(tick)
+        # self.update_base(tick)
         self.check_collisions(tick)
         self.update_units()
 

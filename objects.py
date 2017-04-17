@@ -195,7 +195,7 @@ class Base(object):
         # Add counter for unit generation
         self.width = 20
         self.height = 20
-        self.unit_cycles = [300, 500, 800]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.unit_cycles = [60, 100, 160]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 100, 100)
