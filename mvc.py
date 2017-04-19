@@ -38,16 +38,16 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((500, 500), 1))
-            self.unit_list.append(obj.Teenie((500, 600), 2))
+            self.unit_list.append(obj.Teenie((100, 100), 1))
+            self.unit_list.append(obj.Teenie((1800, 800), 2))
 
         # Sets up initial team positions
-        self.base_list.append(obj.Base((10, 10), 2))
+        self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-110,
-            self.screen_size[1]-110), 1))
+            self.screen_size[1]-110), 2))
         # Sets up flag positions
-        self.flag_list.append(obj.Flag((200, 200), 1))
-        self.flag_list.append(obj.Flag((300, 300), 2))
+        self.flag_list.append(obj.Flag((50, 460), 1))
+        self.flag_list.append(obj.Flag((1790, 460), 2))
 
 
 class View(object):
@@ -70,8 +70,10 @@ class View(object):
         """DOCSTRING
         Given a thing, draws thing on screen
         """
-
-        self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
+        try:
+            self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
+        except TypeError:
+            print(thing.pos)
 
     def draw_all(self):
         """DOCSTRING:
@@ -150,7 +152,7 @@ class Controller(object):
 
     def updates(self, tick):
         self.update_flags()
-        # self.update_base(tick)
+        self.update_base(tick)
         self.check_collisions(tick)
         self.update_units()
 
@@ -189,7 +191,7 @@ class Controller(object):
                 except:
                     pass
             else:
-                unit.update()
+                unit.update(self.model.screen_size)
 
 
     def check_attacks(self, tick, unit):
@@ -248,8 +250,12 @@ class Controller(object):
         return False
 
     def drive_unit(self, event):
-        # Moves selected object with arow keys
-        unit = self.model.unit_list[1]
+        # Moves selected object with arrow keys
+        try:
+            unit = self.model.unit_list[1]
+        except IndexError:
+            print('ERR: No unit to drive!')
+            return
         x = unit.pos[0]
         y = unit.pos[1]
         keys = pygame.key.get_pressed()

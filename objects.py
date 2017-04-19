@@ -70,13 +70,10 @@ class Unit(object):  # TODO Make uninstantiable
             self.sprite = pygame.image.load("sprites/blueunit1.png")
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
-    def update(self):
+    def update(self, screen_size):
         """ DOCSTRING:
             updates unit attributes/methods that take more than one tick to run
             """
-
-        # Sets rect pos to unit pos
-        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
         # If there is goal and unit isn't there, move towards goal
         if self.goal_pos != [None,None] and self.pos != self.goal_pos:
@@ -85,6 +82,17 @@ class Unit(object):  # TODO Make uninstantiable
             # If unit arrived at goal, turn off goal
             if abs(math.sqrt((self.pos[0]-self.goal_pos[0])**2 + (self.pos[1]-self.goal_pos[1])**2)) < self.speed:
                 self.goal_pos = [None,None]
+
+        # Moves unit onto screen if not on screen
+        x, y = self.pos
+        if x > screen_size[0]: x = screen_size[0] # If off right
+        elif x < 0: x = 0 # If off left
+        if y > screen_size[1]: y = screen_size[1] # If off bottom
+        elif y < 0: y = 0 # If off top
+        self.pos = x, y
+
+        # Sets rect pos to unit pos
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
     def select(self):
         """DOCSTRING:
@@ -105,8 +113,9 @@ class Unit(object):  # TODO Make uninstantiable
         """moves unit at self.speed in direction = x, y"""
         x, y = self.pos
         mag = math.sqrt(x_d**2 + y_d**2)
-        x = x + (x_d*self.speed)/mag
-        y = y + (y_d*self.speed)/mag
+        if mag != 0: # Make sure to not div by 0
+            x = x + (x_d*self.speed)/mag
+            y = y + (y_d*self.speed)/mag
         self.pos = x, y
 
     def attack(self, unit, tick):
@@ -195,7 +204,7 @@ class Base(object):
         # Add counter for unit generation
         self.width = 20
         self.height = 20
-        self.unit_cycles = [60, 100, 160]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.unit_cycles = [240, 400, 640]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 100, 100)
