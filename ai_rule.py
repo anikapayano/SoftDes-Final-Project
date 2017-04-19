@@ -46,6 +46,7 @@ class AIRule(object):
             units
             """
 
+        close_to_flag = 0
         for unit in self.units: # Orders for all units
 
             # Weights based on enemy flag position
@@ -54,8 +55,13 @@ class AIRule(object):
                     dir_1 = self.get_direction(self.base.pos,unit.pos,True)
                 else: # Other units follow flag unit
                     dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
-            else: # All units go for flag
-                dir_1 = self.get_direction(self.flag.pos,unit.pos,True)
+            else: # If flag is not captured
+                if close_to_flag > 10 * self.weights[1] and len(self.other_units) != 0: # If many team units close to flag, attack closest enemy
+                    enemy = self.get_closest_enemy(unit.pos,self.other_units)
+                    dir_1 = self.get_direction(enemy.pos,unit.pos,True)
+                else: # Go for flag
+                    close_to_flag += 1
+                    dir_1 = self.get_direction(self.flag.pos,unit.pos,True)
 
             # Weights based on team flag position
             dir_2 = self.get_direction([0,0],[0,0]) # Default no force
@@ -69,7 +75,7 @@ class AIRule(object):
                     break
 
             # Adds and weights all vectors; calculates movement vector
-            direction = self.weights[0] * dir_1 + self.weights[1] * dir_2
+            direction = self.weights[0] * dir_1 + self.weights[2] * dir_2
 
             # Moves unit
             unit.move_direction(direction[0],direction[1])
@@ -83,3 +89,23 @@ class AIRule(object):
         norm_dir = np.linalg.norm(direction)
         if norm and norm_dir != 0: direction = direction/np.linalg.norm(direction) # normalize
         return direction
+
+    def get_closest_enemy(self, pos, enemies):
+        """ DOCSTRING:
+            Given pos, returns closest enemy unit
+            """
+        dist_old = None # Init comparison distance with massive distance
+        closest_unit = None
+
+        for unit in enemies:
+            print(pos,unit.pos)
+            dist = np.linalg.norm(np.array(pos[0] - unit.pos[0],pos[1] - unit.pos[1]))
+            if dist_old != None:
+                if dist < dist_old:
+                    closest_unit = unit
+                    dist_old = dist
+            else:
+                dist_old = dist
+                closest_unit = unit
+
+        return closest_unit
