@@ -67,7 +67,7 @@ class AIRule(object):
             dir_2 = self.get_direction([0,0],[0,0]) # Default no force
             for other_unit in self.other_units: # Check enemy unit pos rel to flag
                 distance = np.linalg.norm(self.get_direction(other_unit.pos,self.other_flag.pos))
-                if distance < 500: # If an enemy unit is close
+                if distance < 250: # If an enemy unit is close
                     if self.other_flag.unit != None: # If flag not taken, guard flag
                         dir_2 = self.get_direction(self.other_flag.unit.pos,unit.pos,True)
                     else: # If flag taken, chase unit
@@ -98,7 +98,7 @@ class AIRule(object):
         closest_unit = None
 
         for unit in enemies:
-            print(pos,unit.pos)
+            print(np.array(int(pos[0] - unit.pos[0]),int(pos[1] - unit.pos[1])))
             dist = np.linalg.norm(np.array(pos[0] - unit.pos[0],pos[1] - unit.pos[1]))
             if dist_old != None:
                 if dist < dist_old:

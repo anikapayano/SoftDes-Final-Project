@@ -242,6 +242,7 @@ class Base(object):
             close to self, then passes message if verbose is true (TODO)"""
         if self.unit_type == 0:
             new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
+            print(new_unit.pos)
             #print("MSG: New Teenie Unit on base " + str(self.team))
         elif self.unit_type == 1:
             new_unit = Speedie((self.pos[0]+200, self.pos[1]+200), self.team)
