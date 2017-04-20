@@ -15,7 +15,7 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team,weights=[1,0.8,1,1,1]):
+    def __init__(self,team,weights=[1,1,1,1,1]):
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
@@ -46,6 +46,7 @@ class AIRule(object):
             units
             """
 
+        close_to_flag = 0
         for unit in self.units: # Orders for all units
 
             # Weights based on enemy flag position
@@ -54,20 +55,27 @@ class AIRule(object):
                     dir_1 = self.get_direction(self.base.pos,unit.pos,True)
                 else: # Other units follow flag unit
                     dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
-            else: # All units go for flag
-                dir_1 = self.get_direction(self.flag.pos,unit.pos,True)
+            else: # If flag is not captured
+                if close_to_flag > 10 * self.weights[1] and len(self.other_units) != 0: # If many team units close to flag, attack closest enemy
+                    enemy = self.get_closest_enemy(unit.pos,self.other_units)
+                    dir_1 = self.get_direction(enemy.pos,unit.pos,True)
+                else: # Go for flag
+                    close_to_flag += 1
+                    dir_1 = self.get_direction(self.flag.pos,unit.pos,True)
 
             # Weights based on team flag position
-            dir_2 = self.get_direction([0,0],[0,0])
-            for other_unit in self.other_units:
-                distance = np.linalg.norm(self.get_direction(other_unit.pos,self.flag.pos))
-                if distance < 500:
-                    dir_2 = self.get_direction(self.other_flag.pos,unit.pos,True)
+            dir_2 = self.get_direction([0,0],[0,0]) # Default no force
+            for other_unit in self.other_units: # Check enemy unit pos rel to flag
+                distance = np.linalg.norm(self.get_direction(other_unit.pos,self.other_flag.pos))
+                if distance < 250: # If an enemy unit is close
+                    if self.other_flag.unit != None: # If flag not taken, guard flag
+                        dir_2 = self.get_direction(self.other_flag.unit.pos,unit.pos,True)
+                    else: # If flag taken, chase unit
+                        dir_2 = self.get_direction(self.other_flag.pos,unit.pos,True)
                     break
 
             # Adds and weights all vectors; calculates movement vector
-            print(unit.pos)
-            direction = self.weights[0] * dir_1 + self.weights[1] * dir_2
+            direction = self.weights[0] * dir_1 + self.weights[2] * dir_2
 
             # Moves unit
             unit.move_direction(direction[0],direction[1])
@@ -78,5 +86,26 @@ class AIRule(object):
             """
 
         direction = np.array([pt1[0]-pt2[0],pt1[1]-pt2[1]]) # Build vector
-        if norm: direction = direction/np.linalg.norm(direction) # normalize
+        norm_dir = np.linalg.norm(direction)
+        if norm and norm_dir != 0: direction = direction/np.linalg.norm(direction) # normalize
         return direction
+
+    def get_closest_enemy(self, pos, enemies):
+        """ DOCSTRING:
+            Given pos, returns closest enemy unit
+            """
+        dist_old = None # Init comparison distance with massive distance
+        closest_unit = None
+
+        for unit in enemies:
+            print(np.array(int(pos[0] - unit.pos[0]),int(pos[1] - unit.pos[1])))
+            dist = np.linalg.norm(np.array(pos[0] - unit.pos[0],pos[1] - unit.pos[1]))
+            if dist_old != None:
+                if dist < dist_old:
+                    closest_unit = unit
+                    dist_old = dist
+            else:
+                dist_old = dist
+                closest_unit = unit
+
+        return closest_unit
