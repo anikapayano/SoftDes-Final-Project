@@ -38,17 +38,16 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((500, 500), 1))
-            self.unit_list.append(obj.Teenie((500, 600), 2))
+            self.unit_list.append(obj.Teenie((100, 100), 1))
+            self.unit_list.append(obj.Teenie((1800, 800), 2))
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-110,
             self.screen_size[1]-110), 2))
         # Sets up flag positions
-        self.flag_list.append(obj.Flag((200, 200), 1))
-        self.flag_list.append(obj.Flag((300, 300), 2))
-
+        self.flag_list.append(obj.Flag((50, 460), 1))
+        self.flag_list.append(obj.Flag((1790, 460), 2))
 
 
 class View(object):
@@ -71,8 +70,10 @@ class View(object):
         """DOCSTRING
         Given a thing, draws thing on screen
         """
-
-        self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
+        try:
+            self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
+        except TypeError:
+            print(thing.pos)
 
     def draw_all(self):
         """DOCSTRING:
@@ -93,9 +94,9 @@ class View(object):
 
 
 class Controller(object):
-    """DOCSTRING
-    Holds functions for manipulating the model
-    """
+    """ DOCSTRING:
+        Holds functions for manipulating model
+        """
 
     def __init__(self, model):
         """DOCSTRING
@@ -148,6 +149,7 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
+
     def updates(self, tick):
         self.update_flags()
         self.update_base(tick)
@@ -155,11 +157,13 @@ class Controller(object):
         self.update_units()
 
     def update_unit_type(self, key):
+        """ DOCSTRING:
+            Given key btw 1-3 or q-e, changes unit type spawned at base 1 or 2.
+            """
         if key == '1' or key == '2' or key == '3':
             self.model.base_list[0].update_unit(key)
         elif key == 'q' or key == 'w' or key == 'e':
             self.model.base_list[1].update_unit(key)
-
 
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
@@ -175,10 +179,7 @@ class Controller(object):
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
-                    for base in self.model.base_list:
-                        if pygame.sprite.collide_rect(flag.unit, base):
-                            if base.team != flag.unit.team:
-                                print('I WOOONNNN!!!!')
+
     def update_units(self):
         """ KILLs units that have no health
             Updates the collision rectangle for those that are alive"""
@@ -190,7 +191,7 @@ class Controller(object):
                 except:
                     pass
             else:
-                unit.update()
+                unit.update(self.model.screen_size)
 
 
     def check_attacks(self, tick, unit):
@@ -212,9 +213,12 @@ class Controller(object):
         pass
 
     def check_flag_pickup(self, unit):
-        """checks whether an offensive unit is touching the flag"""
+        """ DOCSTRING:
+            Given unit, checks whether unit is touching opponents flag; picks up
+            flag if true
+            """
         for flag in self.model.flag_list:
-            if flag.is_selected is False and unit.team == flag.team:
+            if flag.is_selected is False and unit.team != flag.team and flag.pickedup is False:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
 
@@ -231,9 +235,27 @@ class Controller(object):
             self.check_wall_bump(unit)
             self.check_map_bump(unit)
 
+    def check_win(self):
+        """ DOCSTRING:
+            Checks if flag in enemy base; moves to win case if so
+            """
+        for flag in self.model.flag_list:
+            for base in self.model.base_list:
+
+                if flag.unit != None:
+                    if pygame.sprite.collide_rect(flag.unit, base) and base.team == flag.unit.team:
+                        print('MSG: Team ' + str(base.team) + ' is the winner!')
+                        return True
+
+        return False
+
     def drive_unit(self, event):
-        # Moves selected object with arow keys
-        unit = self.model.unit_list[1]
+        # Moves selected object with arrow keys
+        try:
+            unit = self.model.unit_list[1]
+        except IndexError:
+            print('ERR: No unit to drive!')
+            return
         x = unit.pos[0]
         y = unit.pos[1]
         keys = pygame.key.get_pressed()

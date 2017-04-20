@@ -41,24 +41,28 @@ class TestFlag(unittest.TestCase):
 
 
 class Unit(object):  # TODO Make uninstantiable
-    def __init__(self, position, team, stats):  # TODO set to position of the base
-        """
-        DOCSTRING:
-        attributes:
-        TEAM: 1 or 2
-        """
+
+    def __init__(self, position, team, stats):
+        """ DOCSTRING:
+            Given pos, team, & stat list, provides init template for more specific
+            units such as Teenie, Speedie, & Heavie.
+            """
         self.pos = x, y = position
         self.goal_pos = [None,None]
         self.team = team
         self.is_selected = False
+
+        # Sets stats
         self.strength = stats[0]
         self.speed = stats[1]
         self.health = stats[2]
         self.attack_ = stats[3]
         self.cooldown = stats[4]
-        self.cooled = 0       # tick at which unit's attack is enabled again
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
+        self.cooled = 0       # tick at which unit's attack is enabled again
+
+        # Sets sprite(s)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
         if team == 1:
             self.sprite = pygame.image.load("sprites/redunit1.png")
@@ -66,13 +70,10 @@ class Unit(object):  # TODO Make uninstantiable
             self.sprite = pygame.image.load("sprites/blueunit1.png")
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
-    def update(self):
-        """DOCSTRING:
+    def update(self, screen_size):
+        """ DOCSTRING:
             updates unit attributes/methods that take more than one tick to run
             """
-
-        # Sets rect pos to unit pos
-        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
         # If there is goal and unit isn't there, move towards goal
         if self.goal_pos != [None,None] and self.pos != self.goal_pos:
@@ -82,6 +83,16 @@ class Unit(object):  # TODO Make uninstantiable
             if abs(math.sqrt((self.pos[0]-self.goal_pos[0])**2 + (self.pos[1]-self.goal_pos[1])**2)) < self.speed:
                 self.goal_pos = [None,None]
 
+        # Moves unit onto screen if not on screen
+        x, y = self.pos
+        if x > screen_size[0]: x = screen_size[0] # If off right
+        elif x < 0: x = 0 # If off left
+        if y > screen_size[1]: y = screen_size[1] # If off bottom
+        elif y < 0: y = 0 # If off top
+        self.pos = x, y
+
+        # Sets rect pos to unit pos
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
     def select(self):
         """DOCSTRING:
@@ -94,7 +105,6 @@ class Unit(object):  # TODO Make uninstantiable
             self.is_selected = False
             self.sprite = self.old_sprite
 
-
     def move(self, pos):
         """moves unit to pos = x, y"""
         self.pos = pos
@@ -103,8 +113,9 @@ class Unit(object):  # TODO Make uninstantiable
         """moves unit at self.speed in direction = x, y"""
         x, y = self.pos
         mag = math.sqrt(x_d**2 + y_d**2)
-        x = x + (x_d*self.speed)/mag
-        y = y + (y_d*self.speed)/mag
+        if mag != 0: # Make sure to not div by 0
+            x = x + (x_d*self.speed)/mag
+            y = y + (y_d*self.speed)/mag
         self.pos = x, y
 
     def attack(self, unit, tick):
@@ -113,35 +124,33 @@ class Unit(object):  # TODO Make uninstantiable
             self.cooled = tick + self.cooldown
             print(unit.health)
 
-    def pick_up_flag(self, flag):
-        pass
 
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 6, 10, 2, 50, [20,20]])
+        Unit.__init__(self, position, team, [4, 2, 10, 2, 50, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
-
 
 class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 6, 10, 2, 50, [30,30]])
+        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [30,30]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
-
 
 class Heavie(Unit):
     """The strong unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [8, 4, 14, 4, 75, [40,40]])
+        Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [40,40]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
 class Flag(object):
-    """ The flag class for the game"""
+    """ DOCSTRING:
+        Contains attributes and methods for Flag obj of Capture the Flag
+        """
     def __init__(self, position, team):
         # TODO: Initialize attributes like position, color
         # should define the position based off of mouse position
@@ -181,8 +190,10 @@ class Flag(object):
 
 
 class Base(object):
-    """ The base class for the game"""
-
+    """ DOCSTRING:
+        Contains attributes and methods for Base object in Capture the Flag
+        (spawns units, need to get flag to base to win)
+        """
     def __init__(self, position, team):
         self.pos = x, y = position  # pixel position
         self.cycle_count = 0  # initial cycle count
@@ -193,7 +204,7 @@ class Base(object):
         # Add counter for unit generation
         self.width = 20
         self.height = 20
-        self.unit_cycles = [30, 50, 80]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
+        self.unit_cycles = [240, 400, 640]  # number of cycles for a unit to generate (10 - teenie, 20 - speedie)
         self.current_unit_cycle = 30
         self.unit_type = 0
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 100, 100)
@@ -231,6 +242,7 @@ class Base(object):
             close to self, then passes message if verbose is true (TODO)"""
         if self.unit_type == 0:
             new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
+            print(new_unit.pos)
             #print("MSG: New Teenie Unit on base " + str(self.team))
         elif self.unit_type == 1:
             new_unit = Speedie((self.pos[0]+200, self.pos[1]+200), self.team)
