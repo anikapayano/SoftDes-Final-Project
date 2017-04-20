@@ -73,7 +73,7 @@ class View(object):
         try:
             self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
         except TypeError:
-            print(thing.pos)
+            pass
 
     def draw_all(self):
         """DOCSTRING:
@@ -185,14 +185,18 @@ class Controller(object):
             Updates the collision rectangle for those that are alive"""
         for unit in self.model.unit_list:
             if unit.health <= 0:
+                for flag in self.model.flag_list:
+                    if flag.unit is unit:
+                        flag.pickedup = False
+                        flag.unit = None
                 self.model.unit_list.remove(unit)
+                print('death takes us all')
                 try:
                     self.selected_obj.remove(unit)
                 except:
                     pass
             else:
                 unit.update(self.model.screen_size)
-
 
     def check_attacks(self, tick, unit):
         """checks if attack range collides with body sprite of opposing units
@@ -221,6 +225,7 @@ class Controller(object):
             if flag.is_selected is False and unit.team != flag.team and flag.pickedup is False:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
+
 
     def check_map_bump(self, unit):
         """checks if unit is trying to go off the screen and

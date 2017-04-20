@@ -33,7 +33,7 @@ class CaptureGame(object):
         self.model = mvc.Model(self.screen_size)
 
 
-        self.model.set_up(2)
+        self.model.set_up(1)
 
         self.view = mvc.View(self.model, self.screen, self.screen_sprite)
 
@@ -42,7 +42,7 @@ class CaptureGame(object):
         # Creates ai; passes in first info about board
         self.ai1 = ai_rule.AIRule(1,[1,0.1,1,1,1])
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-        self.ai2 = ai_rule.AIRule(2,[0.7,0.2,0.5,1,1])
+        self.ai2 = ai_rule.AIRule(2,[0.1,1,1,1,1])
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
         self.running = True
