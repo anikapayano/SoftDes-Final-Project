@@ -5,7 +5,8 @@ This file is where the evolving of the AIs happen
 #make an individual
 #from ai_rule import AIRule
 import mvc
-
+import random
+import ai_rule as AI
 from deap import algorithms, base, tools, creator
 
 # TODO: class fitness maximize, want to maximize ai_strength
@@ -14,7 +15,8 @@ from deap import algorithms, base, tools, creator
 # weights are (1.0, -1.0, 1.0) because we want to maximize strength, minimize
 # distance to the flag, and mazimize if the AI wins  (this if for the fitness
 # tuple (ai_strength, distance, win))
-creator.create("FitnessMulti", base.fitness, weights=(1.0, -1.0, 1.0))
+creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0, 1.0))
+
 
 
 def fitness_function(ai_team):
@@ -66,28 +68,37 @@ def evaluate_ai(ai):
 	fitness = fitness_function(ai_team)
 	return(fitness)
 
-def mutate(ai):
+def mutate(ai, probs_weights = 0.5):
 	'''
 	change the weights of the AI randomly
 	usually mutation involves insertion, deletion, and substitution, but since
 	AIRule.wieghts must be fixed length, we only use substitution
 	'''
-	# TODO: fill out mutate
-	# SUBSTITUTION
-	# chose a random index in ai.weights
-	# chose a random value to insertion
-	# insert the values
+	
+	#idk if we need this if statement yet, but i'll leave it
+	# commented in case we do
+	#if random.random() < probs_weights:
+
+	# choose a random index in ai.weights
+	i = random.randint(0, len(ai.weights)-1)
+	# choose a random number between 0 and 10 to replace
+	# the current weight value by
+	char = random.randint(0, 10)
+	# insert the new weight at the ith index
+	ai.weights.insert(i, char)
 
 	# return ai in a length 1 tuple (required by DEAP)
-	pass
+	return(ai.weights, )
 
-
-def mate():
+def mate(ai1, ai2):
 	'''
 	simulate mating between two individuals
 	might be able to use DEAP stuff
 	'''
-	pass
+	# this seems to do something with mating...
+	toolbox.mate(ai1.weights, ai2.weights)
+	# delete the current fitness values associated with the parents
+
 
 
 def get_toolbox():
@@ -99,7 +110,7 @@ def get_toolbox():
 	# CREATE POLULATION TO BE EVOLVED
 
 	# create individual (using the AIRule object for an individual we created outselves)
-	toolbox.register("individual", AIRule)
+	toolbox.register("individual", AI.AIRule(1))
 
 	# create a polution
 	toolbox.register("population", tools.initRepeat, list, toolbox.individual)
@@ -127,17 +138,17 @@ def evolve_ai():
 	random.seed(4)
 
 	# configure toolbox using get_toolbox
-	toolbox = get_toolbox(ai)
+	toolbox = get_toolbox()
 
 	# create a population or random ai objects
 	pop = toolbox.population(n=10)
 
 	# Collect statistics as the EA runs
-    stats = tools.Statistics(lambda ind: ind.fitness.values)
-    stats.register("avg", numpy.mean)
-    stats.register("std", numpy.std)
-    stats.register("min", numpy.min)
-    stats.register("max", numpy.max)
+	stats = tools.Statistics(lambda ind: ind.fitness.values)
+	stats.register("avg", numpy.mean)
+	stats.register("std", numpy.std)
+	stats.register("min", numpy.min)
+	stats.register("max", numpy.max)
 
 	# run evolutionary algorithm
 	pop, log = algorithms.eaSimple(pop,
@@ -148,7 +159,6 @@ def evolve_ai():
 								   stats=stats)
 
 	return pop, log
-
 
 
 pop, log = evolve_ai()
