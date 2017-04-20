@@ -245,9 +245,9 @@ class Controller(object):
                 if flag.unit != None:
                     if pygame.sprite.collide_rect(flag.unit, base) and base.team == flag.unit.team:
                         print('MSG: Team ' + str(base.team) + ' is the winner!')
-                        return True
+                        return (True, base.team)
 
-        return False
+        return (False,)
 
     def drive_unit(self, event):
         # Moves selected object with arrow keys

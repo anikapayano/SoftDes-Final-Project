@@ -3,24 +3,34 @@ If-tree based Artificial Intelligence designed to play capture the flag
 
 @author Connor Novak
          """
-import pygame
+
 import numpy as np
 import unittest
 import math
 import objects as obj
 import mvc
+from deap import algorithms, base, tools, creator
+
+class FitnessMaxSingle(base.Fitness):
+    """
+    Class representing the fitness of a given individual, with a single
+    objective that we want to minimize (weight = -1)
+    """
+    weights = (1.0, )
 
 class AIRule(object):
     """ DOCSTRING:
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team,weights=[1,1,1,1,1]):
+    def __init__(self,team=1,weights=[1,1,1,1,1]):
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = team
         self.weights = weights
+        self.fitness = FitnessMaxSingle()
+        self.state_evaluation = (0,)
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -39,6 +49,8 @@ class AIRule(object):
         self.base = self.base[0]
         self.other_base = [base for base in bases if base.team != self.team]
         self.other_base = self.other_base[0]
+
+        #self.fitness()
 
     def unit_command(self):
         """ DOCSTRING:
@@ -109,3 +121,14 @@ class AIRule(object):
                 closest_unit = unit
 
         return closest_unit
+
+    def evaluate_state(self, winning=False):
+        
+        if winning==True:
+            lst = list(self.state_evaluation)
+            lst[0] = 1
+            self.state_evaluation = tuple(lst)
+
+        return(self.state_evaluation)
+
+

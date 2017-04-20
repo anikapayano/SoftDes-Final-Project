@@ -7,7 +7,9 @@ This file is where the evolving of the AIs happen
 import mvc
 import random
 import ai_rule as AI
+import numpy
 from deap import algorithms, base, tools, creator
+import gods_of_capture as gods
 
 # TODO: class fitness maximize, want to maximize ai_strength
 # creates that represents fitness (it's the same as creating an object but
@@ -15,7 +17,7 @@ from deap import algorithms, base, tools, creator
 # weights are (1.0, -1.0, 1.0) because we want to maximize strength, minimize
 # distance to the flag, and mazimize if the AI wins  (this if for the fitness
 # tuple (ai_strength, distance, win))
-creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0, 1.0))
+
 
 
 
@@ -42,7 +44,7 @@ def fitness_function(ai_team):
 
 	#loop through all of the units
 	for unit in unit_list:
-		# if on the same team, then add one to ai_strenght
+		# if on the same team, then add one to ai_strength
 		if unit.team == ai_team:
 			ai_strength += 1
 			ai_distance_flag += (unit.pos[0]**2+unit.pos[1]**2)**(1/2)
@@ -64,11 +66,14 @@ def evaluate_ai(ai):
 	'''
 	Given an AI, returns the fitness of it
 	'''
+	game = gods.CaptureGame(ai)
+	game.run()
 	ai_team = ai.team
-	fitness = fitness_function(ai_team)
-	return(fitness)
+	current_state = ai.evaluate_state()
+	print(current_state)
+	return(current_state)
 
-def mutate(ai, probs_weights = 0.5):
+def mutate(ai, probs_weights = 0.05):
 	'''
 	change the weights of the AI randomly
 	usually mutation involves insertion, deletion, and substitution, but since
@@ -84,6 +89,7 @@ def mutate(ai, probs_weights = 0.5):
 	# choose a random number between 0 and 10 to replace
 	# the current weight value by
 	char = random.randint(0, 10)
+	char = float(char/10)
 	# insert the new weight at the ith index
 	ai.weights.insert(i, char)
 
@@ -97,7 +103,7 @@ def mate(ai1, ai2):
 	'''
 	# this seems to do something with mating...
 	toolbox.mate(ai1.weights, ai2.weights)
-	# delete the current fitness values associated with the parents
+	# delete the current fitness values associated with the parents 
 
 
 
@@ -110,7 +116,7 @@ def get_toolbox():
 	# CREATE POLULATION TO BE EVOLVED
 
 	# create individual (using the AIRule object for an individual we created outselves)
-	toolbox.register("individual", AI.AIRule(1))
+	toolbox.register("individual", AI.AIRule)
 
 	# create a polution
 	toolbox.register("population", tools.initRepeat, list, toolbox.individual)
@@ -141,7 +147,7 @@ def evolve_ai():
 	toolbox = get_toolbox()
 
 	# create a population or random ai objects
-	pop = toolbox.population(n=10)
+	pop = toolbox.population(n=2)
 
 	# Collect statistics as the EA runs
 	stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -149,7 +155,7 @@ def evolve_ai():
 	stats.register("std", numpy.std)
 	stats.register("min", numpy.min)
 	stats.register("max", numpy.max)
-
+	print(stats)
 	# run evolutionary algorithm
 	pop, log = algorithms.eaSimple(pop,
 								   toolbox,
@@ -158,7 +164,9 @@ def evolve_ai():
 								   ngen=5,	  # number of generations to run
 								   stats=stats)
 
+	print(stats)
 	return pop, log
 
 
 pop, log = evolve_ai()
+
