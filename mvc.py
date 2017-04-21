@@ -2,6 +2,7 @@ import pygame
 import unittest
 import math
 import objects as obj
+import random
 
 
 # UNIT TESTS
@@ -32,22 +33,34 @@ class Model(object):
         self.wall_list = []
         self.flag_list = []
         self.base_list = []
+        self.screen_size = screen_size
+        self.bluepositions = []
+        self.redpositions = []
+        for x in range(20, 81, 20):
+            for y in range(200, 750, 50):
+                self.bluepositions.append((x,y))
+        for x in range(1750, 1811, 20):
+            for y in range(200, 750, 50):
+                self.redpositions.append((x,y))
 
-        self.screen_size = screen_size  # Need this to place obj rel. to screen
+         # Need this to place obj rel. to screen
 
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((500, 500), 1))
-            self.unit_list.append(obj.Teenie((500, 600), 2))
+            bluepos = random.choice(self.bluepositions)
+            redpos = random.choice(self.redpositions)
+            self.unit_list.append(obj.Teenie((bluepos[0], bluepos[1]), 1))
+            self.unit_list.append(obj.Teenie((redpos[0], redpos[1]), 2))
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-110,
             self.screen_size[1]-110), 2))
         # Sets up flag positions
-        self.flag_list.append(obj.Flag((200, 200), 1))
-        self.flag_list.append(obj.Flag((300, 300), 2))
+        self.flag_list.append(obj.Flag((50, 400), 1))
+        self.flag_list.append(obj.Flag((self.screen_size[0]-70, 400), 2))
+
 
 
 
@@ -80,15 +93,15 @@ class View(object):
         """
 
         self.screen.blit(self.screen_sprite, (0,0))
-
-        for unit in self.model.unit_list:
-            self.draw(unit)
-        for wall in self.model.wall_list:
-            self.draw(wall)
-        for flag in self.model.flag_list:
-            self.draw(flag)
         for base in self.model.base_list:
             self.draw(base)
+        for wall in self.model.wall_list:
+            self.draw(wall)
+        for unit in self.model.unit_list:
+            self.draw(unit)
+        for flag in self.model.flag_list:
+            self.draw(flag)
+
         pygame.display.update()
 
 
@@ -167,7 +180,8 @@ class Controller(object):
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-            unit = base.update(tick)
+            units = self.model.unit_list
+            unit = base.update(tick, units)
             if unit is False:
                 pass
             else:
@@ -214,7 +228,7 @@ class Controller(object):
     def check_flag_pickup(self, unit):
         """checks whether an offensive unit is touching the flag"""
         for flag in self.model.flag_list:
-            if flag.is_selected is False and unit.team == flag.team:
+            if flag.is_selected is False and unit.team != flag.team:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
 
