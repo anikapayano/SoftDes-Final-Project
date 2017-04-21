@@ -168,7 +168,8 @@ class Controller(object):
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-            unit = base.update(tick)
+            units = self.model.unit_list
+            unit = base.update(tick, units)
             if unit is False:
                 pass
             else:
@@ -180,7 +181,7 @@ class Controller(object):
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
 
-    def update_units(segit merlf):
+    def update_units(self):
         """ KILLs units that have no health
             Updates the collision rectangle for those that are alive"""
         for unit in self.model.unit_list:
