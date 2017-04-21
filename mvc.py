@@ -180,7 +180,7 @@ class Controller(object):
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
 
-    def update_units(self):
+    def update_units(segit merlf):
         """ KILLs units that have no health
             Updates the collision rectangle for those that are alive"""
         for unit in self.model.unit_list:
