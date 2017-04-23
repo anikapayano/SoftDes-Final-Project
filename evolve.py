@@ -2,8 +2,8 @@
 This file is where the evolving of the AIs happen
 '''
 
-#make an individual
-#from ai_rule import AIRule
+# make an individual
+# from ai_rule import AIRule
 import mvc
 import random
 import ai_rule as AI
@@ -17,8 +17,6 @@ import gods_of_capture as gods
 # weights are (1.0, -1.0, 1.0) because we want to maximize strength, minimize
 # distance to the flag, and mazimize if the AI wins  (this if for the fitness
 # tuple (ai_strength, distance, win))
-
-
 
 
 def fitness_function(ai_team):
@@ -79,7 +77,7 @@ def mutate(ai, probs_weights = 0.05):
 	usually mutation involves insertion, deletion, and substitution, but since
 	AIRule.wieghts must be fixed length, we only use substitution
 	'''
-	
+
 	#idk if we need this if statement yet, but i'll leave it
 	# commented in case we do
 	#if random.random() < probs_weights:
@@ -96,6 +94,7 @@ def mutate(ai, probs_weights = 0.05):
 	# return ai in a length 1 tuple (required by DEAP)
 	return(ai.weights, )
 
+
 def mate(ai1, ai2):
 	'''
 	simulate mating between two individuals
@@ -103,8 +102,21 @@ def mate(ai1, ai2):
 	'''
 	# this seems to do something with mating...
 	toolbox.mate(ai1.weights, ai2.weights)
-	# delete the current fitness values associated with the parents 
+	# delete the current fitness values associated with the parents
 
+
+def crossover(ai1, ai2):
+	'''
+	implements 2 point crossover (mating) between 2 ai's using their
+	weights
+	'''
+	ai_child_1 = AI.AIRule()
+	ai_child_2 = AI.AIRule()
+	size = len(ai1.weights)
+	pos = int(random.random()*size)
+	ai_child_1.wieghts = ai1.weights[:pos] + ai2.weights[pos:]
+	ai_child_2.weights = ai2.weights[:pos] + ai1.weights[pos:]
+	return (ai_child_1, ai_child_2)
 
 
 def get_toolbox():
@@ -126,7 +138,7 @@ def get_toolbox():
 	toolbox.register("evaluate", evaluate_ai)
 	# mate using two point crossover
 	# TODO: figure out how this works/how we can mate AIRule.weights specifically
-	toolbox.register("mate", tools.cxTwoPoint)
+	toolbox.register("mate", crossover)
 	# mutate function written above (insertion only)
 	toolbox.register("mutate", mutate)
 	# selection method, tournsize: number of individuals participlatingin each
@@ -169,4 +181,3 @@ def evolve_ai():
 
 
 pop, log = evolve_ai()
-

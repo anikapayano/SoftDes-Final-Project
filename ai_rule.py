@@ -123,12 +123,10 @@ class AIRule(object):
         return closest_unit
 
     def evaluate_state(self, winning=False):
-        
+
         if winning==True:
             lst = list(self.state_evaluation)
             lst[0] = 1
             self.state_evaluation = tuple(lst)
 
         return(self.state_evaluation)
-
-
