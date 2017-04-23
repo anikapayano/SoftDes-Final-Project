@@ -92,8 +92,11 @@ class Unit(object):  # TODO Make uninstantiable
         elif y < 0: y = 0 # If off top
         self.pos = x, y
 
-        # Sets rect pos to unit pos
-        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        try:
+            # Sets rect pos to unit pos
+            self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        except TypeError:
+            print(self.team, self.health, self.pos)
 
     def select(self):
         """DOCSTRING:
@@ -123,13 +126,12 @@ class Unit(object):  # TODO Make uninstantiable
         if tick > self.cooled:
             unit.health = unit.health - self.attack_
             self.cooled = tick + self.cooldown
-            print(unit.health)
 
 
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 2, 10, 2, 50, [20,20]])
+        Unit.__init__(self, position, team, [4, 4, 10, 2, 15, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
@@ -186,6 +188,7 @@ class Flag(object):
             self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
         else:
             self.pickedup = False
+
 
     # TODO more methods here!
 
