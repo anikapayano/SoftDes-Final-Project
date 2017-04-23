@@ -132,21 +132,30 @@ class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [4, 4, 10, 2, 15, [20,20]])
-        self.sprite = pygame.transform.scale(self.sprite, self.size)
+        if team == 1:
+            self.sprite = pygame.image.load("sprites/blueunit1.png")
+        elif team == 2:
+            self.sprite = pygame.image.load("sprites/redunit1.png")
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [30,30]])
-        self.sprite = pygame.transform.scale(self.sprite, self.size)
+        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [40,40]])
+        if team == 1:
+            self.sprite = pygame.image.load("sprites/blueunit2.png")
+        elif team == 2:
+            self.sprite = pygame.image.load("sprites/redunit2.png")
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 class Heavie(Unit):
     """The strong unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [40,40]])
-        self.sprite = pygame.transform.scale(self.sprite, self.size)
+        Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [60,60]])
+        if team == 1:
+            self.sprite = pygame.image.load("sprites/blueunit3.png")
+        elif team == 2:
+            self.sprite = pygame.image.load("sprites/redunit3.png")
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
@@ -215,10 +224,10 @@ class Base(object):
         self.redpositions = []
         for x in range(20, 81, 20):
             for y in range(200, 750, 50):
-                self.bluepositions.append((x,y))
+                self.redpositions.append((x,y))
         for x in range(1750, 1811, 20):
             for y in range(200, 750, 50):
-                self.redpositions.append((x,y))
+                self.bluepositions.append((x,y))
 
     def update(self, tick, units):
         self.cycle_count += 1
