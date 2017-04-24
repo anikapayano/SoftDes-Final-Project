@@ -1,8 +1,9 @@
 ---
-title: PAGE TITLE HERE
+title: Gods of Capture
 layout: template
 filename: NAME OF THIS .md FILE HERE
 --- 
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/anikapayano/SoftDes-Final-Project/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
