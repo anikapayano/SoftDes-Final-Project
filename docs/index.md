@@ -1,6 +1,6 @@
 ---
 title: Gods of Capture
-layout: template
+layout: jekyll-theme-merlot
 filename: NAME OF THIS .md FILE HERE
 --- 
 
