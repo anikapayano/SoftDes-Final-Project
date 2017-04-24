@@ -131,16 +131,13 @@ class Unit(object):  # TODO Make uninstantiable
 class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
-<<<<<<< HEAD
-        Unit.__init__(self, position, team, [4, 30, 10, 2, 50, [20,20]])
-        self.sprite = pygame.transform.scale(self.sprite, self.size)
-=======
+
         Unit.__init__(self, position, team, [4, 4, 10, 2, 15, [20,20]])
         if team == 1:
             self.sprite = pygame.image.load("sprites/blueunit1.png")
         elif team == 2:
             self.sprite = pygame.image.load("sprites/redunit1.png")
->>>>>>> master
+
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 class Speedie(Unit):

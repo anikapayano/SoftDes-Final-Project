@@ -114,13 +114,11 @@ class CaptureGame(object):
                         self.winning = False
         if self.evolving == True:
             self.winning = False
-            print('we are evolving some shit')
 
 
-'''
+
 if __name__ == "__main__":
-    game = CaptureGame()
+    game = CaptureGame(ai_rule.AIRule())
     game.run()
 
     #TestUnit().run_tests()
-'''

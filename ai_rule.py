@@ -23,11 +23,8 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-<<<<<<< HEAD
     def __init__(self,team=1,weights=[1,1,1,1,1]):
-=======
-    def __init__(self,team,weights=[1,0.8,1,1,1]):
->>>>>>> master
+
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
@@ -100,27 +97,7 @@ class AIRule(object):
         mag = np.linalg.norm(direction)
         if norm and mag > 0: direction = direction/mag # normalize
         return direction
-<<<<<<< HEAD
 
-    def get_closest_enemy(self, pos, enemies):
-        """ DOCSTRING:
-            Given pos, returns closest enemy unit
-            """
-        dist_old = None # Init comparison distance with massive distance
-        closest_unit = None
-
-        for unit in enemies:
-            print(np.array(int(pos[0] - unit.pos[0]),int(pos[1] - unit.pos[1])))
-            dist = np.linalg.norm(np.array(pos[0] - unit.pos[0],pos[1] - unit.pos[1]))
-            if dist_old != None:
-                if dist < dist_old:
-                    closest_unit = unit
-                    dist_old = dist
-            else:
-                dist_old = dist
-                closest_unit = unit
-
-        return closest_unit
 
     def evaluate_state(self, winning=False):
         
@@ -132,5 +109,3 @@ class AIRule(object):
         return(self.state_evaluation)
 
 
-=======
->>>>>>> master
