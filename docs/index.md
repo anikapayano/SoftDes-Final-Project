@@ -1,8 +1,3 @@
----
-title: Gods of Capture
-layout: jekyll-theme-merlot
-filename: NAME OF THIS .md FILE HERE
---- 
 
 ## Welcome to GitHub Pages
 
