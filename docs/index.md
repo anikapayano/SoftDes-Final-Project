@@ -1,4 +1,9 @@
-
+---
+title: PAGE TITLE HERE
+layout: template
+theme: jekyll-theme-merlot
+filename: NAME OF THIS .md FILE HERE
+--- 
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/anikapayano/SoftDes-Final-Project/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
