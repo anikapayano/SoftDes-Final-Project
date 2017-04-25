@@ -93,6 +93,8 @@ class AIRule(object):
                     predict_dir = other_unit_dir + other_unit.direction     # leading the units
                     force_hat = np.linalg.norm(predict_dir)
                     unit_weight = self.get_weight(unit, other_unit)
+                    unit_force = force_hat*unit_weight
+                    force_list.append(unit_force)
 
             elif unit.mission == 'return':  # If unit is returning
                 f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
