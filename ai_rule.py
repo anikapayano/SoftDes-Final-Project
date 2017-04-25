@@ -21,6 +21,10 @@ class AIRule(object):
             """
         self.team = team
         self.weights = weights
+        self.input_ratio = [4, 2, 2]  # teeny, big, speedy
+        self.desired_ratio = []
+        for unit_type in self.input_ratio:
+            self.desired.ratio.append(unit_type/sum(self.input_ratio))
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -39,6 +43,12 @@ class AIRule(object):
         self.base = self.base[0]
         self.other_base = [base for base in bases if base.team != self.team]
         self.other_base = self.other_base[0]
+
+        teenies = [unit for unit in self.units if unit.species == 'teenie']
+        speedies = [unit for unit in self.units if unit.species == 'speedie']
+        heavies = [unit for unit in self.units if unit.species == 'heavie']
+        n = len(self.units)
+        self.ratio = [len(teenies)/n, len(speedies)/n, len(heavies)/n]
 
     def unit_command(self):
         """ DOCSTRING:
@@ -68,6 +78,7 @@ class AIRule(object):
                         dir_2 = self.get_direction(self.other_flag.pos,unit.pos,True)
 
                     break
+
 
             # Adds and weights all vectors; calculates movement vector
             direction = self.weights[0] * dir_1 + self.weights[1] * dir_2
