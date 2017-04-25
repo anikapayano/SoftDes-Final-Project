@@ -86,7 +86,6 @@ class AIRule(object):
                 else:
                     f1 = self.get_direction(self.flag.pos,unit.pos,True)
                 f2 = self.get_direction(unit.pos,unit.pos)
-                print(f1,f2)
 
             elif unit.mission == 'defend':  # If unit is defending
                 dir_destination = self.get_direction(self.flag, unit.pos, True)

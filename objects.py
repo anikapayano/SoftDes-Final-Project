@@ -146,7 +146,7 @@ class Teenie(Unit):
 class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [40,40]])
+        Unit.__init__(self, position, team, [3, 10, 15, 2, 30, [50,50]])
         if team == 1:
             self.sprite = pygame.image.load("sprites/blueunit2.png")
         elif team == 2:
@@ -252,7 +252,6 @@ class Base(object):
         """DOCSTRING
             given pressed key, changes currently spawning unit type based on
             which key is pressed"""
-        print(key)
         if key == '1' or key =='q':
             self.unit_type = 0
             print("MSG: Unit type changed to Teenie on base " + str(self.team))
@@ -267,11 +266,11 @@ class Base(object):
     def unit_generation(self, units):
         """DOCSTRING
             Checks unit type to spawn, creates new unit of current type
-            close to self, then passes message if verbose is true (TODO)"""
+            close to self, then passes message if verbose is true (TODO)
+            """
         maxiters = 7
         if self.unit_type == 0:
             new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
-            print(new_unit.pos)
             if self.team  == 1:
                 spawnpos = random.choice(self.bluepositions)
                 i = 0
