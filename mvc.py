@@ -92,7 +92,6 @@ class View(object):
             self.draw(flag)
         pygame.display.update()
 
-
 class Controller(object):
     """ DOCSTRING:
         Holds functions for manipulating model
@@ -209,6 +208,10 @@ class Controller(object):
                     unit.attack(sec_unit, tick)  # initiates attack
 
     def check_unit_bumps(self, unit):
+#        for sec_unit in self.model.unit_list:
+#            if pygame.sprite.collide_rect(unit, sec_unit):
+#                    unit.rect.right = sec_unit.rect.left
+
         """Optional! checks if unit is bumping into any other units"""
         pass
 
