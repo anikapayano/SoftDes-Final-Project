@@ -58,6 +58,21 @@ class AIRule(object):
 
         for unit in self.units: # Orders for all units
 
+            if unit.mission == 'attack': # If unit is attacking
+                if self.flag.pickedup == True: # If enemy flag is obtained
+                    if unit == self.flag.unit: # Flag unit returns to base
+                        dir_1 = self.get_direction(self.base.pos,unit.pos,True)
+                    else: # Other units follow flag unit
+                        dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
+            elif unit.mission == 'defend':  # If unit is defending
+                dir_1 = self.get_direction()
+            elif unit.mission == 'return':  # If unit is returning
+                f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
+                for enemy in self.other_units:
+                    f2 += self.get_direction(self.enemy.pos,unit.pos,False)
+
+
+
             # Weights based on enemy flag position
             if (self.flag.pickedup == True): # If flag is obtained
                 if unit == self.flag.unit: # Flag unit returns to base
@@ -80,11 +95,14 @@ class AIRule(object):
                     break
 
 
-            # Adds and weights all vectors; calculates movement vector
-            direction = self.weights[0] * dir_1 + self.weights[1] * dir_2
+            # Adds all force vectors; calculates movement vector
+            direction = f1 + f2 + f3 + f4
 
             # Moves unit
             unit.move_direction(direction[0],direction[1])
+
+                unit.directioin = direction
+
 
     def get_direction(self,pt1,pt2,norm=False):
         """ DOCSTRING:
@@ -95,3 +113,9 @@ class AIRule(object):
         mag = np.linalg.norm(direction)
         if norm and mag > 0: direction = direction/mag # normalize
         return direction
+    def get_distance(self,pt1,pt2):
+        """ DOCSTRING:
+            Given two points, returns distance btw pts
+            """
+
+        direction = np.array([])

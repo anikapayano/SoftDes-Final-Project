@@ -1,6 +1,7 @@
 # Gods of Capture: Evolved AI play Capture the Flag
 
-Visit our website
+[Visit our website](https://anikapayano.github.io/SoftDes-Final-Project/)
+
 ## Description:
 Gods of Capture is a 2 vs. 2 capture the flag game built to be played by two
 algorithms (after called AIs) pitted against one another. The objective of each
@@ -30,11 +31,11 @@ This project was worked on as a final project in Olin College of Engineering's
 spring semester Software Design course.
 
 ## Authors:
-- Anika Payano[Github](https://github.com/anikapayano)
-- Connor Novak[Github](https://github.com/ConnorNovak)|[LinkedIn](https://www.linkedin.com/in/connor-novak-b606a0116)
-- Colvin Chapman[Github](https://github.com/Colvchap)
-- Emily Lepert[Github](https://github.com/Elepert)
-- Sophia Nielsen[Github](https://github.com/snielsen221b)
+- Anika Payano [Github](https://github.com/anikapayano)
+- Connor Novak [Github](https://github.com/ConnorNovak) | [LinkedIn](https://www.linkedin.com/in/connor-novak-b606a0116)
+- Colvin Chapman [Github](https://github.com/Colvchap)
+- Emily Lepert [Github](https://github.com/Elepert)
+- Sophia Nielsen [Github](https://github.com/snielsen221b)
 
 ## Getting Started:
 ### Downloading Files:
