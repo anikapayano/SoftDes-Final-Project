@@ -27,7 +27,7 @@
       <header>
         <span class="ribbon-outer">
           <span class="ribbon-inner">
-            <h1>{{ Gods of Capture | Gods of Capture }}</h1>
+            <h1 class="project-name">Gods of Capture</h1>
             <h2>{{ site.description | default: site.github.project_tagline }}</h2>
           </span>
           <span class="left-tail"></span>
@@ -36,12 +36,14 @@
       </header>
 
       <section>
-        {% for page in site.pages %}
-          <a href= {{ page.filename }} class="btn">{{ page.title }}</a>
-        {% endfor %}
-        {% if site.show_downloads %}
-        <a href="https://github.com/anikapayano/SoftDes-Final-Project" class="btn">View on GitHub</a>
-       </section>
+        <span class="inner">
+          {% for page in site.pages %}
+            <a href= {{ page.filename }} class="btn">{{ page.title }}</a>
+          {% endfor %}
+          {% if site.show_downloads %}
+          <a href="https://github.com/anikapayano/SoftDes-Final-Project" class="btn">View on GitHub</a>
+        </span>
+      </section>
 
       <span class="banner-fix"></span>
 
@@ -59,6 +61,7 @@
             {% if site.github.is_user_page %}
               <p>Projects by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a> can be found on <a href="{{ site.github.repository_url }}">GitHub</a></p>
             {% endif %}
+          
           </span>
           <span class="left-tail"></span>
           <span class="right-tail"></span>
