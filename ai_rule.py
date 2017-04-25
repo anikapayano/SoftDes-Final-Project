@@ -45,7 +45,7 @@ class AIRule(object):
             Given list of units on team, returns direction for movement of each
             units
             """
-
+        
         for unit in self.units: # Orders for all units
 
             # Weights based on enemy flag position
