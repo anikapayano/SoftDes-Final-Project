@@ -21,10 +21,12 @@ class AIRule(object):
             """
         self.team = team
         self.weights = weights
-        self.input_ratio = [4, 2, 2]  # teeny, big, speedy
+        self.input_ratio = np.array([4, 2, 2])  # teeny, big, speedy
         self.desired_ratio = []
+        self.convert = 10
         for unit_type in self.input_ratio:
             self.desired.ratio.append(unit_type/sum(self.input_ratio))
+        self.desired_ratio = np.array(self.desired_ratio)
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -34,7 +36,7 @@ class AIRule(object):
         self.units = [unit for unit in self.all_units if unit.team == self.team]
         self.other_units = [unit for unit in self.all_units if unit.team != self.team]
 
-        self.flag = [flag for flag in flags if flag.team != self.team]
+         f1 + f2 + f3 + f4self.flag = [flag for flag in flags if flag.team != self.team]
         self.flag = self.flag[0]
         self.other_flag = [flag for flag in flags if flag.team == self.team]
         self.other_flag = self.other_flag[0]
@@ -48,12 +50,28 @@ class AIRule(object):
         speedies = [unit for unit in self.units if unit.species == 'speedie']
         heavies = [unit for unit in self.units if unit.species == 'heavie']
         n = len(self.units)
-        self.ratio = [len(teenies)/n, len(speedies)/n, len(heavies)/n]
+        self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
+
+    def base_command(self):
+        """ DOCSTRING:
+            Returns unit type for base to generate
+            """
+        ratio_diff = self.desired_ratio - self.ratio
+        unit_index = np.argmax(ratio_diff)
+        if unit_index == 0:
+            if self.team == 1: return '1'
+            else: return 'q'
+        elif unit_index == 1:
+            if self.team == 1: return '2'
+            else: return 'w'
+        else:
+            if self.team == 1: return '3'
+            else: return 'e'
+
 
     def unit_command(self):
         """ DOCSTRING:
-            Given list of units on team, returns direction for movement of each
-            units
+            Returns direction for movement of each unit on team
             """
 
         for unit in self.units: # Orders for all units
@@ -65,40 +83,18 @@ class AIRule(object):
                     else: # Other units follow flag unit
                         dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
             elif unit.mission == 'defend': # If unit is defending
+                pass
             elif unit.mission == 'return': # If unit is returning
                 f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
                 for enemy in self.other_units:
-                    f2 += self.get_direction(self.enemy.pos,unit.pos,False)
-
-
-
-            # Weights based on enemy flag position
-            if (self.flag.pickedup == True): # If flag is obtained
-                if unit == self.flag.unit: # Flag unit returns to base
-                    dir_1 = self.get_direction(self.base.pos,unit.pos,True)
-                else: # Other units follow flag unit
-                    dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
-            else: # All units go for flag
-                dir_1 = self.get_direction(self.flag.pos,unit.pos,True)
-
-            # Weights based on team flag position
-            dir_2 = self.get_direction([0,0],[0,0])
-            for other_unit in self.other_units:
-                distance = np.linalg.norm(self.get_direction(other_unit.pos,self.other_flag.pos))
-                if distance < 300:
-                    if self.other_flag.unit != None:
-                        dir_2 = self.get_direction(self.other_flag.unit.pos,unit.pos,True)
-                    else:
-                        dir_2 = self.get_direction(self.other_flag.pos,unit.pos,True)
-
-                    break
-
+                    f2 += self.convert/self.get_distance(self.enemy.pos,unit.pos) * self.get_direction(self.enemy.pos,unit.pos,False)
 
             # Adds all force vectors; calculates movement vector
-            direction = f1 + f2 + f3 + f4
+            direction = f1 + f2
 
             # Moves unit
             unit.move_direction(direction[0],direction[1])
+
 
     def get_direction(self,pt1,pt2,norm=False):
         """ DOCSTRING:
@@ -109,9 +105,12 @@ class AIRule(object):
         mag = np.linalg.norm(direction)
         if norm and mag > 0: direction = direction/mag # normalize
         return direction
+
+
     def get_distance(self,pt1,pt2):
         """ DOCSTRING:
             Given two points, returns distance btw pts
             """
 
-        direction = np.array([])
+        direction = np.array([pt1[0]-pt2[0],pt1[1]-pt2[1]]) # Build vector
+        return np.linalg.norm(direction)

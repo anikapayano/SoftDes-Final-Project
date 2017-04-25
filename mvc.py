@@ -148,12 +148,16 @@ class Controller(object):
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
 
-
     def updates(self, tick):
+        """ DOCSTRING:
+            Given current game tick, calls all update functions; returns info
+            from updating base
+            """
         self.update_flags()
-        self.update_base(tick)
+        infolist = self.update_base(tick)
         self.check_collisions(tick)
         self.update_units()
+        return infolist
 
     def update_unit_type(self, key):
         """ DOCSTRING:
@@ -165,14 +169,21 @@ class Controller(object):
             self.model.base_list[1].update_unit(key)
 
     def update_base(self, tick):
+        """ DOCSTRING:
+            Given current game tick, updates base tick; adds new unit to unit
+            model list, if applicable; returns True if unit was made, False
+            otherwise
+            """
         # Tells base class to update their personal timecounters
+        infolist = [] # List to return state info
         for base in self.model.base_list:
             units = self.model.unit_list
             unit = base.update(tick, units)
             if unit is False:
-                pass
+                infolist.append[base.team,True]
             else:
                 self.model.unit_list.append(unit)
+                infolist.append[base.team,False]
 
     def update_flags(self):
         # moves flag. (flag is already picked up)
@@ -208,9 +219,9 @@ class Controller(object):
                     unit.attack(sec_unit, tick)  # initiates attack
 
     def check_unit_bumps(self, unit):
-#        for sec_unit in self.model.unit_list:
-#            if pygame.sprite.collide_rect(unit, sec_unit):
-#                    unit.rect.right = sec_unit.rect.left
+        # for sec_unit in self.model.unit_list:
+        #     if pygame.sprite.collide_rect(unit, sec_unit):
+        #        unit.rect.right = sec_unit.rect.left
 
         """Optional! checks if unit is bumping into any other units"""
         pass
@@ -229,7 +240,6 @@ class Controller(object):
             if flag.is_selected is False and unit.team != flag.team and flag.pickedup is False:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
-
 
     def check_map_bump(self, unit):
         """checks if unit is trying to go off the screen and
