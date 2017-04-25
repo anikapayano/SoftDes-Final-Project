@@ -20,7 +20,7 @@ class AIRule(object):
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = team
-        self.weights = weights
+        self.Weights = weights #TODO reshape from single list
         self.input_ratio = [4, 2, 2]  # teeny, big, speedy
         self.desired_ratio = []
         for unit_type in self.input_ratio:
