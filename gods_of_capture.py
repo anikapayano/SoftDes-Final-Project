@@ -18,24 +18,28 @@ class CaptureGame(object):
     """Class that defines a game of capture the flag.
        Creates instancese of other important classes,
        Uses Model View Controller Architecture"""
-    def __init__(self, ai1):
+    def __init__(self, ai1, evolution=False):
         pygame.init()                   # initialize pygame
-
-        # Initializes screen and places background on it
-        self.screen_size = [1840, 920]  # size of screen
-        self.screen_sprite = pygame.image.load("sprites/background.png")
-        self.screen = pygame.display.set_mode(self.screen_size)
-        self.screen.blit(self.screen_sprite, (0, 0))
-        pygame.display.update()
-
+        self.evolution = evolution
+        
+        self.screen_size = [1840, 920]
         # Initialize MVC classes
 
         self.model = mvc.Model(self.screen_size)
-
-
         self.model.set_up(1)
+        
+        # Initializes screen and places background on it
+          # size of screen
+        #self.screen_sprite = pygame.image.load("sprites/background.png")
+        #self.screen = pygame.display.set_mode(self.screen_size)
+        #self.screen.blit(self.screen_sprite, (0, 0))
+        #pygame.display.update()
 
-        self.view = mvc.View(self.model, self.screen, self.screen_sprite)
+        #self.view = mvc.View(self.model, self.screen, self.screen_sprite)
+
+        
+
+        
 
         self.control = mvc.Controller(self.model)
 
@@ -48,9 +52,6 @@ class CaptureGame(object):
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
-
-        #attribute to indicate that this version of the game is for evolving
-        self.evolving = True
 
 
     def run(self):
@@ -90,8 +91,8 @@ class CaptureGame(object):
             self.ai2.unit_command()
 
             # AI Input WILL Go here
-            self.view.draw_all()
-            pygame.display.update()
+            #self.view.draw_all()
+            #pygame.display.update()
 
             self.control.updates(self.tick)
             self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
@@ -105,15 +106,18 @@ class CaptureGame(object):
                     self.ai1.evaluate_state(True)
                 elif check_win[1] == 2:
                     self.ai2.evaluate_state(True)
+                self.ai1.end_game()
+                self.ai2.end_game()
                 
 
-        if self.evolving == False:
+        if self.evolution == False:
             while self.winning:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
                         self.winning = False
-        if self.evolving == True:
+        if self.evolution == True:
             self.winning = False
+            
 
 
 

@@ -66,11 +66,11 @@ def evaluate_ai(ai):
 	'''
 	Given an AI, returns the fitness of it
 	'''
-	game = gods.CaptureGame(ai)
+	game = gods.CaptureGame(ai, True)
 	game.run()
 	ai_team = ai.team
 	current_state = ai.evaluate_state()
-	print(current_state)
+	#print(current_state)
 	return(current_state)
 
 def mutate(ai, probs_weights = 0.05):
@@ -83,7 +83,7 @@ def mutate(ai, probs_weights = 0.05):
 	#idk if we need this if statement yet, but i'll leave it
 	# commented in case we do
 	#if random.random() < probs_weights:
-
+	
 	# choose a random index in ai.weights
 	i = random.randint(0, len(ai.weights)-1)
 	# choose a random number between 0 and 10 to replace
@@ -92,17 +92,27 @@ def mutate(ai, probs_weights = 0.05):
 	char = float(char/10)
 	# insert the new weight at the ith index
 	ai.weights.insert(i, char)
-
 	# return ai in a length 1 tuple (required by DEAP)
-	return(ai.weights, )
+	return(AI.AIRule(1, ai.weights), )
 
 def mate(ai1, ai2):
 	'''
 	simulate mating between two individuals
 	might be able to use DEAP stuff
 	'''
+	
+	toolbox = base.Toolbox()
 	# this seems to do something with mating...
-	toolbox.mate(ai1.weights, ai2.weights)
+	i = 0
+	while i < len(ai1.weights):
+		if random.randint(0,1) == 0:
+			new2_weight = ai1.weights[i] 
+			new1_weight = ai2.weights[i]
+			ai2.weights[i] = new2_weight
+			ai1.weights[i] = new1_weight
+		i += 1
+	#toolbox.mate(ai1.weights, ai2.weights)
+	return(ai1, ai2)
 	# delete the current fitness values associated with the parents 
 
 
@@ -114,21 +124,21 @@ def get_toolbox():
 	toolbox = base.Toolbox()
 
 	# CREATE POLULATION TO BE EVOLVED
-
+	
 	# create individual (using the AIRule object for an individual we created outselves)
 	toolbox.register("individual", AI.AIRule)
-
 	# create a polution
 	toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
 	# initialize genetic operators
 	# evaluate using fit function
 	toolbox.register("evaluate", evaluate_ai)
 	# mate using two point crossover
 	# TODO: figure out how this works/how we can mate AIRule.weights specifically
-	toolbox.register("mate", tools.cxTwoPoint)
+	toolbox.register("mate", mate)
+	
 	# mutate function written above (insertion only)
 	toolbox.register("mutate", mutate)
+	
 	# selection method, tournsize: number of individuals participlatingin each
 	# tournament
 	toolbox.register("select", tools.selTournament, tournsize=3)
@@ -147,7 +157,7 @@ def evolve_ai():
 	toolbox = get_toolbox()
 
 	# create a population or random ai objects
-	pop = toolbox.population(n=2)
+	pop = toolbox.population(n=10)
 
 	# Collect statistics as the EA runs
 	stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -155,16 +165,15 @@ def evolve_ai():
 	stats.register("std", numpy.std)
 	stats.register("min", numpy.min)
 	stats.register("max", numpy.max)
-	print(stats)
 	# run evolutionary algorithm
 	pop, log = algorithms.eaSimple(pop,
 								   toolbox,
-								   cxpb=0.5,  # Prob. of crossover (mating)
-								   mutpb=0.2, # Prob of mutation
-								   ngen=5,	  # number of generations to run
+								   cxpb=1,  # Prob. of crossover (mating)
+								   mutpb=1, # Prob of mutation
+								   ngen=100,	  # number of generations to run
 								   stats=stats)
 
-	print(stats)
+	#print(stats)
 	return pop, log
 
 

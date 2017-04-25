@@ -248,7 +248,7 @@ class Base(object):
         """DOCSTRING
             given pressed key, changes currently spawning unit type based on
             which key is pressed"""
-        print(key)
+        #print(key)
         if key == '1' or key =='q':
             self.unit_type = 0
             print("MSG: Unit type changed to Teenie on base " + str(self.team))
@@ -267,7 +267,7 @@ class Base(object):
         maxiters = 7
         if self.unit_type == 0:
             new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
-            print(new_unit.pos)
+            #print(new_unit.pos)
             if self.team  == 1:
                 spawnpos = random.choice(self.bluepositions)
                 i = 0

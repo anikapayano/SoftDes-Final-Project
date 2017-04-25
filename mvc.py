@@ -133,7 +133,7 @@ class Controller(object):
                     return
                 else:
                     if not any(unit.team != u.team for u in self.selected_obj):
-                        print(unit.team for u in self.selected_obj)
+                        #print(unit.team for u in self.selected_obj)
                         unit.select()
                         self.selected_obj.append(unit)
                         return
@@ -191,7 +191,7 @@ class Controller(object):
                         flag.pickedup = False
                         flag.unit = None
                 self.model.unit_list.remove(unit)
-                print('death takes us all')
+                #print('death takes us all')
                 try:
                     self.selected_obj.remove(unit)
                 except:
@@ -250,7 +250,7 @@ class Controller(object):
 
                 if flag.unit != None:
                     if pygame.sprite.collide_rect(flag.unit, base) and base.team == flag.unit.team:
-                        print('MSG: Team ' + str(base.team) + ' is the winner!')
+                        #print('MSG: Team ' + str(base.team) + ' is the winner!')
                         return (True, base.team)
 
         return (False,)

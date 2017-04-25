@@ -53,6 +53,15 @@ class AIRule(object):
 
         #self.fitness()
 
+    def end_game(self):
+        self.all_units = None
+        self.units = None
+        self.other_units = None
+        self.flag = None
+        self.other_flag = None
+        self.base = None
+        self.other_base = None
+
     def unit_command(self):
         """ DOCSTRING:
             Given list of units on team, returns direction for movement of each
