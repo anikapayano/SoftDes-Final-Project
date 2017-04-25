@@ -20,8 +20,9 @@ class AIRule(object):
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = team
-        self.weights = weights
-        self.input_ratio = np.array([4, 2, 2])  # teeny, big, speedy
+        self.Weights = weights #TODO reshape from single list
+        self.input_ratio = [4, 2, 2]  # teeny, big, speedy
+
         self.desired_ratio = []
         self.convert = 10
         for unit_type in self.input_ratio:
@@ -74,7 +75,7 @@ class AIRule(object):
             Returns direction for movement of each unit on team
             """
 
-        for unit in self.units: # Orders for all units
+        for unit in self.units:  # Orders for all units
 
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
@@ -82,9 +83,17 @@ class AIRule(object):
                         dir_1 = self.get_direction(self.base.pos,unit.pos,True)
                     else: # Other units follow flag unit
                         dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
-            elif unit.mission == 'defend': # If unit is defending
-                pass
-            elif unit.mission == 'return': # If unit is returning
+
+            elif unit.mission == 'defend':  # If unit is defending
+                dir_destination = self.get_direction(self.flag, unit.pos, True)
+                force_list = []
+                for other_unit in self.other_units:
+                    other_unit_dir = get_direction(other_unit.pos, unit.pos)  # straight line between units
+                    predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                    force_hat = np.linalg.norm(predict_dir)
+                    unit_weight = self.get_weight(unit, other_unit)
+
+            elif unit.mission == 'return':  # If unit is returning
                 f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
                 for enemy in self.other_units:
                     f2 += self.convert/self.get_distance(self.enemy.pos,unit.pos) * self.get_direction(self.enemy.pos,unit.pos,False)
@@ -93,7 +102,10 @@ class AIRule(object):
             direction = f1 + f2
 
             # Moves unit
-            unit.move_direction(direction[0],direction[1])
+            unit.move_direction(direction[0], direction[1])
+
+                unit.directioin = direction
+
 
 
     def get_direction(self,pt1,pt2,norm=False):
@@ -106,6 +118,31 @@ class AIRule(object):
         if norm and mag > 0: direction = direction/mag # normalize
         return direction
 
+    def get_weight(self, unit, other_unit):
+        """ DOCSTRING:
+            Given a unit opposing unit and mission, returns the coreect weight to
+            give the unit force.
+            """
+        i = None    # our unit type index
+        j = None    # other unit index
+        if unit.species == 'teenie':
+            i = 0
+        elif unit.species == 'speedie':
+            i = 1
+        elif unit.species == 'heavie':
+            i = 2
+
+        if other_unit.species == 'teenie':
+            j = 0
+        elif other_unit.species == 'speedie':
+            j = 1
+        elif other_unit.species == 'heavie':
+            j = 2
+
+        if unit.mission == 'attack':
+            return Weights[1][j][i]
+        elif unit.mission == 'defend':
+            return Weights[2][j][i]
 
     def get_distance(self,pt1,pt2):
         """ DOCSTRING:

@@ -44,7 +44,7 @@ class Model(object):
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-110,
-            self.screen_size[1]-110), 2))
+                    self.screen_size[1]-110), 2))
         # Sets up flag positions
         self.flag_list.append(obj.Flag((50, 460), 1))
         self.flag_list.append(obj.Flag((1790, 460), 2))
