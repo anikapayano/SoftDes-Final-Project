@@ -88,13 +88,17 @@ class AIRule(object):
                 f2 = self.get_direction(unit.pos,unit.pos)
 
             elif unit.mission == 'defend':  # If unit is defending
-                dir_destination = self.get_direction(self.flag, unit.pos, True)
                 force_list = []
+                dir_flag = self.get_direction(self.flag, unit.pos, True)
+                f1 = dir_flag*self.Weights[2]
                 for other_unit in self.other_units:
-                    other_unit_dir = get_direction(other_unit.pos, unit.pos)  # straight line between units
+                    other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
                     predict_dir = other_unit_dir + other_unit.direction     # leading the units
                     force_hat = np.linalg.norm(predict_dir)
                     unit_weight = self.get_weight(unit, other_unit)
+                    unit_force = force_hat * unit_weight
+                    force_list.append(unit_force)
+                f2 = np.sum(force_list)
 
             elif unit.mission == 'return':  # If unit is returning
                 f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
