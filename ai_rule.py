@@ -26,7 +26,7 @@ class AIRule(object):
         self.desired_ratio = []
         self.convert = 10
         for unit_type in self.input_ratio:
-            self.desired.ratio.append(unit_type/sum(self.input_ratio))
+            self.desired_ratio.append(unit_type/sum(self.input_ratio))
         self.desired_ratio = np.array(self.desired_ratio)
 
     def update(self, units, flags, bases):
@@ -37,7 +37,7 @@ class AIRule(object):
         self.units = [unit for unit in self.all_units if unit.team == self.team]
         self.other_units = [unit for unit in self.all_units if unit.team != self.team]
 
-         f1 + f2 + f3 + f4self.flag = [flag for flag in flags if flag.team != self.team]
+        self.flag = [flag for flag in flags if flag.team != self.team]
         self.flag = self.flag[0]
         self.other_flag = [flag for flag in flags if flag.team == self.team]
         self.other_flag = self.other_flag[0]
@@ -69,13 +69,14 @@ class AIRule(object):
             if self.team == 1: return '3'
             else: return 'e'
 
-
     def unit_command(self):
         """ DOCSTRING:
             Returns direction for movement of each unit on team
             """
 
         for unit in self.units:  # Orders for all units
+            if unit.mission == None
+                unit.mission == 'attack'
 
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
@@ -103,10 +104,7 @@ class AIRule(object):
 
             # Moves unit
             unit.move_direction(direction[0], direction[1])
-
-                unit.directioin = direction
-
-
+            unit.direction = direction
 
     def get_direction(self,pt1,pt2,norm=False):
         """ DOCSTRING:

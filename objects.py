@@ -62,7 +62,10 @@ class Unit(object):  # TODO Make uninstantiable
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
         self.cooled = 0       # tick at which unit's attack is enabled again
+
+        # Sets movement attributes
         self.direction = None  #storing unit movement for decisions made in the next iteration
+        self.mission = None
 
         # Sets sprite(s)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
