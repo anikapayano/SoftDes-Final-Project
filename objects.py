@@ -230,10 +230,10 @@ class Base(object):
         self.redpositions = []
         for x in range(20, 81, 20):
             for y in range(200, 750, 50):
-                self.redpositions.append((x,y))
+                self.bluepositions.append((x,y))
         for x in range(1750, 1811, 20):
             for y in range(200, 750, 50):
-                self.bluepositions.append((x,y))
+                self.redpositions.append((x,y))
 
     def update(self, tick, units):
         self.cycle_count += 1
