@@ -2,7 +2,6 @@
 
 [Project Website](https://anikapayano.github.io/SoftDes-Final-Project/)
 
-Visit our website
 ## Description:
 Gods of Capture is a 2 vs. 2 capture the flag game built to be played by two
 algorithms (after called AIs) pitted against one another. The objective of each
