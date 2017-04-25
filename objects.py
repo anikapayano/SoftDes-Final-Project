@@ -133,6 +133,7 @@ class Teenie(Unit):
         Unit.__init__(self, position, team, [4, 4, 10, 2, 15, [20,20]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.species = 'teenie'
 
 class Speedie(Unit):
     """ The fast unit in the game"""
@@ -140,6 +141,7 @@ class Speedie(Unit):
         Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [30,30]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.species = 'speedie'
 
 class Heavie(Unit):
     """The strong unit in the game"""
@@ -147,7 +149,7 @@ class Heavie(Unit):
         Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [40,40]])
         self.sprite = pygame.transform.scale(self.sprite, self.size)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
-
+        self.species = 'heavie'
 
 class Flag(object):
     """ DOCSTRING:
