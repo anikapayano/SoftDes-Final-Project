@@ -1,6 +1,6 @@
 # Gods of Capture: Evolved AI play Capture the Flag
 
-[Visit our Website](https://anikapayano.github.io/SoftDes-Final-Project/)
+[Visit our website](https://anikapayano.github.io/SoftDes-Final-Project/)
 
 ## Description:
 Gods of Capture is a 2 vs. 2 capture the flag game built to be played by two
