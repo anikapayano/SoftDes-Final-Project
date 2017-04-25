@@ -21,7 +21,7 @@
   </head>
 
   <body>
-    <a id="User Instructions" href="{{https://github.com/anikapayano/SoftDes-Final-Project/blob/master/README.md}}">View on GitHub</a>
+    <a id="forkme_banner" href="{{ site.github.repository_url }}">View on GitHub</a>
     <div class="shell">
 
       <header>
@@ -34,45 +34,36 @@
           <span class="right-tail"></span>
         </span>
       </header>
-         <section class="page-header">
-      <h1 class="project-name">Gods of Capture</h1>
-      <h2 class="project-tagline"></h2>
-      {% for page in site.pages %}
-        <a href= {{ page.filename }} class="btn">{{ page.title }}</a>
-      {% endfor %}
-      <a href="https://github.com/anikapayano/SoftDes-Final-Project" class="btn">View on GitHub</a>
-    </section>
-
-    <section class="main-content">
       
-      {{ content }}
-
-
-
-      <span class="banner-fix"></span>
-      
-      
-
-      <section id="main_content">
-        {{ content }}
+      <section class="page-header">
+        <h1 class="project-name">Gods of Capture</h1>
+        <h2 class="project-tagline"></h2>
+        {% for page in site.pages %}
+          <a href= {{ page.filename }} class="btn">{{ page.title }}</a>
+        {% endfor %}
+        <a href="https://github.com/anikapayano/SoftDes-Final-Project" class="btn">View on GitHub</a>
       </section>
 
-      <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            {% if site.github.is_project_page %}
-              <p>this project by <a href="{{https://github.com/anikapayano}}">{{anikapayano}}</a> can be found on <a href="{{https://github.com/anikapayano/SoftDes-Final-Project}}">GitHub</a></p>
-            {% endif %}
-            {% if site.github.is_user_page %}
-              <p>Projects by <a href="{{https://github.com/anikapayano}}">{{anikapayano}}</a> can be found on <a href="{{https://github.com/anikapayano/SoftDes-Final-Project}}">GitHub</a></p>
-            {% endif %}
+      <section class="main-content">
+
+        {{ content }}
+
+        <footer>
+          <span class="ribbon-outer">
+            <span class="ribbon-inner">
+              {% if site.github.is_project_page %}
+                <p>this project by <a href="{{https://github.com/anikapayano}}">{{anikapayano}}</a> can be found on <a href="{{https://github.com/anikapayano/SoftDes-Final-Project}}">GitHub</a></p>
+              {% endif %}
+              {% if site.github.is_user_page %}
+                <p>Projects by <a href="{{https://github.com/anikapayano}}">{{anikapayano}}</a> can be found on <a href="{{https://github.com/anikapayano/SoftDes-Final-Project}}">GitHub</a></p>
+              {% endif %}
+            </span>
+            <span class="left-tail"></span>
+            <span class="right-tail"></span>
           </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/pages-themes/merlot">Merlot theme</a>.</p>
-        <span class="octocat"></span>
-      </footer>
+          <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/pages-themes/merlot">Merlot theme</a>.</p>
+          <span class="octocat"></span>
+        </footer>
 
     </div>
 
