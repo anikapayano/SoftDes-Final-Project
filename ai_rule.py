@@ -56,7 +56,7 @@ class AIRule(object):
             units
             """
 
-        for unit in self.units: # Orders for all units
+        for unit in self.units:  # Orders for all units
 
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
@@ -65,7 +65,13 @@ class AIRule(object):
                     else: # Other units follow flag unit
                         dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
             elif unit.mission == 'defend':  # If unit is defending
-                dir_1 = self.get_direction()
+                dir_destination = self.get_direction(self.flag, unit.pos, True)
+                force_list = []
+                for other_unit in self.other_units:
+                    other_unit_dir = get_direction(other_unit.pos, unit.pos)  # straight line between units
+                    predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                    force_hat = np.linalg.norm(predict_dir)
+                    unit_weight =
             elif unit.mission == 'return':  # If unit is returning
                 f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
                 for enemy in self.other_units:
@@ -99,7 +105,7 @@ class AIRule(object):
             direction = f1 + f2 + f3 + f4
 
             # Moves unit
-            unit.move_direction(direction[0],direction[1])
+            unit.move_direction(direction[0], direction[1])
 
                 unit.directioin = direction
 
@@ -113,6 +119,33 @@ class AIRule(object):
         mag = np.linalg.norm(direction)
         if norm and mag > 0: direction = direction/mag # normalize
         return direction
+
+    def get_weight(unit, other_unit, mission):
+        """ DOCSTRING:
+            Given a unit opposing unit and mission, returns the coreect weight to
+            give the unit force.
+            """
+        i = None    # our unit type index
+        j = None    # other unit index
+        if unit.species == 'teenie':
+            i = 0
+        elif unit.species == 'speedie':
+            i = 1
+        elif unit.species == 'heavie':
+            i = 2
+
+        if other_unit.species == 'teenie':
+            j = 0
+        elif other_unit.species == 'speedie':
+            j = 1
+        elif other_unit.species == 'heavie':
+            j = 2
+
+        if mission == 'attack':
+            return Weights[1][j][i]
+        elif mission == 'defend':
+            return Weights[2][j][i]
+
     def get_distance(self,pt1,pt2):
         """ DOCSTRING:
             Given two points, returns distance btw pts

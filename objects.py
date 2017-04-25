@@ -62,6 +62,7 @@ class Unit(object):  # TODO Make uninstantiable
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
         self.cooled = 0       # tick at which unit's attack is enabled again
+        self.direction = None  #storing unit movement for decisions made in the next iteration
 
         # Sets sprite(s)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
@@ -86,10 +87,10 @@ class Unit(object):  # TODO Make uninstantiable
 
         # Moves unit onto screen if not on screen
         x, y = self.pos
-        if x > screen_size[0]: x = screen_size[0] # If off right
-        elif x < 0: x = 0 # If off left
-        if y > screen_size[1]: y = screen_size[1] # If off bottom
-        elif y < 0: y = 0 # If off top
+        if x > screen_size[0]: x = screen_size[0]  # If off right
+        elif x < 0: x = 0  # If off left
+        if y > screen_size[1]: y = screen_size[1]  # If off bottom
+        elif y < 0: y = 0  # If off top
         self.pos = x, y
 
         try:
