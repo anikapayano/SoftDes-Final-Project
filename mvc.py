@@ -180,10 +180,10 @@ class Controller(object):
             units = self.model.unit_list
             unit = base.update(tick, units)
             if unit is False:
-                infolist.append[base.team,True]
+                infolist.append([base.team,True])
             else:
                 self.model.unit_list.append(unit)
-                infolist.append[base.team,False]
+                infolist.append([base.team,False])
 
     def update_flags(self):
         # moves flag. (flag is already picked up)

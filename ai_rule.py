@@ -75,15 +75,18 @@ class AIRule(object):
             """
 
         for unit in self.units:  # Orders for all units
-            if unit.mission == None
-                unit.mission == 'attack'
-
+            if unit.mission == None:
+                unit.mission = 'attack'
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
-                        dir_1 = self.get_direction(self.base.pos,unit.pos,True)
+                        f1 = self.get_direction(self.base.pos,unit.pos,True)
                     else: # Other units follow flag unit
-                        dir_1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
+                        f1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
+                else:
+                    f1 = self.get_direction(self.flag.pos,unit.pos,True)
+                f2 = self.get_direction(unit.pos,unit.pos)
+                print(f1,f2)
 
             elif unit.mission == 'defend':  # If unit is defending
                 dir_destination = self.get_direction(self.flag, unit.pos, True)
