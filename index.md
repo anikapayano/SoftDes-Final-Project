@@ -1,7 +1,7 @@
 ---
 title: User Instructions
 layout: template
-filename: Index
+filename: index
 ---
 
 Information to help users download, install, and get started running your software 
