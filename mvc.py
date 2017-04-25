@@ -92,7 +92,6 @@ class View(object):
             self.draw(flag)
         pygame.display.update()
 
-
 class Controller(object):
     """ DOCSTRING:
         Holds functions for manipulating model
@@ -168,7 +167,8 @@ class Controller(object):
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-            unit = base.update(tick)
+            units = self.model.unit_list
+            unit = base.update(tick, units)
             if unit is False:
                 pass
             else:
@@ -208,6 +208,10 @@ class Controller(object):
                     unit.attack(sec_unit, tick)  # initiates attack
 
     def check_unit_bumps(self, unit):
+#        for sec_unit in self.model.unit_list:
+#            if pygame.sprite.collide_rect(unit, sec_unit):
+#                    unit.rect.right = sec_unit.rect.left
+
         """Optional! checks if unit is bumping into any other units"""
         pass
 
