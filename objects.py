@@ -154,10 +154,9 @@ class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [3, 10, 15, 2, 30, [50,50]])
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit2.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit2.png")
+        self.sprite_l = pygame.image.load("sprites/unit_2_"+str(team)+"_l.png")
+        self.sprite_r = pygame.image.load("sprites/unit_2_"+str(team)+"_r.png")
+        self.sprite = self.sprite_l
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.species = 'speedie'
 

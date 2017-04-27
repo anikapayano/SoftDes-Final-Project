@@ -124,7 +124,7 @@ class AIRule(object):
 
     def get_weight(self, unit, other_unit):
         """ DOCSTRING:
-            Given a unit opposing unit and mission, returns the coreect weight to
+            Given a unit opposing unit and mission, returns the correct weight to
             give the unit force.
             """
         i = None    # our unit type index
