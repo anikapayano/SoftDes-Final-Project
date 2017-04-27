@@ -1,8 +1,8 @@
-""" DOCSTRING
-If-tree based Artificial Intelligence designed to play capture the flag
+""" DOCSTRING:
+    If-tree based Artificial Intelligence designed to play capture the flag
 
-@author Connor Novak
-         """
+    @author Connor Novak, Colvin Chapman
+    """
 import pygame
 import numpy as np
 import unittest

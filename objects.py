@@ -51,7 +51,8 @@ class Unit(object):  # TODO Make uninstantiable
         # Sets movement attributes
         self.pos = x, y = position
         self.goal_pos = [None,None]
-        self.direction = None
+        self.direction = None  #storing unit movement for decisions made in the next iteration
+        self.mission = None
 
         self.team = team
         self.is_selected = False
@@ -66,12 +67,11 @@ class Unit(object):  # TODO Make uninstantiable
         self.radius = float(stats[5][1]/2)
         self.cooled = 0       # tick at which unit's attack is enabled again
 
-        # Sets movement attributes
-        self.direction = None  #storing unit movement for decisions made in the next iteration
-        self.mission = None
 
         # Sets sprite(s) (sprites filled in by sub-classes)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
+        self.sprite_l = None
+        self.sprite_r = None
         self.sprite = None
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
@@ -103,6 +103,11 @@ class Unit(object):  # TODO Make uninstantiable
             print(self.team, self.health, self.pos)
 
         # Updates sprite to move left or right
+        try:
+            if self.direction[0] < 0:self.sprite = self.sprite_l
+            else: self.sprite = self.sprite_r
+        except:
+            self.sprite = self.sprite_l
 
     def select(self):
         """DOCSTRING:
@@ -127,6 +132,7 @@ class Unit(object):  # TODO Make uninstantiable
             x = x + (x_d*self.speed)/mag
             y = y + (y_d*self.speed)/mag
         self.pos = x, y
+        self.direction = [x_d, y_d]
 
     def attack(self, unit, tick):
         if tick > self.cooled:
