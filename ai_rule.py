@@ -15,7 +15,7 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team,weights=[1,0.8,1,1,1]):
+    def __init__(self,team,weights=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]):
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
@@ -76,7 +76,7 @@ class AIRule(object):
 
         for unit in self.units:  # Orders for all units
             if unit.mission == None:
-                unit.mission = 'attack'
+                unit.mission = get_mission(self.Weights[23])
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
@@ -112,6 +112,7 @@ class AIRule(object):
             unit.move_direction(direction[0], direction[1])
             unit.direction = direction
 
+    def get_mission(self,weights)
     def get_direction(self,pt1,pt2,norm=False):
         """ DOCSTRING:
             Given two points, returns normalized vector from pt1 towards pt2
