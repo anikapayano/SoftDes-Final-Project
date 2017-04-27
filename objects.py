@@ -268,13 +268,13 @@ class Base(object):
             Checks unit type to spawn, creates new unit of current type
             close to self, then passes message if verbose is true (TODO)
             """
-        maxiters = 7
-        if self.unit_type == 0:
+        maxiters = 7 # Max # of times to check spawn positions before giving up
+        if self.unit_type == 0: # If teenie
             new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
-            if self.team  == 1:
+            if self.team == 1:
                 spawnpos = random.choice(self.bluepositions)
                 i = 0
-                while i < maxiters:
+                while i < maxiters: # Checks spawnpos for other unit
                     newpos = False
                     for unit in units:
                         if unit.rect.collidepoint(spawnpos):
