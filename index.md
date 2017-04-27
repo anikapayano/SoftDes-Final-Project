@@ -1,23 +1,29 @@
 ---
-title: User Instructions
+title: Gods of Capture
 layout: template
 filename: index
 ---
 
-# Getting Started:
-## How to Run Gods of Capture on your Computer
-1. Download code
-To get the source code for the Gods of Capture project, go to (the project
-  github)[https://github.com/anikapayano/SoftDes-Final-Project] and switch to
-  the release branch, then download all of the files.
-2. Install libraries
-The Gods of Capture project uses several other python libraries. To install
-  these libraries, navigate to the main folder of the project and run
-  `pip install -r requirements.txt`. This command will install the DEAP, pygame,
-  and numpy libraries.
-3. Run the project
-The file containing the run file is `gods_of_capture.py`. To run the file, enter
-the following command in the Terminal:
-`python3 gods_of_capture.py` This command will start the simulation.
-4. Change parameters
-TODO: document how to mess with parameters, interface with game
+# Gods of Capture
+### The Class
+Gods of Capture is a final class project for a semester-long course at Olin
+College of Engineering titled "Software Design". The course gives an
+introduction to designing, writing, debugging, and optimizing code, as well as
+a number of toolboxes designed to allow students to tailor their experience and
+assignments to fit what skills they want to get out of the course.
+### The Project
+Gods of Capture is a 5-person project created in 4 weeks, loosely based upon the
+[Evolutionary Algorithms toolbox](https://sd17spring.github.io//toolboxes/evolutionary-algorithms/)
+and the [AI and Algorithms toolbox](https://sd17spring.github.io//toolboxes/algorithms-and-ai/)
+ found on the (SoftDes website)[https://sd17spring.github.io//]. We chose this
+ project because we wanted to learn more about Artificial Intelligence, and we
+ thought that if we built the mechanics behind the game, we'd fully understand
+ how the AI would interact with the game. We then decided that we wanted to
+ build AIs based on play styles, and decided to see if we could evolve AIs to
+ use certain strategies using an evolutionary algorithm that mimics the natural
+ process of evolution.
+### The Result
+Gods of Capture's final representation is a capture the flag game with simple
+blob sprites attempting to capture the opponent's flag and return it to their
+base. Both sides are controlled by a separate AI, and one AI is played off
+against the other, then evolved based on it's performance.  
