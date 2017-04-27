@@ -102,6 +102,8 @@ class Unit(object):  # TODO Make uninstantiable
         except TypeError:
             print(self.team, self.health, self.pos)
 
+        # Updates sprite to move left or right
+
     def select(self):
         """DOCSTRING:
             flips selection state of unit and changes sprite
@@ -136,10 +138,9 @@ class Teenie(Unit):
     """ The base unit in the game"""
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [4, 4, 10, 2, 15, [30,30]])
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit1.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit1.png")
+        self.sprite_l = pygame.image.load("sprites/unit_1_"+str(team)+"_l.png")
+        self.sprite_r = pygame.image.load("sprites/unit_1_"+str(team)+"_r.png")
+        self.sprite = self.sprite_l
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.species = 'teenie'
 
