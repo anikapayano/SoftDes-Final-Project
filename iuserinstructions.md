@@ -1,7 +1,7 @@
 ---
 title: User Instructions
 layout: template
-filename: i_userinstructions
+filename: iuserinstructions
 ---
 
 # Getting Started:
