@@ -13,8 +13,8 @@ a number of toolboxes designed to allow students to tailor their experience and
 assignments to fit what skills they want to get out of the course.
 ### The Project
 Gods of Capture is a 5-person project created in 4 weeks, loosely based upon the
-(Evolutionary Algorithms toolbox)[https://sd17spring.github.io//toolboxes/evolutionary-algorithms/]
-and the (AI and Algorithms toolbox)[https://sd17spring.github.io//toolboxes/algorithms-and-ai/]
+[Evolutionary Algorithms toolbox](https://sd17spring.github.io//toolboxes/evolutionary-algorithms/)
+and the [AI and Algorithms toolbox](https://sd17spring.github.io//toolboxes/algorithms-and-ai/)
  found on the (SoftDes website)[https://sd17spring.github.io//]. We chose this
  project because we wanted to learn more about Artificial Intelligence, and we
  thought that if we built the mechanics behind the game, we'd fully understand
