@@ -15,14 +15,21 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team,weights=[1,0.8,1,1,1]):
+    def __init__(self, team, weights=[.5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
+                                      .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
+                                      .5, 0.8, .5, .5]): #24 weights
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = team
-        self.Weights = weights #TODO reshape from single list
-        self.input_ratio = [4, 2, 2]  # teeny, big, speedy
-
+        self.attack_weights = [weights[0:3], weights[3:6], weights[6:9]]
+        self.defend_weights = [weights[9:12], weights[12:15], weights[15:18]]
+        self.flag_weights = weights[18:20]
+        self.attack_ratio = weights[20]
+        produce_ratio = weights[21:24]
+        s = sum(produce_ratio)
+        self.input_ratio = [produce_ratio[0]/s, produce_ratio[1]/s,
+                            produce_ratio[2]/s]  # teeny, big, speedy
         self.desired_ratio = []
         self.convert = 10
         for unit_type in self.input_ratio:
@@ -82,7 +89,7 @@ class AIRule(object):
                     if unit == self.flag.unit: # Flag unit returns to base
                         f1 = self.get_direction(self.base.pos,unit.pos,True)
                     else: # Other units follow flag unit
-                        f1 = self.get_direction(self.flag.unit.pos,unit.pos,True)
+                        f1 = (self.get_direction(self.flag.unit.pos,unit.pos,True) + self.flag.unit.direction)
                 else:
                     f1 = self.get_direction(self.flag.pos,unit.pos,True)
                 f2 = self.get_direction(unit.pos,unit.pos)
@@ -144,9 +151,9 @@ class AIRule(object):
             j = 2
 
         if unit.mission == 'attack':
-            return Weights[1][j][i]
+            return self.attack_weights[j][i]
         elif unit.mission == 'defend':
-            return Weights[2][j][i]
+            return self.defend_weights[j][i]
 
     def get_distance(self,pt1,pt2):
         """ DOCSTRING:
