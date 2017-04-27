@@ -32,6 +32,12 @@ class AIRule(object):
         self.weights = weights
         self.fitness = FitnessMaxSingle()
         self.state_evaluation = (0,)
+        self.all_units = []
+        self.all_other_units = []
+        self.loss = 0
+        self.other_loss = 0
+        self.previous_units = []
+        self.other_previous_units = []
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -51,7 +57,7 @@ class AIRule(object):
         self.other_base = [base for base in bases if base.team != self.team]
         self.other_base = self.other_base[0]
 
-        #self.fitness()
+        self.evaluate_during_game()
 
     def end_game(self):
         self.all_units = None
@@ -61,6 +67,8 @@ class AIRule(object):
         self.other_flag = None
         self.base = None
         self.other_base = None
+        self.previous_units = []
+        self.other_previous_units = []
 
     def unit_command(self):
         """ DOCSTRING:
@@ -107,14 +115,43 @@ class AIRule(object):
         if norm and mag > 0: direction = direction/mag # normalize
         return direction
 
+    def evaluate_during_game(self):
+        if len(self.previous_units) > len(self.units):
+            self.loss += len(self.previous_units) - len(self.units)
+        elif len(self.other_previous_units) > len(self.other_units):
+            self.other_loss += len(self.other_previous_units) - len(self.other_units)
+
+        self.previous_units = self.units
+        self.other_previous_units = self.other_units
 
     def evaluate_state(self, winning=False):
-        
+        lst = list(self.state_evaluation)
+
+        #final_total_own = len(self.units)
+        #final_total_rival = len(self.other_units)
+        won = 0
         if winning==True:
-            lst = list(self.state_evaluation)
-            lst[0] = 1
-            self.state_evaluation = tuple(lst)
+            won = 1
+
+        #lst[0] = won*50-self.loss*5+self.other_loss*5
+        if self.other_loss == 0:
+            self.other_loss = 1
+        lst[0] = float(won*50-float(self.loss/self.other_loss)*10)
+        self.state_evaluation = tuple(lst)
 
         return(self.state_evaluation)
 
+    def final_state(self, ai_state):
+        self.state_evaluation = ai_state
+        return(self.state_evaluation)
 
+
+
+'''
+for unit in self.unit:
+                if (unit not in self.all_units) and (unit not in self.all_other_units):
+                    if unit.team == self.team:
+                        self.all_units.append(unit)
+                    else:
+                        self.all_other_units(unit)
+'''

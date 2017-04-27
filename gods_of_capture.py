@@ -99,15 +99,26 @@ class CaptureGame(object):
             self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
             check_win = self.control.check_win()
-            if check_win[0] is True:
+            print(self.tick)
+            if check_win[0] is True or self.tick >= 10000:
                 self.running = False
                 self.winning = True
+                if check_win[0] is False:
+                    check_win = [0,0]
                 if check_win[1] == 1:
-                    self.ai1.evaluate_state(True)
+                    ai1_state = self.ai1.evaluate_state(True)
+                    ai2_state = self.ai2.evaluate_state()
                 elif check_win[1] == 2:
-                    self.ai2.evaluate_state(True)
+                    ai2_state = self.ai2.evaluate_state(True)
+                    ai1_state = self.ai2.evaluate_state()
+                else:
+                    ai2_state = self.ai2.evaluate_state()
+                    ai1_state = self.ai2.evaluate_state()
                 self.ai1.end_game()
                 self.ai2.end_game()
+                print('game ended')
+                self.ai1.final_state(ai1_state)
+                self.ai2.final_state(ai2_state)
                 
 
         if self.evolution == False:

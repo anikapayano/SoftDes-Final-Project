@@ -191,7 +191,7 @@ class Controller(object):
                         flag.pickedup = False
                         flag.unit = None
                 self.model.unit_list.remove(unit)
-                #print('death takes us all')
+                #print('death takes us all: ' + str(unit.team))
                 try:
                     self.selected_obj.remove(unit)
                 except:
