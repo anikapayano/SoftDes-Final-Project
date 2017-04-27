@@ -22,5 +22,8 @@ and the (AI and Algorithms toolbox)[https://sd17spring.github.io//toolboxes/algo
  build AIs based on play styles, and decided to see if we could evolve AIs to
  use certain strategies using an evolutionary algorithm that mimics the natural
  process of evolution.
- ### The Result
- 
+### The Result
+Gods of Capture's final representation is a capture the flag game with simple
+blob sprites attempting to capture the opponent's flag and return it to their
+base. Both sides are controlled by a separate AI, and one AI is played off
+against the other, then evolved based on it's performance.  
