@@ -15,7 +15,7 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team,weights=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]):
+    def __init__(self,team,weights): # 25 weights
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
@@ -76,7 +76,7 @@ class AIRule(object):
 
         for unit in self.units:  # Orders for all units
             if unit.mission == None:
-                unit.mission = get_mission(self.Weights[23])
+                unit.mission = self.get_mission(self.Weights[23],self.units)
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
@@ -89,7 +89,7 @@ class AIRule(object):
 
             elif unit.mission == 'defend':  # If unit is defending
                 force_list = []
-                dir_flag = self.get_direction(self.flag, unit.pos, True)
+                dir_flag = self.get_direction(self.flag.pos, unit.pos, True)
                 f1 = dir_flag*self.Weights[2]
                 for other_unit in self.other_units:
                     other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
@@ -112,7 +112,23 @@ class AIRule(object):
             unit.move_direction(direction[0], direction[1])
             unit.direction = direction
 
-    def get_mission(self,weights)
+    def get_mission(self,weight, units):
+        """ DOCSTRING:
+            Given weight representing ratio of missions & list of units, returns
+            mission for new unit
+            """
+        ratio = abs(weight)
+        att_units = len([unit for unit in units if unit.mission == 'attack'])
+        def_units = len([unit for unit in units if unit.mission == 'defend'])
+        if def_units == 0: curr_ratio = 1
+        else: curr_ratio = att_units/def_units
+        print(ratio, curr_ratio)
+        if def_units == 0: new_ratio_1 = 1
+        else: new_ratio_1 = (att_units+1)/def_units
+        new_ratio_2 = att_units/(def_units + 1)
+        if abs(ratio - new_ratio_1) < abs(ratio - new_ratio_2): return 'attack'
+        else: return 'defend'
+
     def get_direction(self,pt1,pt2,norm=False):
         """ DOCSTRING:
             Given two points, returns normalized vector from pt1 towards pt2
@@ -143,11 +159,11 @@ class AIRule(object):
             j = 1
         elif other_unit.species == 'heavie':
             j = 2
-
+        print(selfself.Weights)
         if unit.mission == 'attack':
-            return Weights[1][j][i]
+            return self.Weights[1][j][i]
         elif unit.mission == 'defend':
-            return Weights[2][j][i]
+            return self.Weights[2][j][i]
 
     def get_distance(self,pt1,pt2):
         """ DOCSTRING:
