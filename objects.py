@@ -48,8 +48,11 @@ class Unit(object):  # TODO Make uninstantiable
             Given pos, team, & stat list, provides init template for more specific
             units such as Teenie, Speedie, & Heavie.
             """
+        # Sets movement attributes
         self.pos = x, y = position
         self.goal_pos = [None,None]
+        self.direction = None
+
         self.team = team
         self.is_selected = False
 
@@ -67,12 +70,9 @@ class Unit(object):  # TODO Make uninstantiable
         self.direction = None  #storing unit movement for decisions made in the next iteration
         self.mission = None
 
-        # Sets sprite(s)
+        # Sets sprite(s) (sprites filled in by sub-classes)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit1.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit1.png")
+        self.sprite = None
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
     def update(self, screen_size):
@@ -159,10 +159,9 @@ class Heavie(Unit):
     """The strong unit in the game"""
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [60,60]])
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit3.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit3.png")
+        self.sprite_l = pygame.image.load("sprites/unit_3_"+str(team)+"_l.png")
+        self.sprite_r = pygame.image.load("sprites/unit_3_"+str(team)+"_r.png")
+        self.sprite = self.sprite_l
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.species = 'heavie'
 
