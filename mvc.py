@@ -38,8 +38,8 @@ class Model(object):
     def set_up(self, starting_units):
         # Add units
         for i in range(starting_units):
-            self.unit_list.append(obj.Teenie((100, 100), 1))
-            self.unit_list.append(obj.Teenie((1800, 800), 2))
+            self.unit_list.append(obj.Heavie((100, 100), 1))
+            self.unit_list.append(obj.Heavie((1800, 800), 2))
 
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
@@ -218,8 +218,8 @@ class Controller(object):
                 if unit.rect.colliderect(sec_unit.rect):
                     v = np.array((sec_unit.pos)) - np.array((unit.pos))
                     vector = v / np.linalg.norm(v)
-                    unit.pos = np.array((unit.pos)) - (2 * vector)
-                    sec_unit.pos = np.array((sec_unit.pos)) + (2 * vector)
+                    unit.pos = np.array((unit.pos)) - (16.0/unit.strength * vector)
+                    sec_unit.pos = np.array((sec_unit.pos)) + (16.0/sec_unit.strength * vector)
 
 
         """Optional! checks if unit is bumping into any other units"""
@@ -239,6 +239,7 @@ class Controller(object):
             if flag.is_selected is False and unit.team != flag.team and flag.pickedup is False:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
+                    unit.carrying = True
 
 
     def check_map_bump(self, unit):

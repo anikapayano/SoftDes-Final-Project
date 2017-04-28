@@ -62,6 +62,7 @@ class Unit(object):  # TODO Make uninstantiable
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
         self.cooled = 0       # tick at which unit's attack is enabled again
+        self.carrying = False
 
         # Sets sprite(s)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
@@ -119,10 +120,13 @@ class Unit(object):  # TODO Make uninstantiable
         """moves unit at self.speed in direction = x, y"""
         x, y = self.pos
         mag = math.sqrt(x_d**2 + y_d**2)
+        if self.carrying == True:
+            mag = mag +(2.0/self.strength)
         if mag != 0: # Make sure to not div by 0
             x = x + (x_d*self.speed)/mag
             y = y + (y_d*self.speed)/mag
         self.pos = x, y
+
 
     def attack(self, unit, tick):
         if tick > self.cooled:
