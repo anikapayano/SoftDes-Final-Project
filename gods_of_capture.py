@@ -38,7 +38,7 @@ class CaptureGame(object):
         #self.view = mvc.View(self.model, self.screen, self.screen_sprite)
 
         
-
+        self.tick = 0 # Initializes world tick clock
         
 
         self.control = mvc.Controller(self.model)
@@ -46,12 +46,12 @@ class CaptureGame(object):
         # Creates ai; passes in first info about board
         self.ai1 = ai1
         #self.ai1 = ai_rule.AIRule(1,[1,0.1,1,1,1])
-        self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+        self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
         self.ai2 = ai_rule.AIRule(2,[0.1,1,1,1,1])
-        self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+        self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
         self.running = True
-        self.tick = 0 # Initializes world tick clock
+       
 
 
     def run(self):
@@ -95,11 +95,10 @@ class CaptureGame(object):
             #pygame.display.update()
 
             self.control.updates(self.tick)
-            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
+            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
             check_win = self.control.check_win()
-            print(self.tick)
             if check_win[0] is True or self.tick >= 10000:
                 self.running = False
                 self.winning = True
@@ -116,7 +115,6 @@ class CaptureGame(object):
                     ai1_state = self.ai2.evaluate_state()
                 self.ai1.end_game()
                 self.ai2.end_game()
-                print('game ended')
                 self.ai1.final_state(ai1_state)
                 self.ai2.final_state(ai2_state)
                 

@@ -10,6 +10,9 @@ import ai_rule as AI
 import numpy
 from deap import algorithms, base, tools, creator
 import gods_of_capture as gods
+from os.path import exists
+import sys
+from pickle import dump, load
 
 # TODO: class fitness maximize, want to maximize ai_strength
 # creates that represents fitness (it's the same as creating an object but
@@ -27,51 +30,12 @@ class Evolution():
 	def __init__(self):
 		pass
 
-	def fitness_function(ai_team):
-		'''
-		evaluating fitness in terms of:
-		- difference between number of units on each team
-		- how close units are to flag
-		- how close units are to other team units
-		- once unit has flag, how close it is to base
-		'''
-		unit_list = mvc.Model.unit_list
-		flag_list = mvc.Model.flag_list
 
-		ai_strength = 0
-		ai_distance_flag = 0
-
-		opposite_flag = ''
-
-		# find the opposite team's flag
-		for flag in flag_list:
-			if flag.team != ai_team:
-				opposite_flag = flag
-
-		#loop through all of the units
-		for unit in unit_list:
-			# if on the same team, then add one to ai_strength
-			if unit.team == ai_team:
-				ai_strength += 1
-				ai_distance_flag += (unit.pos[0]**2+unit.pos[1]**2)**(1/2)
-			else:
-				ai_strength -= 1
-
-		# TODO: I'm thinking that these numbers should be stats for an entire game and
-		# we should add a value that's a 1 if the ai won and 0 if it lost
-		# we also may want to consier other mearures of fitness
-		# ideas: how many of their units died, how many of the other units they killed,
-		# how many times they picked up the flag/their flag was picked up, etc.
-		# In any case, I think we'll have to have the ai play an entire game and
-		# evolve the weights off that.
-		fitness = (ai_strength, ai_distance_flag)
-		return(fitness)
-
-
-	def evaluate_ai(ai):
+	def evaluate_ai(self, ai):
 		'''
 		Given an AI, returns the fitness of it
 		'''
+		
 		game = gods.CaptureGame(ai, True)
 		game.run()
 		ai_team = ai.team
@@ -80,7 +44,7 @@ class Evolution():
 		#print('ai evaluated')
 		return(current_state)
 
-	def mutate(ai, probs_weights = 0.05):
+	def mutate(self, ai, insert_weights = 0.2, increment_weights = 0.2):
 		'''
 		change the weights of the AI randomly
 		usually mutation involves insertion, deletion, and substitution, but since
@@ -89,21 +53,25 @@ class Evolution():
 		
 		#idk if we need this if statement yet, but i'll leave it
 		# commented in case we do
-		#if random.random() < probs_weights:
-		#print('problem')
-		# choose a random index in ai.weights
-		i = random.randint(0, len(ai.weights)-1)
-		# choose a random number between 0 and 10 to replace
-		# the current weight value by
-		char = random.randint(-10, 10)
-		char = float(char/10)
-		# insert the new weight at the ith index
-		ai.weights.insert(i, char)
-		# return ai in a length 1 tuple (required by DEAP)
-		#print('no problem')
+		if random.random() < insert_weights:
+			# choose a random index in ai.weights
+			i = random.randint(0, len(ai.weights)-1)
+			# choose a random number between 0 and 10 to replace
+			# the current weight value by
+			char = random.randint(0, 100)
+			char = float(char/100)
+			# insert the new weight at the ith index
+			ai.weights[i] = char #.insert(i, char)
+			# return ai in a length 1 tuple (required by DEAP)
+			#print('no problem')
+		if random.random() < increment_weights:
+			i = random.randint(0, len(ai.weights)-1)
+			if ai.weights[i] <= 0.95:
+				ai.weights[i] += 0.05
+
 		return(AI.AIRule(1, ai.weights), )
 
-	def mate(ai1, ai2):
+	def mate(self, ai1, ai2):
 		'''
 		simulate mating between two individuals
 		might be able to use DEAP stuff
@@ -112,13 +80,14 @@ class Evolution():
 		toolbox = base.Toolbox()
 		# this seems to do something with mating...
 		i = 0
-		while i < len(ai1.weights):
-			if random.randint(0,1) == 0:
-				new2_weight = ai1.weights[i] 
-				new1_weight = ai2.weights[i]
-				ai2.weights[i] = new2_weight
-				ai1.weights[i] = new1_weight
-			i += 1
+		if len(ai1.weights) == len(ai2.weights):
+			while i < len(ai1.weights):
+				if random.randint(0,1) == 0:
+					new2_weight = ai1.weights[i] 
+					new1_weight = ai2.weights[i]
+					ai2.weights[i] = new2_weight
+					ai1.weights[i] = new1_weight
+				i += 1
 		ai1.state_evaluation = (0,)
 		ai2.state_evaluation = (0,)
 		return(ai1, ai2)
@@ -126,7 +95,7 @@ class Evolution():
 
 
 
-	def get_toolbox():
+	def get_toolbox(self):
 		'''
 		Return DEAP Toolbox configured given AI
 		'''
@@ -140,13 +109,13 @@ class Evolution():
 		toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 		# initialize genetic operators
 		# evaluate using fit function
-		toolbox.register("evaluate", evaluate_ai)
+		toolbox.register("evaluate", self.evaluate_ai)
 		# mate using two point crossover
 		# TODO: figure out how this works/how we can mate AIRule.weights specifically
-		toolbox.register("mate", mate)
+		toolbox.register("mate", self.mate)
 		
 		# mutate function written above (insertion only)
-		toolbox.register("mutate", mutate)
+		toolbox.register("mutate", self.mutate)
 		
 		# selection method, tournsize: number of individuals participlatingin each
 		# tournament
@@ -154,16 +123,16 @@ class Evolution():
 		return toolbox
 
 
-	def evolve_ai():
+	def evolve_ai(self):
 		'''
 		use evolutionary algorithm to evolve ai object
 		mostly going to be DEAP library
 		'''
 		# set random number generator seed so results are repeatable
-		random.seed(4)
+		#random.seed(4)
 
 		# configure toolbox using get_toolbox
-		toolbox = get_toolbox()
+		toolbox = self.get_toolbox()
 
 		# create a population or random ai objects
 		pop = toolbox.population(n=20)
@@ -185,11 +154,35 @@ class Evolution():
 		#print(stats)
 		return pop, log
 
+	def store_ai(self, file_name):
+		pop, log = self.evolve_ai()
+		if exists(file_name):
+			f = open(file_name,'rb+')
+			ai_list = load(f)
+			for ai in pop:
+				if ai.state_evaluation[0] > 4320:
+					i
+					ai_list.append(ai)
+			dump(ai_list, open(file_name, 'wb'))
+			f.close()
+		else:
+			f = open(file_name, 'wb')
+			ai_list = []
+			for ai in pop:
+				if ai.state_evaluation[0] > 4320:
+					ai_list.append(ai)
+			dump(ai_list, f)
+			f.close()
 
+			
+	def read_ai(self, file_name):
+		f_new = load(open(file_name, 'rb'))
+		for i in f_new:
+			print(i.weights, i.state_evaluation)
 
-pop, log = evolve_ai()
+evolution = Evolution()
+evolution.store_ai('sec_ai_try.txt')
+evolution.read_ai('sec_ai_try.txt')
 
-for ai in pop:
-	print(ai.state_evaluation)
 
 

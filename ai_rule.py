@@ -3,13 +3,14 @@ If-tree based Artificial Intelligence designed to play capture the flag
 
 @author Connor Novak
          """
-
+import random
 import numpy as np
 import unittest
 import math
 import objects as obj
 import mvc
 from deap import algorithms, base, tools, creator
+
 
 class FitnessMaxSingle(base.Fitness):
     """
@@ -23,13 +24,18 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team=1,weights=[1,1,1,1,1]):
+    def __init__(self,team=1,weights=None):
 
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = team
-        self.weights = weights
+        self.weights = []
+        for i in range(5):
+            random_weight = random.randint(0, 100)
+            random_weight = float(random_weight/100)
+            self.weights.append(random_weight)
+
         self.fitness = FitnessMaxSingle()
         self.state_evaluation = (0,)
         self.all_units = []
@@ -38,8 +44,10 @@ class AIRule(object):
         self.other_loss = 0
         self.previous_units = []
         self.other_previous_units = []
+        self.tick = 0
 
-    def update(self, units, flags, bases):
+
+    def update(self, units, flags, bases, tick):
         """ DOCSTRING:
             Updates info that AI knows of game; pos of units, base, flag
             """
@@ -56,6 +64,7 @@ class AIRule(object):
         self.base = self.base[0]
         self.other_base = [base for base in bases if base.team != self.team]
         self.other_base = self.other_base[0]
+        self.tick = tick
 
         self.evaluate_during_game()
 
@@ -131,18 +140,22 @@ class AIRule(object):
         #final_total_rival = len(self.other_units)
         won = 0
         if winning==True:
-            won = 1
+            won = 5000
 
+        '''
         #lst[0] = won*50-self.loss*5+self.other_loss*5
         if self.other_loss == 0:
             self.other_loss = 1
         lst[0] = float(won*50-float(self.loss/self.other_loss)*10)
         self.state_evaluation = tuple(lst)
-
+        '''
+        lst[0] = won-self.tick
+        self.state_evaluation = tuple(lst)
         return(self.state_evaluation)
 
     def final_state(self, ai_state):
         self.state_evaluation = ai_state
+        #print(self.state_evaluation, self.tick)
         return(self.state_evaluation)
 
 

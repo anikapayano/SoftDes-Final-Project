@@ -29,7 +29,6 @@ class Model(object):
             '''
 
         self.unit_list = []
-        self.wall_list = []
         self.flag_list = []
         self.base_list = []
 
@@ -77,15 +76,13 @@ class View(object):
 
     def draw_all(self):
         """DOCSTRING:
-        Draws all units, walls, flags, and bases in model
+        Draws all units, flags, and bases in model
         """
 
         self.screen.blit(self.screen_sprite, (0,0))
 
         for base in self.model.base_list:
             self.draw(base)
-        for wall in self.model.wall_list:
-            self.draw(wall)
         for unit in self.model.unit_list:
             self.draw(unit)
         for flag in self.model.flag_list:
@@ -212,11 +209,6 @@ class Controller(object):
         """Optional! checks if unit is bumping into any other units"""
         pass
 
-    def check_wall_bump(self, unit):
-        """checks if unit is trying to go through a wall, and
-        changes position accordingly"""
-        pass
-
     def check_flag_pickup(self, unit):
         """ DOCSTRING:
             Given unit, checks whether unit is touching opponents flag; picks up
@@ -238,7 +230,6 @@ class Controller(object):
             self.check_unit_bumps(unit)
             self.check_attacks(tick, unit)
             self.check_flag_pickup(unit)
-            self.check_wall_bump(unit)
             self.check_map_bump(unit)
 
     def check_win(self):
