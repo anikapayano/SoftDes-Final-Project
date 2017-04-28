@@ -11,6 +11,7 @@ import objects as obj
 import mvc
 import ai_rule
 from objects import TestUnit
+import numpy as np
 
 
 class CaptureGame(object):

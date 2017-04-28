@@ -2,7 +2,7 @@ import pygame
 import unittest
 import math
 import objects as obj
-
+import numpy as np
 
 # UNIT TESTS
 class TestModel(unittest.TestCase):
@@ -204,15 +204,22 @@ class Controller(object):
         # TODO Make attack range sprite
         for sec_unit in self.model.unit_list:
             if unit.team != sec_unit.team:
-                if pygame.sprite.collide_rect(unit, sec_unit):
-                    unit.attack(sec_unit, tick)  # initiates attack
+                rect1 = pygame.Rect((unit.pos[0] - 6), (unit.pos[1] - 6),
+                (unit.size[0] + 12), (unit.size[1] + 12))
+                rect2 = pygame.Rect((sec_unit.pos[0] - 6), (sec_unit.pos[1] - 6),
+                (sec_unit.size[0] + 12), (sec_unit.size[1] + 12))
+                if rect1.colliderect(rect2):
+                    unit.attack(sec_unit, tick)
+                  # initiates attack
 
     def check_unit_bumps(self, unit):
         for sec_unit in self.model.unit_list:
             if sec_unit != unit:
                 if unit.rect.colliderect(sec_unit.rect):
-                    return
-                #    print("colliding: ", unit.rect, sec_unit.rect)
+                    v = np.array((sec_unit.pos)) - np.array((unit.pos))
+                    vector = v / np.linalg.norm(v)
+                    unit.pos = np.array((unit.pos)) - (2 * vector)
+                    sec_unit.pos = np.array((sec_unit.pos)) + (2 * vector)
 
 
         """Optional! checks if unit is bumping into any other units"""
