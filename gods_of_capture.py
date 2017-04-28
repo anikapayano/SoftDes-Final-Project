@@ -43,6 +43,7 @@ class CaptureGame(object):
         self.ai1 = ai_rule.AIRule(1)
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
         self.ai2 = ai_rule.AIRule(2)
+
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
         self.running = True
