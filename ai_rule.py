@@ -87,12 +87,21 @@ class AIRule(object):
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
-                        f1 = self.get_direction(self.base.pos,unit.pos,True)
+                        f1 = self.get_direction(self.base.pos, unit.pos, True)
                     else: # Other units follow flag unit
-                        f1 = (self.get_direction(self.flag.unit.pos,unit.pos,True) + self.flag.unit.direction)
+                        f1 = (self.get_direction(self.flag.unit.pos, unit.pos, True) + .5*self.flag.unit.direction)
                 else:
-                    f1 = self.get_direction(self.flag.pos,unit.pos,True)
-                f2 = self.get_direction(unit.pos,unit.pos)
+                    f1 = self.get_direction(self.flag.pos, unit.pos, True)
+                force_list = []
+                # for other_unit in self.other_units:
+                #     other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
+                #     predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                #     force_hat = np.linalg.norm(predict_dir)
+                #     unit_weight = self.get_weight(unit, other_unit)
+                #     unit_force = force_hat * unit_weight
+                #     force_list.append(unit_force)
+                # f2 = np.sum(force_list)
+                f2 = np.array([0, 0])
 
             elif unit.mission == 'defend':  # If unit is defending
                 force_list = []

@@ -33,7 +33,6 @@ class CaptureGame(object):
 
         self.model = mvc.Model(self.screen_size)
 
-
         self.model.set_up(1)
 
         self.view = mvc.View(self.model, self.screen, self.screen_sprite)
@@ -41,14 +40,13 @@ class CaptureGame(object):
         self.control = mvc.Controller(self.model)
 
         # Creates ai; passes in first info about board
-        self.ai1 = ai_rule.AIRule(1,[1,0.1,1,1,1])
+        self.ai1 = ai_rule.AIRule(1)
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-        self.ai2 = ai_rule.AIRule(2,[0.1,1,1,1,1])
+        self.ai2 = ai_rule.AIRule(2)
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
-
 
 
     def run(self):

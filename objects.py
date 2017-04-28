@@ -2,6 +2,7 @@ import pygame
 import unittest
 import math
 import random
+import numpy as np
 
 
 class TestUnit(unittest.TestCase):
@@ -51,7 +52,7 @@ class Unit(object):  # TODO Make uninstantiable
         # Sets movement attributes
         self.pos = x, y = position
         self.goal_pos = [None,None]
-        self.direction = None  #storing unit movement for decisions made in the next iteration
+        self.direction = np.array([0, 0])  #storing unit movement for decisions made in the next iteration
         self.mission = None
 
         self.team = team
