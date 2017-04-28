@@ -118,10 +118,10 @@ class Unit(object):  # TODO Make uninstantiable
     def move_direction(self, x_d, y_d):
         """moves unit at self.speed in direction = x, y"""
         x, y = self.pos
-        #mag = math.sqrt(x_d**2 + y_d**2)
-        #if mag != 0: # Make sure to not div by 0
-        #    x = x + (x_d*self.speed)/mag
-        #    y = y + (y_d*self.speed)/mag
+        mag = math.sqrt(x_d**2 + y_d**2)
+        if mag != 0: # Make sure to not div by 0
+            x = x + (x_d*self.speed)/mag
+            y = y + (y_d*self.speed)/mag
         self.pos = x, y
 
     def attack(self, unit, tick):
