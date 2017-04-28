@@ -159,7 +159,6 @@ class Heavie(Unit):
             self.sprite = pygame.image.load("sprites/redunit3.png")
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
-
 class Flag(object):
     """ DOCSTRING:
         Contains attributes and methods for Flag obj of Capture the Flag
@@ -229,6 +228,11 @@ class Base(object):
         for x in range(1750, 1811, 20):
             for y in range(200, 750, 50):
                 self.bluepositions.append((x,y))
+        self.positions = []
+        if self.team == 1:
+            self.positions = self.bluepositions
+        else:
+            self.positions = self.redpositions
 
     def update(self, tick, units):
         self.cycle_count += 1
@@ -263,101 +267,46 @@ class Base(object):
         """DOCSTRING
             Checks unit type to spawn, creates new unit of current type
             close to self, then passes message if verbose is true (TODO)"""
-        maxiters = 7
         if self.unit_type == 0:
-            new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
-            print(new_unit.pos)
-            if self.team  == 1:
-                spawnpos = random.choice(self.bluepositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.bluepositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            else:
-                spawnpos = random.choice(self.redpositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.redpositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            if not newpos:
+            spawninfo = self.spawn(units)
+            newpos = spawninfo[0]
+            spawnpos = spawninfo[1]
+            if newpos == True:
                 new_unit = Teenie((spawnpos[0],spawnpos[1]), self.team)
+                print(new_unit.pos)
             #print("MSG: New Teenie Unit on base " + str(self.team))
         elif self.unit_type == 1:
-            if self.team  == 1:
-                spawnpos = random.choice(self.bluepositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.bluepositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            else:
-                spawnpos = random.choice(self.redpositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.redpositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            if not newpos:
+            spawninfo = self.spawn(units)
+            newpos = spawninfo[0]
+            spawnpos = spawninfo[1]
+            if newpos == True:
                 new_unit = Speedie((spawnpos[0],spawnpos[1]), self.team)
             #print("MSG: New Speedie Unit on base " + str(self.team))
         else:
-            if self.team  == 1:
-                spawnpos = random.choice(self.bluepositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.bluepositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            else:
-                spawnpos = random.choice(self.redpositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.redpositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            if not newpos:
+            spawninfo = self.spawn(units)
+            newpos = spawninfo[0]
+            spawnpos = spawninfo[1]
+            if newpos == True:
                 new_unit = Heavie((spawnpos[0],spawnpos[1]), self.team)
             #print("MSG: New Heavie Unit on base " + str(self.team))
-        if not newpos:
+        if newpos == True:
             return(new_unit)
+
+    def spawn(self, units):
+        spawnpos = random.choice(self.positions)
+        maxiters = 7
+        i = 0
+        while i < maxiters:
+            newpos = True
+            for unit in units:
+                if unit.rect.collidepoint(spawnpos):
+                    spawnpos = random.choice(self.positions)
+                    newpos = False
+                    break
+            if newpos == True:
+                break
+            i += 1
+        return(newpos, spawnpos)
 
     # TODO more methods here!
 

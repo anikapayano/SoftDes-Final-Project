@@ -98,10 +98,9 @@ class CaptureGame(object):
                 self.running = False
                 self.winning = True
 
-        while self.winning:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
-                    self.winning = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
+                self.winning = False
 
 
 if __name__ == "__main__":

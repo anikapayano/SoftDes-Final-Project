@@ -208,9 +208,12 @@ class Controller(object):
                     unit.attack(sec_unit, tick)  # initiates attack
 
     def check_unit_bumps(self, unit):
-#        for sec_unit in self.model.unit_list:
-#            if pygame.sprite.collide_rect(unit, sec_unit):
-#                    unit.rect.right = sec_unit.rect.left
+        for sec_unit in self.model.unit_list:
+            if sec_unit != unit:
+                if unit.rect.colliderect(sec_unit.rect):
+                    return
+                #    print("colliding: ", unit.rect, sec_unit.rect)
+
 
         """Optional! checks if unit is bumping into any other units"""
         pass
