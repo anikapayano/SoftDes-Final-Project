@@ -44,7 +44,7 @@ class Model(object):
         # Sets up initial team positions
         self.base_list.append(obj.Base((10, 10), 1))
         self.base_list.append(obj.Base((self.screen_size[0]-110,
-                    self.screen_size[1]-110), 2))
+                                        self.screen_size[1]-110), 2))
         # Sets up flag positions
         self.flag_list.append(obj.Flag((50, 460), 1))
         self.flag_list.append(obj.Flag((1790, 460), 2))
@@ -272,7 +272,8 @@ class Controller(object):
     def drive_unit(self, event):
         # Moves selected object with arrow keys
         try:
-            unit = self.model.unit_list[1]
+            self.driven_unit = self.model.unit_list[1]
+            unit = self.driven_unit
         except IndexError:
             print('ERR: No unit to drive!')
             return

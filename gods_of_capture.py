@@ -86,8 +86,8 @@ class CaptureGame(object):
             self.control.drive_unit(event) # Allows arrow key control of 1 unit
 
             # Tells ais to give units direction commands
-            self.ai1.unit_command()
-            self.ai2.unit_command()
+            self.ai1.unit_command(self.control)
+            self.ai2.unit_command(self.control)
 
             # Updates display
             self.view.draw_all()

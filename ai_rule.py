@@ -18,7 +18,7 @@ class AIRule(object):
 
     def __init__(self, team, weights=[.5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
                                       .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
-                                      .5, 0.8, .5, .5]): #24 weights
+                                      .5, 0.8, .5, .5]):  # 24 weights
 
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
@@ -78,7 +78,7 @@ class AIRule(object):
             if self.team == 1: return '3'
             else: return 'e'
 
-    def unit_command(self):
+    def unit_command(self, control):
         """ DOCSTRING:
             Returns direction for movement of each unit on team
             """
@@ -91,21 +91,21 @@ class AIRule(object):
                     if unit == self.flag.unit: # Flag unit returns to base
                         f1 = self.get_direction(self.base.pos, unit.pos, True)
                     else: # Other units follow flag unit
-                        flag_weight = self.flag_weights[0] # charging weight
                         f1 = (self.get_direction(self.flag.unit.pos,
                                 unit.pos, True) + .5*self.flag.unit.direction)
                 else:
-                    f1 = self.get_direction(self.flag.pos, unit.pos, True)
+                    flag_weight = self.flag_weights[0] # charging weight
+                    f1 = self.get_direction(self.flag.pos, unit.pos)*flag_weight
                 force_list = []
-                # for other_unit in self.other_units:
-                #     other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
-                #     predict_dir = other_unit_dir + other_unit.direction     # leading the units
-                #     force_hat = np.linalg.norm(predict_dir)
-                #     unit_weight = self.get_weight(unit, other_unit)
-                #     unit_force = force_hat * unit_weight
-                #     force_list.append(unit_force)
-                # f2 = np.sum(force_list)
-                f2 = np.array([0, 0])
+                for other_unit in self.other_units:
+                    other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
+                    predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                    force_hat = np.linalg.norm(predict_dir)
+                    unit_weight = self.get_weight(unit, other_unit)
+                    unit_force = force_hat * unit_weight
+                    force_list.append(unit_force)
+                f2 = np.sum(force_list)
+                # f2 = np.array([0, 0])
 
             elif unit.mission == 'defend':  # If unit is defending
                 force_list = []
@@ -129,8 +129,9 @@ class AIRule(object):
             direction = f1 + f2
 
             # Moves unit
-            unit.move_direction(direction[0], direction[1])
-            unit.direction = direction
+            if unit != control.driven_unit:
+                unit.move_direction(direction[0], direction[1])
+                unit.direction = direction
 
     def get_mission(self, weight, units):
         """ DOCSTRING:
@@ -142,7 +143,6 @@ class AIRule(object):
         def_units = len([unit for unit in units if unit.mission == 'defend'])
         if def_units == 0: curr_ratio = 1
         else: curr_ratio = att_units/def_units
-        print(ratio, curr_ratio)
         if def_units == 0: new_ratio_1 = 1
         else: new_ratio_1 = (att_units+1)/def_units
         new_ratio_2 = att_units/(def_units + 1)
