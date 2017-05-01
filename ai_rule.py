@@ -24,17 +24,20 @@ class AIRule(object):
         Class defining AI to play game based on rules of game and if-tree
         """
 
-    def __init__(self,team=1,weights=None):
+    def __init__(self,team=1,weights=[]):
 
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
         self.team = team
-        self.weights = []
-        for i in range(5):
-            random_weight = random.randint(0, 100)
-            random_weight = float(random_weight/100)
-            self.weights.append(random_weight)
+        if weights == []:
+            self.weights = []
+            for i in range(5):
+                random_weight = random.randint(0, 100)
+                random_weight = float(random_weight/100)
+                self.weights.append(random_weight)
+        else:
+            self.weights = weights
 
         self.fitness = FitnessMaxSingle()
         self.state_evaluation = (0,)

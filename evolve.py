@@ -28,18 +28,18 @@ class Evolution():
 	'''
 
 	def __init__(self):
-		pass
+		self.ai2 = AI.AIRule(2,[0.1,1,1,1,1])
 
 
-	def evaluate_ai(self, ai):
+	def evaluate_ai(self, ai1):
 		'''
 		Given an AI, returns the fitness of it
 		'''
 		
-		game = gods.CaptureGame(ai, True)
+		game = gods.CaptureGame(ai1, self.ai2, True)
 		game.run()
-		ai_team = ai.team
-		current_state = ai.state_evaluation
+		ai_team = ai1.team
+		current_state = ai1.state_evaluation
 		#print(current_state)
 		#print('ai evaluated')
 		return(current_state)
@@ -158,31 +158,46 @@ class Evolution():
 		pop, log = self.evolve_ai()
 		if exists(file_name):
 			f = open(file_name,'rb+')
-			ai_list = load(f)
+			ai_list = [AI.AIRule(1), AI.AIRule(1), AI.AIRule(1)]
+			minimum_ai = ai_list[0]
+			minimum_index = 0
 			for ai in pop:
-				if ai.state_evaluation[0] > 4320:
-					i
-					ai_list.append(ai)
+				for old_ai in ai_list:
+					if (old_ai.state_evaluation[0] <= minimum_ai.state_evaluation[0]):
+						minimum_index = ai_list.index(minimum_ai)
+						minimum_ai = old_ai
+				if (ai.state_evaluation[0] > minimum_ai.state_evaluation[0]) and (ai.weights != minimum_ai.weights):
+					ai_list[minimum_index] = ai
 			dump(ai_list, open(file_name, 'wb'))
 			f.close()
 		else:
 			f = open(file_name, 'wb')
-			ai_list = []
+			ai_list = [AI.AIRule(1), AI.AIRule(1), AI.AIRule(1)]
+			minimum_ai = ai_list[0]
+			minimum_index = 0
 			for ai in pop:
-				if ai.state_evaluation[0] > 4320:
-					ai_list.append(ai)
+				for old_ai in ai_list:
+					if (old_ai.state_evaluation[0] <= minimum_ai.state_evaluation[0]):
+						minimum_index = ai_list.index(minimum_ai)
+						minimum_ai = old_ai
+				if (ai.state_evaluation[0] > minimum_ai.state_evaluation[0]) and (ai.weights != minimum_ai.weights):
+					ai_list[minimum_index] = ai
 			dump(ai_list, f)
 			f.close()
 
 			
+	def tournament(self, file_name):
+		f_new = load(open(file_name, 'rb'))
+
+
 	def read_ai(self, file_name):
 		f_new = load(open(file_name, 'rb'))
 		for i in f_new:
 			print(i.weights, i.state_evaluation)
 
 evolution = Evolution()
-evolution.store_ai('sec_ai_try.txt')
-evolution.read_ai('sec_ai_try.txt')
+evolution.store_ai('reallynew_ai.txt')
+evolution.read_ai('reallynew_ai.txt')
 
 
 

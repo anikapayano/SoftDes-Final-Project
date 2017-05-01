@@ -18,7 +18,7 @@ class CaptureGame(object):
     """Class that defines a game of capture the flag.
        Creates instancese of other important classes,
        Uses Model View Controller Architecture"""
-    def __init__(self, ai1, evolution=False):
+    def __init__(self, ai1, ai2, evolution=False):
         pygame.init()                   # initialize pygame
         self.evolution = evolution
         
@@ -47,7 +47,7 @@ class CaptureGame(object):
         self.ai1 = ai1
         #self.ai1 = ai_rule.AIRule(1,[1,0.1,1,1,1])
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
-        self.ai2 = ai_rule.AIRule(2,[0.1,1,1,1,1])
+        self.ai2 = ai2
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
         self.running = True
