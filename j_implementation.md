@@ -12,6 +12,8 @@ The AI is the part of the game that controls one of the teams that play the game
 
 For example, the AI checks if it has a unit carrying the enemy flag and directs them to bring it back to the base (the if tree). The unit also wants to avoid opposing units in the process, and uses weights to decide how much of an influence each opposing unit has on the path of the flag carrying unit. This decision is done mathematically by making a hypothetical force for each other object that should effect the path of a unit, whose weights are a factor of the distance to the other object, and the corresponding weight stored by the AI.
 
+<img src="https://raw.githubusercontent.com/anikapayano/SoftDes-Final-Project/rule_ai/ForceGraphic.png" alt=""/>
+
 The weights contain information for the AI's offense/defense ratio, unit production preferences, and path-finding preferences for each unit_type. The weights are stored in a matrix (or list of lists) that can then be rearranged into a single list of numbers that can be optimized using evolutionary techniques.
 
 # Evolutionary Algorithm
