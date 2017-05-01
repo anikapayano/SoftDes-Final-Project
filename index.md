@@ -31,5 +31,5 @@ against the other, then evolved based on it's performance.
 - Anika Payano [Github](https://github.com/anikapayano)
 - Connor Novak [Github](https://github.com/ConnorNovak) ~ [LinkedIn](https://www.linkedin.com/in/connor-novak-b606a0116)
 - Colvin Chapman [Github](https://github.com/Colvchap)
-- Emily Lepert [Github](https://github.com/Elepert)
+- Emily Lepert [Github](https://github.com/Elepert) ~ [LinkedIn](https://www.linkedin.com/in/emilylepert/)
 - Sophia Nielsen [Github](https://github.com/snielsen221b)
