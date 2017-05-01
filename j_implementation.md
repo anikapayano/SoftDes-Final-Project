@@ -19,3 +19,5 @@ We utilised the DEAP library to implement an evolutionary algorithm on the AIs. 
 This is the current fitness function. The corresponding state_evaluation variable will be large if the AI killed more units than it lost and will be low if it lost more units than it killed. Winning provides a large boost.
 
 The DEAP library then selects which AIs from the population had high fitness values, chooses some to mate and mutate, and then outputs a new generation to run against the AI.
+
+Once it has run the algorithm once, it stores the 5 most effective AIs in a file. The next iteration will run the algorithm 5 separate times using these 5 AIs as opponents to the ones it is now evolving, each time comparing the fitness values of the outputted AIs to the current most fit. If they find that one of the AIs' fitness value is greater than the 5 currently on file, it will replace it with the new one. By doing this multiple times, we insure that the AIs become more and more fit.
