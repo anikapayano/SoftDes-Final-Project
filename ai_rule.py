@@ -85,13 +85,15 @@ class AIRule(object):
 
         for unit in self.units:  # Orders for all units
             if unit.mission == None:
-                unit.mission = self.get_mission(self.Weights[23],self.units)
+                unit.mission = self.get_mission(self.attack_ratio, self.units)
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
                         f1 = self.get_direction(self.base.pos, unit.pos, True)
                     else: # Other units follow flag unit
-                        f1 = (self.get_direction(self.flag.unit.pos, unit.pos, True) + .5*self.flag.unit.direction)
+                        flag_weight = self.flag_weights[0] # charging weight
+                        f1 = (self.get_direction(self.flag.unit.pos,
+                                unit.pos, True) + .5*self.flag.unit.direction)
                 else:
                     f1 = self.get_direction(self.flag.pos, unit.pos, True)
                 force_list = []
@@ -108,7 +110,7 @@ class AIRule(object):
             elif unit.mission == 'defend':  # If unit is defending
                 force_list = []
                 dir_flag = self.get_direction(self.flag.pos, unit.pos, True)
-                f1 = dir_flag*self.Weights[2]
+                f1 = dir_flag*self.flag_weights[1]
                 for other_unit in self.other_units:
                     other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
                     predict_dir = other_unit_dir + other_unit.direction     # leading the units
@@ -130,7 +132,7 @@ class AIRule(object):
             unit.move_direction(direction[0], direction[1])
             unit.direction = direction
 
-    def get_mission(self,weight, units):
+    def get_mission(self, weight, units):
         """ DOCSTRING:
             Given weight representing ratio of missions & list of units, returns
             mission for new unit
@@ -147,7 +149,7 @@ class AIRule(object):
         if abs(ratio - new_ratio_1) < abs(ratio - new_ratio_2): return 'attack'
         else: return 'defend'
 
-    def get_direction(self,pt1,pt2,norm=False):
+    def get_direction(self, pt1, pt2, norm=False):
         """ DOCSTRING:
             Given two points, returns normalized vector from pt1 towards pt2
             """
@@ -177,17 +179,16 @@ class AIRule(object):
             j = 1
         elif other_unit.species == 'heavie':
             j = 2
-        print(selfself.Weights)
         if unit.mission == 'attack':
             return self.attack_weights[j][i]
         elif unit.mission == 'defend':
             return self.defend_weights[j][i]
 
 
-    def get_distance(self,pt1,pt2):
+    def get_distance(self, pt1, pt2):
         """ DOCSTRING:
             Given two points, returns distance btw pts
             """
 
-        direction = np.array([pt1[0]-pt2[0],pt1[1]-pt2[1]]) # Build vector
+        direction = np.array([pt1[0]-pt2[0], pt1[1]-pt2[1]])  # Build vector
         return np.linalg.norm(direction)
