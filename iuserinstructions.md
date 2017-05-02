@@ -9,8 +9,12 @@ filename: iuserinstructions
 ### 1. Download code
 
 To get the source code for the Gods of Capture project, go to [the project
-github](https://github.com/anikapayano/SoftDes-Final-Project) and switch to
-the release branch, then download all of the files.
+github](https://github.com/anikapayano/SoftDes-Final-Project) and download 
+the following files from the `release` branch of the repository:
+- `gods_of_capture.py`: Main game file, holds CaptureGame class
+- `objects.py`: Holds Unit class/subclasses, Flag class, Base class
+- `mvc.py`: Holds Model class, View class, Controller class
+- `ai_rule.py`: Holds AIRule class
 
 ### 2. Install libraries
 
