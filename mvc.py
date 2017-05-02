@@ -2,7 +2,7 @@ import pygame
 import unittest
 import math
 import objects as obj
-
+import numpy as np
 
 # UNIT TESTS
 class TestModel(unittest.TestCase):
@@ -91,6 +91,7 @@ class View(object):
         for flag in self.model.flag_list:
             self.draw(flag)
         pygame.display.update()
+
 
 class Controller(object):
     """ DOCSTRING:
@@ -216,20 +217,28 @@ class Controller(object):
         # TODO Make attack range sprite
         for sec_unit in self.model.unit_list:
             if unit.team != sec_unit.team:
-                if pygame.sprite.collide_rect(unit, sec_unit):
-                    unit.attack(sec_unit, tick)  # initiates attack
+                try:
+                    rect1 = pygame.Rect((unit.pos[0] - 6), (unit.pos[1] - 6),
+                                        (unit.size[0] + 12), (unit.size[1] + 12))
+                    rect2 = pygame.Rect((sec_unit.pos[0] - 6), (sec_unit.pos[1] - 6),
+                                        (sec_unit.size[0] + 12), (sec_unit.size[1] + 12))
+                except:
+                    print('Unit position is: %d', unit.pos)
+                    print('Unit size is: %d', unit.size)
+                if rect1.colliderect(rect2):
+                    unit.attack(sec_unit, tick)
+                    # initiates attack
 
     def check_unit_bumps(self, unit):
-        # for sec_unit in self.model.unit_list:
-        #     if pygame.sprite.collide_rect(unit, sec_unit):
-        #        unit.rect.right = sec_unit.rect.left
+        for sec_unit in self.model.unit_list:
+            if sec_unit != unit:
+                if unit.rect.colliderect(sec_unit.rect):
+                    v = np.array((sec_unit.pos)) - np.array((unit.pos))
+                    vector = v / np.linalg.norm(v)
+                    unit.pos = np.array((unit.pos)) - (16.0/unit.strength * vector)
+                    sec_unit.pos = np.array((sec_unit.pos)) + (16.0/sec_unit.strength * vector)
 
         """Optional! checks if unit is bumping into any other units"""
-        pass
-
-    def check_wall_bump(self, unit):
-        """checks if unit is trying to go through a wall, and
-        changes position accordingly"""
         pass
 
     def check_flag_pickup(self, unit):
@@ -241,19 +250,15 @@ class Controller(object):
             if flag.is_selected is False and unit.team != flag.team and flag.pickedup is False:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
-
-    def check_map_bump(self, unit):
-        """checks if unit is trying to go off the screen and
-        changes position accordingly"""
-        pass
+                    unit.carrying = True
 
     def check_collisions(self, tick):
         for unit in self.model.unit_list:
+            if math.isnan(unit.pos[0]):
+                print(" --------------------Ahhhh!! this unit doesn't have a position!---------------")
             self.check_unit_bumps(unit)
             self.check_attacks(tick, unit)
             self.check_flag_pickup(unit)
-            self.check_wall_bump(unit)
-            self.check_map_bump(unit)
 
     def check_win(self):
         """ DOCSTRING:

@@ -60,7 +60,10 @@ class AIRule(object):
         speedies = [unit for unit in self.units if unit.species == 'speedie']
         heavies = [unit for unit in self.units if unit.species == 'heavie']
         n = len(self.units)
-        self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
+        if n == 0:
+            self.ratio = np.array([0, 0, 0])
+        else:
+            self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
 
     def base_command(self):
         """ DOCSTRING:
@@ -84,8 +87,11 @@ class AIRule(object):
             """
         for unit in self.units:  # Orders for all units
             all_force = []
+            f1 = []
+            f2 = []
             if unit.mission == None:
                 unit.mission = self.get_mission(self.attack_ratio, self.units)
+                print('Gave unit mission: ' + unit.mission)
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
@@ -103,7 +109,7 @@ class AIRule(object):
                         unit_weight = self.get_weight(unit, other_unit)
                         unit_force = predict_dir * unit_weight
                         force_list.append(unit_force)
-                    f2 = np.sum(force_list)
+                    f2 = sum(force_list)
                     all_force.append(f2)
                 all_force.append(f1)
                 # f2 = np.array([0, 0])
@@ -121,7 +127,8 @@ class AIRule(object):
                         unit_weight = self.get_weight(unit, other_unit)
                         unit_force = predict_dir * unit_weight
                         force_list.append(unit_force)
-                    f2 = np.sum(force_list)
+                    f2 = sum(force_list)
+                    print(f2)
                     all_force.append(f2)
                 all_force.append(f1)
 
@@ -133,7 +140,7 @@ class AIRule(object):
             # Adds all force vectors; calculates movement vector
             direction = sum(all_force)
 
-            # Moves unit
+            # Moves unit if it's not the debugging unit
             if unit != control.driven_unit:
                 unit.move_direction(direction[0], direction[1])
                 unit.direction = direction
@@ -189,7 +196,6 @@ class AIRule(object):
             return self.attack_weights[j][i]
         elif unit.mission == 'defend':
             return self.defend_weights[j][i]
-
 
     def get_distance(self, pt1, pt2):
         """ DOCSTRING:
