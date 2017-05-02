@@ -5,7 +5,7 @@ filename: results
 ---
 
 # Game
-For each iteration of the evolutionary algorithm, numerous AIs play off against one another very rapidly. An example battle is seen [here](https://youtu.be/XXFaTE93WN4)
+For each iteration of the evolutionary algorithm, numerous AIs play off against one another very rapidly. An example battle is seen [here](https://youtu.be/XXFaTE93WN4).
 
 # Evolutionary Algorithm
 Currently the algorithm can run through a population of 20 AIs for 20 generations to evolve the most fit AIs. By storing the five most fit, we allow the evolutionary algorithm to use them in future iterations. We use them to play new AIs against, thus increasing the specialisation of each AI.
