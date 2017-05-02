@@ -92,6 +92,7 @@ class View(object):
             self.draw(flag)
         pygame.display.update()
 
+
 class Controller(object):
     """ DOCSTRING:
         Holds functions for manipulating model
@@ -227,11 +228,6 @@ class Controller(object):
         """Optional! checks if unit is bumping into any other units"""
         pass
 
-    def check_wall_bump(self, unit):
-        """checks if unit is trying to go through a wall, and
-        changes position accordingly"""
-        pass
-
     def check_flag_pickup(self, unit):
         """ DOCSTRING:
             Given unit, checks whether unit is touching opponents flag; picks up
@@ -242,18 +238,11 @@ class Controller(object):
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
 
-    def check_map_bump(self, unit):
-        """checks if unit is trying to go off the screen and
-        changes position accordingly"""
-        pass
-
     def check_collisions(self, tick):
         for unit in self.model.unit_list:
             self.check_unit_bumps(unit)
             self.check_attacks(tick, unit)
             self.check_flag_pickup(unit)
-            self.check_wall_bump(unit)
-            self.check_map_bump(unit)
 
     def check_win(self):
         """ DOCSTRING:

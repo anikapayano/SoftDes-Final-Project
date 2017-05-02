@@ -91,9 +91,9 @@ class Unit(object):  # TODO Make uninstantiable
 
         # Moves unit onto screen if not on screen
         x, y = self.pos
-        if x > screen_size[0]: x = screen_size[0]  # If off right
+        if x > screen_size[0] - self.size[0]: x = screen_size[0] - self.size[0]  # If off right
         elif x < 0: x = 0  # If off left
-        if y > screen_size[1]: y = screen_size[1]  # If off bottom
+        if y > screen_size[1] - self.size[1]: y = screen_size[1] - self.size[1]  # If off bottom
         elif y < 0: y = 0  # If off top
         self.pos = x, y
 
