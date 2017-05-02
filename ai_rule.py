@@ -16,19 +16,21 @@ class AIRule(object):
         """
 
 
-    def __init__(self, team, weights=[.5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
+    def __init__(self, team, weights=[-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
                                       .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
-                                      .5, 0.8, .5, .5]):  # 24 weights
+                                      .5, 0.8, .5, .5, .15, .07]):  # 26 weights
 
         """ DOCSTRING:
             Initializes AI w/ weights (default weights implicit)
             """
+        self.weights = weights
         self.team = team
         self.attack_weights = [weights[0:3], weights[3:6], weights[6:9]]
         self.defend_weights = [weights[9:12], weights[12:15], weights[15:18]]
         self.flag_weights = weights[18:20]
         self.attack_ratio = weights[20]
         produce_ratio = weights[21:24]
+        self.sensitivity_weights = weights[24:26]
         s = sum(produce_ratio)
         self.input_ratio = [produce_ratio[0]/s, produce_ratio[1]/s,
                             produce_ratio[2]/s]  # teeny, big, speedy
@@ -91,6 +93,7 @@ class AIRule(object):
             f2 = []
             if unit.mission == None:
                 unit.mission = self.get_mission(self.attack_ratio, self.units)
+                unit.mission = 'attack'
                 print('Gave unit mission: ' + unit.mission)
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
@@ -110,6 +113,13 @@ class AIRule(object):
                         unit_force = predict_dir * unit_weight
                         force_list.append(unit_force)
                     f2 = sum(force_list)
+                    # print(f2,"----------F2----------")
+                    # print(f1,"----------F1----------")
+                    # try:
+                    #     print(other_unit_dir,"----------other_unit_dir----------")
+                    # except:
+                    #     print("___________________________there is no other_unit_dir")
+                    # print("")
                     all_force.append(f2)
                 all_force.append(f1)
                 # f2 = np.array([0, 0])
@@ -128,19 +138,18 @@ class AIRule(object):
                         unit_force = predict_dir * unit_weight
                         force_list.append(unit_force)
                     f2 = sum(force_list)
-                    print(f2)
                     all_force.append(f2)
                 all_force.append(f1)
 
             elif unit.mission == 'return':  # If unit is returning
                 f1 = self.get_direction(self.base.pos,unit.pos,"Normal") # f1 towards base
                 for enemy in self.other_units:
-                    f2 += self.convert/self.get_distance(self.enemy.pos,unit.pos) * self.get_direction(self.enemy.pos,unit.pos,False)
+                    f2 += self.convert/self.get_distance(self.enemy.pos,unit.pos) * self.get_direction(self.enemy.pos,unit.pos,"Inverse")
 
             # Adds all force vectors; calculates movement vector
             direction = sum(all_force)
 
-            # Moves unit if it's not the debugging unit
+            # Moves unit if it's not the one being used for debugging
             if unit != control.driven_unit:
                 unit.move_direction(direction[0], direction[1])
                 unit.direction = direction
@@ -165,11 +174,12 @@ class AIRule(object):
         """ DOCSTRING:
             Given two points, returns normalized vector from pt1 towards pt2
             """
-        direction = np.array([pt1[0]-pt2[0],pt1[1]-pt2[1]]) # Build vector
-        mag = np.linalg.norm(direction)
+        direction = np.array([pt1[0]-pt2[0], pt1[1]-pt2[1]]) # Build vector
+        location_sense = self.sensitivity_weights[0]*1000 # correct order of mag
+        mag = np.linalg.norm(direction)/location_sense
 
         if norm == "Normal" and mag > 0: direction = direction/mag # normalize
-        if norm == "Inverse" and mag > 0: direction = direction/mag/mag # invert
+        if norm == "Inverse" and mag > 0: direction = direction/mag/mag+.01 # invert
         return direction
 
     def get_weight(self, unit, other_unit):
