@@ -30,13 +30,14 @@ class CaptureGame(object):
         
         # Initializes screen and places background on it
           # size of screen
-        #self.screen_sprite = pygame.image.load("sprites/background.png")
-        #self.screen = pygame.display.set_mode(self.screen_size)
-        #self.screen.blit(self.screen_sprite, (0, 0))
-        #pygame.display.update()
+        '''
+        self.screen_sprite = pygame.image.load("sprites/background.png")
+        self.screen = pygame.display.set_mode(self.screen_size)
+        self.screen.blit(self.screen_sprite, (0, 0))
+        pygame.display.update()
 
-        #self.view = mvc.View(self.model, self.screen, self.screen_sprite)
-
+        self.view = mvc.View(self.model, self.screen, self.screen_sprite)
+        '''
         
         self.tick = 0 # Initializes world tick clock
         
@@ -90,7 +91,7 @@ class CaptureGame(object):
             self.ai1.unit_command()
             self.ai2.unit_command()
 
-            # AI Input WILL Go here
+            
             #self.view.draw_all()
             #pygame.display.update()
 
@@ -99,24 +100,31 @@ class CaptureGame(object):
             self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
             check_win = self.control.check_win()
+            # if a unit has won or if time has run out
             if check_win[0] is True or self.tick >= 10000:
                 self.running = False
                 self.winning = True
+                # if nobody won, make a dummy list
                 if check_win[0] is False:
                     check_win = [0,0]
+                # if team 1 won
                 if check_win[1] == 1:
+                    # evaluate ais with ai1 winning
                     ai1_state = self.ai1.evaluate_state(True)
                     ai2_state = self.ai2.evaluate_state()
                 elif check_win[1] == 2:
+                    # evaluate ais with ai2 winning
                     ai2_state = self.ai2.evaluate_state(True)
-                    ai1_state = self.ai2.evaluate_state()
+                    ai1_state = self.ai1.evaluate_state()
                 else:
+                    # evaluate ais with none winning
                     ai2_state = self.ai2.evaluate_state()
-                    ai1_state = self.ai2.evaluate_state()
+                    ai1_state = self.ai1.evaluate_state()
+                # erase all pygame objects
                 self.ai1.end_game()
                 self.ai2.end_game()
-                self.ai1.final_state(ai1_state)
-                self.ai2.final_state(ai2_state)
+                #self.ai1.evaluate_state(True, ai1_state)
+                #self.ai2.evaluate_state(True, ai2_state)
                 
 
         if self.evolution == False:
