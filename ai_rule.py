@@ -82,51 +82,56 @@ class AIRule(object):
         """ DOCSTRING:
             Returns direction for movement of each unit on team
             """
-
         for unit in self.units:  # Orders for all units
+            all_force = []
             if unit.mission == None:
                 unit.mission = self.get_mission(self.attack_ratio, self.units)
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
                     if unit == self.flag.unit: # Flag unit returns to base
-                        f1 = self.get_direction(self.base.pos, unit.pos, True)
+                        f1 = self.get_direction(self.base.pos, unit.pos, "Normal")
                     else: # Other units follow flag unit
                         f1 = (self.get_direction(self.flag.unit.pos,
-                                unit.pos, True) + .5*self.flag.unit.direction)
-                else:
+                                unit.pos, "Normal") + .5*self.flag.unit.direction)  # leading unit
+                else:  # normal find flag
                     flag_weight = self.flag_weights[0] # charging weight
-                    f1 = self.get_direction(self.flag.pos, unit.pos)*flag_weight
-                force_list = []
-                for other_unit in self.other_units:
-                    other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
-                    predict_dir = other_unit_dir + other_unit.direction     # leading the units
-                    force_hat = np.linalg.norm(predict_dir)
-                    unit_weight = self.get_weight(unit, other_unit)
-                    unit_force = force_hat * unit_weight
-                    force_list.append(unit_force)
-                f2 = np.sum(force_list)
+                    f1 = self.get_direction(self.flag.pos, unit.pos,"Normal")*flag_weight
+                    force_list = []
+                    for other_unit in self.other_units:
+                        other_unit_dir = self.get_direction(other_unit.pos, unit.pos,"Inverse")  # straight line between units
+                        predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                        unit_weight = self.get_weight(unit, other_unit)
+                        unit_force = predict_dir * unit_weight
+                        force_list.append(unit_force)
+                    f2 = np.sum(force_list)
+                    all_force.append(f2)
+                all_force.append(f1)
                 # f2 = np.array([0, 0])
 
             elif unit.mission == 'defend':  # If unit is defending
-                force_list = []
-                dir_flag = self.get_direction(self.flag.pos, unit.pos, True)
-                f1 = dir_flag*self.flag_weights[1]
-                for other_unit in self.other_units:
-                    other_unit_dir = self.get_direction(other_unit.pos, unit.pos)  # straight line between units
-                    predict_dir = other_unit_dir + other_unit.direction     # leading the units
-                    force_hat = np.linalg.norm(predict_dir)
-                    unit_weight = self.get_weight(unit, other_unit)
-                    unit_force = force_hat * unit_weight
-                    force_list.append(unit_force)
-                f2 = np.sum(force_list)
+                if self.other_flag.pickedup:
+                    f1 = self.get_direction(self.other_flag.unit.pos, unit.pos, "Normal")
+                else:  # normal find flag
+                    flag_weight = self.flag_weights[1]  # puppy guarding weight
+                    f1 = self.get_direction(self.other_flag.pos, unit.pos,"Normal")*flag_weight
+                    force_list = []
+                    for other_unit in self.other_units:
+                        other_unit_dir = self.get_direction(other_unit.pos, unit.pos,"Inverse")  # straight line between units
+                        predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                        unit_weight = self.get_weight(unit, other_unit)
+                        unit_force = predict_dir * unit_weight
+                        force_list.append(unit_force)
+                    f2 = np.sum(force_list)
+                    all_force.append(f2)
+                all_force.append(f1)
 
             elif unit.mission == 'return':  # If unit is returning
-                f1 = self.get_direction(self.base.pos,unit.pos,True) # f1 towards base
+                f1 = self.get_direction(self.base.pos,unit.pos,"Normal") # f1 towards base
                 for enemy in self.other_units:
                     f2 += self.convert/self.get_distance(self.enemy.pos,unit.pos) * self.get_direction(self.enemy.pos,unit.pos,False)
 
             # Adds all force vectors; calculates movement vector
-            direction = f1 + f2
+            direction = sum(all_force)
 
             # Moves unit
             if unit != control.driven_unit:
@@ -149,14 +154,15 @@ class AIRule(object):
         if abs(ratio - new_ratio_1) < abs(ratio - new_ratio_2): return 'attack'
         else: return 'defend'
 
-    def get_direction(self, pt1, pt2, norm=False):
+    def get_direction(self, pt1, pt2, norm="Regular"):
         """ DOCSTRING:
             Given two points, returns normalized vector from pt1 towards pt2
             """
-
         direction = np.array([pt1[0]-pt2[0],pt1[1]-pt2[1]]) # Build vector
         mag = np.linalg.norm(direction)
-        if norm and mag > 0: direction = direction/mag # normalize
+
+        if norm == "Normal" and mag > 0: direction = direction/mag # normalize
+        if norm == "Inverse" and mag > 0: direction = direction/mag/mag # invert
         return direction
 
     def get_weight(self, unit, other_unit):
