@@ -155,6 +155,15 @@ class AIRule(object):
             to None
             """
 
+
+        teenies = [unit for unit in self.units if unit.species == 'teenie']
+        speedies = [unit for unit in self.units if unit.species == 'speedie']
+        heavies = [unit for unit in self.units if unit.species == 'heavie']
+        n = len(self.units)
+        if n == 0:
+            self.ratio = np.array([0, 0, 0])
+        else:
+            self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
         self.all_units = None
         self.units = None
         self.other_units = None
@@ -165,14 +174,7 @@ class AIRule(object):
         self.previous_units = []
         self.other_previous_units = []
 
-        teenies = [unit for unit in self.units if unit.species == 'teenie']
-        speedies = [unit for unit in self.units if unit.species == 'speedie']
-        heavies = [unit for unit in self.units if unit.species == 'heavie']
-        n = len(self.units)
-        if n == 0:
-            self.ratio = np.array([0, 0, 0])
-        else:
-            self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
+        
 
     def base_command(self):
         """ DOCSTRING:

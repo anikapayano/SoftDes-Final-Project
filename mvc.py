@@ -250,6 +250,8 @@ class Controller(object):
         for unit in self.model.unit_list:
             if math.isnan(unit.pos[0]):
                 print(" --------------------Ahhhh!! this unit doesn't have a position!---------------")
+                self.model.unit_list.remove(unit)
+                break
             self.check_unit_bumps(unit)
             self.check_attacks(tick, unit)
             self.check_flag_pickup(unit)
