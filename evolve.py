@@ -17,7 +17,7 @@ from pickle import dump, load
 
 class Evolution():
 	""" DOCSTRING:
-		Evolves AI
+	Evolves AI
 		"""
 
 	def __init__(self):
@@ -87,21 +87,27 @@ class Evolution():
 				i += 1
 
 		# reset state_evaluations of babies
-		ai1.state_evaluation = (0,)
-		ai2.state_evaluation = (0,)
+		ai1.state_evaluation = (0, 0, 0)
+		ai2.state_evaluation = (0, 0, 0)
 		return(ai1, ai2)
 
 
-	def get_toolbox(self):
+	def get_toolbox(self, personality):
 		""" DOCSTRING:
 			Return DEAP Toolbox configured given AI
+			personality is a string, either "offensive", "defensive", or nothing
 			"""
 		toolbox = base.Toolbox()
 
 		# CREATE POLULATION TO BE EVOLVED
 
 		# create individual (using the AIRule object for an individual we created outselves)
-		toolbox.register("individual", AI.AIRule)
+		if personality == "offensive":
+			toolbox.register("individual", AI.AIOffensive)
+		elif personality == "defensive":
+			toolbox.register("individual", AI.AIDefensive)
+		else:
+			toolbox.register("individual", AI.AIRule)
 		# create a polution
 		toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 		# initialize genetic operators
@@ -120,14 +126,14 @@ class Evolution():
 		return toolbox
 
 
-	def evolve_ai(self,):
+	def evolve_ai(self, personality):
 		""" DOSCTRING:
 			use evolutionary algorithm to evolve ai object
 			mostly going to be DEAP library
 			"""
 
 		# configure toolbox using get_toolbox
-		toolbox = self.get_toolbox()
+		toolbox = self.get_toolbox(personality=personality)
 
 		# create a population or random ai objects
 		pop = toolbox.population(n=20)
@@ -152,7 +158,7 @@ class Evolution():
 		""" DOCSTRING:
 			Stores the 5 most fit AIs in a file
 			"""
-		pop, log = self.evolve_ai()
+		pop, log = self.evolve_ai(personality="offensive")
 
 		if exists(file_name):
 			f = open(file_name,'rb+')
@@ -247,6 +253,3 @@ evolution.store_ai('reallnew_ai.txt')
 evolution.read_ai('reallnew_ai.txt')
 
 # run store_ai for a new file name first and then run tournament
-
-
->>>>>>> afcec02c3a22dc1e2bbae3174e7d78c66100107d

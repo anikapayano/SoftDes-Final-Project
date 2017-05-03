@@ -14,9 +14,26 @@ from deap import algorithms, base, tools, creator
 class FitnessMaxSingle(base.Fitness):
     """
     Class representing the fitness of a given individual, with a single
-    objective that we want to minimize (weight = -1)
+    objective that we want to maximize (weight = 1)
     """
-    weights = (1.0, )
+    weights = (1.0, 0, 0)
+
+
+class FitnessTrippleOffensive(base.Fitness):
+    """
+    Fitness class that maximizes or minimizes wieghts for offensive AI
+    minimizes distance to other flag
+    """
+    weights = (1.0, 0, -1.0)
+
+
+class FitnessTrippleDefensive(base.Fitness):
+    """
+    Fitness class that maximizes or minimizes wieghts fo defensive AI
+    minimizes distance to own flag
+    """
+    weights = (1.0, -1.0, 0)
+
 
 class AIRule(object):
     """ DOCSTRING:
@@ -24,8 +41,7 @@ class AIRule(object):
         """
 
 
-
-    def __init__(self, team, weights=[]):# [-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
+    def __init__(self, team, weights=[], personality=None):# [-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
         #                               .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
         #                               .5, 0.8, .5, .5, .15, .07]):  # 26 weights
 
@@ -46,10 +62,15 @@ class AIRule(object):
             self.weights = weights
 
         # this is necessary for DEAP to run
-        self.fitness = FitnessMaxSingle()
+        if personality == "offensive":
+            self.fitness = FitnessTrippleOffensive()
+        elif personality == "defensive":
+            self.fitness = FitnessTrippleDefensive()
+        else:
+            self.fitness = FitnessMaxSingle()
 
-        # fitness number
-        self.state_evaluation = (0,)
+        # fitness number, agressiveness index, defensiveness index
+        self.state_evaluation = (0, 0, 0)
 
         # initialize empty list of all of AI's units
         self.all_units = []
@@ -79,7 +100,15 @@ class AIRule(object):
             self.desired_ratio.append(unit_type/sum(self.input_ratio))
         self.desired_ratio = np.array(self.desired_ratio)
 
-
+        # attributes for changing
+        self.distance_to_flag = 0
+        self.distance_to_other_flag = 0
+        # keeps track of distacne to own flag at last tick and current tick
+        self.new_distance = 0
+        self.old_distance = 0
+        # keeps track of distacne to other flag at last tick and current tick
+        self.new_distance_other = 0
+        self.old_distance_other = 0
 
     def update(self, units, flags, bases, tick):
         """ DOCSTRING:
@@ -101,7 +130,23 @@ class AIRule(object):
         self.other_base = self.other_base[0]
         self.tick = tick
 
-        #self.evaluate_loss_during_game()
+        # Evlauates distances to flags
+        if not self.tick == 0:
+            self.old_distance = self.new_distance
+
+        distances = [((unit.pos[0] - self.flag.pos[0])**2 +
+                      (unit.pos[1] - self.flag.pos[1])**2)**(1/2)
+                      for unit in self.units]
+        self.new_distance = sum(distances)
+
+        distances_other = distances = [((unit.pos[0] - self.other_flag.pos[0])**2 +
+                      (unit.pos[1] - self.other_flag.pos[1])**2)**(1/2)
+                      for unit in self.units]
+        self.new_distance_other = sum(distances_other)
+
+        self.evaluate_flag_distance()
+
+        self.evaluate_loss_during_game()
 
     def end_game(self):
         """ DOCSTRING:
@@ -257,6 +302,17 @@ class AIRule(object):
         self.previous_units = self.units
         self.other_previous_units = self.other_units
 
+    def evaluate_flag_distance(self):
+        """DOCSTRING:
+            evlauates distance_to_flag by taking the difference
+            """
+        if not self.tick == 0:
+            diff = self.old_distance - self.new_distance
+            self.distance_to_flag += diff
+
+            diff_other = self.old_distance_other - self.new_distance_other
+            self.distance_to_other_flag += diff_other
+
     def evaluate_state(self, winning=False):
         """ DOCSTRING:
             evaluates AI at the end of game
@@ -278,7 +334,10 @@ class AIRule(object):
         '''
         # if it wins, add 5000 but subtract time. this prevents the ai from
         # taking forever to win
-        lst[0] = won-self.tick
+        lst[0] = won - self.tick
+        # how close the units are to their own flag
+        lst[1] = self.distance_to_flag
+        lst[2] = self.distance_to_other_flag
         self.state_evaluation = tuple(lst)
 
         return(self.state_evaluation)
@@ -315,3 +374,11 @@ class AIRule(object):
 
         direction = np.array([pt1[0]-pt2[0], pt1[1]-pt2[1]])  # Build vector
         return np.linalg.norm(direction)
+
+class AIOffensive(AIRule):
+    def __init__(self):
+        AIRule.__init__(self, personality="offensive")
+
+class AIDefensive(AIRule):
+    def __init__(self):
+        AIRule.__init__(self, personality="defensive")
