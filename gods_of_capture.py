@@ -89,15 +89,15 @@ class CaptureGame(object):
                     elif event.key == pygame.K_e:
                         self.control.update_unit_type('e')
 
-            self.control.drive_unit(event) # Allows arrow key control of 1 unit
+            #self.control.drive_unit(event) # Allows arrow key control of 1 unit
 
             # Tells ais to give units direction commands
             self.ai1.unit_command(self.control)
             self.ai2.unit_command(self.control)
 
             # Updates display
-            self.view.draw_all()
-            pygame.display.update()
+            #self.view.draw_all()
+            #pygame.display.update()
 
             # Tells ais to update unit choices at bases if bases have made units
             infolist = self.control.updates(self.tick)
@@ -109,8 +109,8 @@ class CaptureGame(object):
                 if infolist[1][1] == True: self.control.update_unit_type(self.ai1.base_command())
 
             # Updates info that ais "know"
-            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list,self.tick)
+            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list,self.tick)
 
             check_win = self.control.check_win()
             # if a unit has won or if time has run out
@@ -150,7 +150,7 @@ class CaptureGame(object):
 
 
 if __name__ == "__main__":
-    game = CaptureGame(ai_rule.AIRule())
+    game = CaptureGame(ai_rule.AIRule(1),ai_rule.AIRule(2))
     game.run()
 
     #TestUnit().run_tests()

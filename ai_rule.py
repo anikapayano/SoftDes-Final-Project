@@ -54,7 +54,7 @@ class AIRule(object):
         # if now weights are given, generate random weights
         if weights == []:
             self.weights = []
-            for i in range(5):
+            for i in range(26):
                 random_weight = random.randint(-100, 100)
                 random_weight = float(random_weight/100)
                 self.weights.append(random_weight)
@@ -76,6 +76,7 @@ class AIRule(object):
         self.all_units = []
         # initialize empty list of all of AI's opponent's units
         self.all_other_units = []
+        weights = self.weights # appeasing weight splitting below
 
         # attributes for changing the fitness function
         # used for taking ratio of AI's unit loss to opponent's unit loss
@@ -83,7 +84,6 @@ class AIRule(object):
         self.other_loss = 0
         self.previous_units = []
         self.other_previous_units = []
-
         self.team = team
         self.attack_weights = [weights[0:3], weights[3:6], weights[6:9]]
         self.defend_weights = [weights[9:12], weights[12:15], weights[15:18]]
@@ -178,7 +178,7 @@ class AIRule(object):
         """ DOCSTRING:
             Returns unit type for base to generate
             """
-        ratio_diff = self.desired_ratio - self.ratio
+        ratio_diff = self.desired_ratio - self.input_ratio  # desired - measured
         unit_index = np.argmax(ratio_diff)
         if unit_index == 0:
             if self.team == 1: return '1'
@@ -257,9 +257,9 @@ class AIRule(object):
             direction = sum(all_force)
 
             # Moves unit if it's not the one being used for debugging
-            if unit != control.driven_unit:
-                unit.move_direction(direction[0], direction[1])
-                unit.direction = direction
+
+            unit.move_direction(direction[0], direction[1])
+            unit.direction = direction
 
     def get_mission(self, weight, units):
         """ DOCSTRING:
