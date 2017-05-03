@@ -29,7 +29,6 @@ class Model(object):
             '''
 
         self.unit_list = []
-        self.wall_list = []
         self.flag_list = []
         self.base_list = []
 
@@ -73,19 +72,17 @@ class View(object):
         try:
             self.screen.blit(thing.sprite, (thing.pos[0], thing.pos[1]))
         except TypeError:
-            print(thing.pos)
+            pass
 
     def draw_all(self):
         """DOCSTRING:
-        Draws all units, walls, flags, and bases in model
+        Draws all units, flags, and bases in model
         """
 
         self.screen.blit(self.screen_sprite, (0,0))
 
         for base in self.model.base_list:
             self.draw(base)
-        for wall in self.model.wall_list:
-            self.draw(wall)
         for unit in self.model.unit_list:
             self.draw(unit)
         for flag in self.model.flag_list:
@@ -133,7 +130,7 @@ class Controller(object):
                     return
                 else:
                     if not any(unit.team != u.team for u in self.selected_obj):
-                        print(unit.team for u in self.selected_obj)
+                        #print(unit.team for u in self.selected_obj)
                         unit.select()
                         self.selected_obj.append(unit)
                         return
@@ -168,7 +165,8 @@ class Controller(object):
     def update_base(self, tick):
         # Tells base class to update their personal timecounters
         for base in self.model.base_list:
-            unit = base.update(tick)
+            units = self.model.unit_list
+            unit = base.update(tick, units)
             if unit is False:
                 pass
             else:
@@ -185,14 +183,18 @@ class Controller(object):
             Updates the collision rectangle for those that are alive"""
         for unit in self.model.unit_list:
             if unit.health <= 0:
+                for flag in self.model.flag_list:
+                    if flag.unit is unit:
+                        flag.pickedup = False
+                        flag.unit = None
                 self.model.unit_list.remove(unit)
+                #print('death takes us all: ' + str(unit.team))
                 try:
                     self.selected_obj.remove(unit)
                 except:
                     pass
             else:
                 unit.update(self.model.screen_size)
-
 
     def check_attacks(self, tick, unit):
         """checks if attack range collides with body sprite of opposing units
@@ -207,11 +209,6 @@ class Controller(object):
         """Optional! checks if unit is bumping into any other units"""
         pass
 
-    def check_wall_bump(self, unit):
-        """checks if unit is trying to go through a wall, and
-        changes position accordingly"""
-        pass
-
     def check_flag_pickup(self, unit):
         """ DOCSTRING:
             Given unit, checks whether unit is touching opponents flag; picks up
@@ -221,6 +218,7 @@ class Controller(object):
             if flag.is_selected is False and unit.team != flag.team and flag.pickedup is False:
                 if pygame.sprite.collide_rect(flag, unit):
                     flag.be_picked_up(unit)
+
 
     def check_map_bump(self, unit):
         """checks if unit is trying to go off the screen and
@@ -232,7 +230,6 @@ class Controller(object):
             self.check_unit_bumps(unit)
             self.check_attacks(tick, unit)
             self.check_flag_pickup(unit)
-            self.check_wall_bump(unit)
             self.check_map_bump(unit)
 
     def check_win(self):
@@ -244,7 +241,7 @@ class Controller(object):
 
                 if flag.unit != None:
                     if pygame.sprite.collide_rect(flag.unit, base) and base.team == flag.unit.team:
-                        print('MSG: Team ' + str(base.team) + ' is the winner!')
+                        #print('MSG: Team ' + str(base.team) + ' is the winner!')
                         return (True, base.team)
 
         return (False,)

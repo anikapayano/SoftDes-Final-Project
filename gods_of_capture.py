@@ -18,39 +18,41 @@ class CaptureGame(object):
     """Class that defines a game of capture the flag.
        Creates instancese of other important classes,
        Uses Model View Controller Architecture"""
-    def __init__(self, ai1):
+    def __init__(self, ai1, ai2, evolution=False):
         pygame.init()                   # initialize pygame
+        self.evolution = evolution
+        
+        self.screen_size = [1840, 920]
+        # Initialize MVC classes
 
+        self.model = mvc.Model(self.screen_size)
+        self.model.set_up(1)
+        
         # Initializes screen and places background on it
-        self.screen_size = [1840, 920]  # size of screen
+          # size of screen
+        '''
         self.screen_sprite = pygame.image.load("sprites/background.png")
         self.screen = pygame.display.set_mode(self.screen_size)
         self.screen.blit(self.screen_sprite, (0, 0))
         pygame.display.update()
 
-        # Initialize MVC classes
-
-        self.model = mvc.Model(self.screen_size)
-
-
-        self.model.set_up(2)
-
         self.view = mvc.View(self.model, self.screen, self.screen_sprite)
+        '''
+        
+        self.tick = 0 # Initializes world tick clock
+        
 
         self.control = mvc.Controller(self.model)
 
         # Creates ai; passes in first info about board
         self.ai1 = ai1
         #self.ai1 = ai_rule.AIRule(1,[1,0.1,1,1,1])
-        self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-        self.ai2 = ai_rule.AIRule(2,[0.7,0.2,0.5,1,1])
-        self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+        self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
+        self.ai2 = ai2
+        self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
         self.running = True
-        self.tick = 0 # Initializes world tick clock
-
-        #attribute to indicate that this version of the game is for evolving
-        self.evolving = True
+       
 
 
     def run(self):
@@ -89,38 +91,55 @@ class CaptureGame(object):
             self.ai1.unit_command()
             self.ai2.unit_command()
 
-            # AI Input WILL Go here
-            self.view.draw_all()
-            pygame.display.update()
+            
+            #self.view.draw_all()
+            #pygame.display.update()
 
             self.control.updates(self.tick)
-            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
+            self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
+            self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
             check_win = self.control.check_win()
-            if check_win[0] is True:
+            # if a unit has won or if time has run out
+            if check_win[0] is True or self.tick >= 10000:
                 self.running = False
                 self.winning = True
+                # if nobody won, make a dummy list
+                if check_win[0] is False:
+                    check_win = [0,0]
+                # if team 1 won
                 if check_win[1] == 1:
-                    self.ai1.evaluate_state(True)
+                    # evaluate ais with ai1 winning
+                    ai1_state = self.ai1.evaluate_state(True)
+                    ai2_state = self.ai2.evaluate_state()
                 elif check_win[1] == 2:
-                    self.ai2.evaluate_state(True)
+                    # evaluate ais with ai2 winning
+                    ai2_state = self.ai2.evaluate_state(True)
+                    ai1_state = self.ai1.evaluate_state()
+                else:
+                    # evaluate ais with none winning
+                    ai2_state = self.ai2.evaluate_state()
+                    ai1_state = self.ai1.evaluate_state()
+                # erase all pygame objects
+                self.ai1.end_game()
+                self.ai2.end_game()
+                #self.ai1.evaluate_state(True, ai1_state)
+                #self.ai2.evaluate_state(True, ai2_state)
                 
 
-        if self.evolving == False:
+        if self.evolution == False:
             while self.winning:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
                         self.winning = False
-        if self.evolving == True:
+        if self.evolution == True:
             self.winning = False
-            print('we are evolving some shit')
+            
 
 
-'''
+
 if __name__ == "__main__":
-    game = CaptureGame()
+    game = CaptureGame(ai_rule.AIRule())
     game.run()
 
     #TestUnit().run_tests()
-'''
