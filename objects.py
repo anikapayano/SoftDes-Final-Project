@@ -2,6 +2,7 @@ import pygame
 import unittest
 import math
 import random
+import numpy as np
 
 
 class TestUnit(unittest.TestCase):
@@ -48,8 +49,12 @@ class Unit(object):  # TODO Make uninstantiable
             Given pos, team, & stat list, provides init template for more specific
             units such as Teenie, Speedie, & Heavie.
             """
+        # Sets movement attributes
         self.pos = x, y = position
         self.goal_pos = [None,None]
+        self.direction = np.array([0, 0])  #storing unit movement for decisions made in the next iteration
+        self.mission = None
+
         self.team = team
         self.is_selected = False
 
@@ -62,13 +67,14 @@ class Unit(object):  # TODO Make uninstantiable
         self.size = stats[5]
         self.radius = float(stats[5][1]/2)
         self.cooled = 0       # tick at which unit's attack is enabled again
+        self.carrying = False
 
-        # Sets sprite(s)
+
+        # Sets sprite(s) (sprites filled in by sub-classes)
         self.range_sprite = pygame.image.load("sprites/unitradius.png")
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit1.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit1.png")
+        self.sprite_l = None
+        self.sprite_r = None
+        self.sprite = None
         self.old_sprite = self.sprite # Stores unit sprite when using selected unit sprite
 
     def update(self, screen_size):
@@ -86,10 +92,10 @@ class Unit(object):  # TODO Make uninstantiable
 
         # Moves unit onto screen if not on screen
         x, y = self.pos
-        if x > screen_size[0]: x = screen_size[0] # If off right
-        elif x < 0: x = 0 # If off left
-        if y > screen_size[1]: y = screen_size[1] # If off bottom
-        elif y < 0: y = 0 # If off top
+        if x > screen_size[0] - self.size[0]: x = screen_size[0] - self.size[0]  # If off right
+        elif x < 0: x = 0  # If off left
+        if y > screen_size[1] - self.size[1]: y = screen_size[1] - self.size[1]  # If off bottom
+        elif y < 0: y = 0  # If off top
         self.pos = x, y
 
         try:
@@ -99,6 +105,11 @@ class Unit(object):  # TODO Make uninstantiable
             print(self.team, self.health, self.pos)
 
         # Updates sprite to move left or right
+        try:
+            if self.direction[0] < 0:self.sprite = self.sprite_l
+            else: self.sprite = self.sprite_r
+        except:
+            self.sprite = self.sprite_l
 
     def select(self):
         """DOCSTRING:
@@ -119,10 +130,14 @@ class Unit(object):  # TODO Make uninstantiable
         """moves unit at self.speed in direction = x, y"""
         x, y = self.pos
         mag = math.sqrt(x_d**2 + y_d**2)
+        if self.carrying == True:
+            mag = mag +(2.0/self.strength)
         if mag != 0: # Make sure to not div by 0
             x = x + (x_d*self.speed)/mag
             y = y + (y_d*self.speed)/mag
         self.pos = x, y
+        self.direction = [x_d, y_d]
+
 
     def attack(self, unit, tick):
         if tick > self.cooled:
@@ -138,27 +153,27 @@ class Teenie(Unit):
         self.sprite_r = pygame.image.load("sprites/unit_1_"+str(team)+"_r.png")
         self.sprite = self.sprite_l
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.species = 'teenie'
 
 class Speedie(Unit):
     """ The fast unit in the game"""
     def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 4, 10, 2, 50, [40,40]])
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit2.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit2.png")
+        Unit.__init__(self, position, team, [3, 10, 15, 2, 30, [50,50]])
+        self.sprite_l = pygame.image.load("sprites/unit_2_"+str(team)+"_l.png")
+        self.sprite_r = pygame.image.load("sprites/unit_2_"+str(team)+"_r.png")
+        self.sprite = self.sprite_l
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.species = 'speedie'
 
 class Heavie(Unit):
     """The strong unit in the game"""
     def __init__(self, position, team):
         Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [60,60]])
-        if team == 1:
-            self.sprite = pygame.image.load("sprites/blueunit3.png")
-        elif team == 2:
-            self.sprite = pygame.image.load("sprites/redunit3.png")
+        self.sprite_l = pygame.image.load("sprites/unit_3_"+str(team)+"_l.png")
+        self.sprite_r = pygame.image.load("sprites/unit_3_"+str(team)+"_r.png")
+        self.sprite = self.sprite_l
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
-
+        self.species = 'heavie'
 
 class Flag(object):
     """ DOCSTRING:
@@ -225,10 +240,15 @@ class Base(object):
         self.redpositions = []
         for x in range(20, 81, 20):
             for y in range(200, 750, 50):
-                self.redpositions.append((x,y))
+                self.bluepositions.append((x,y))
         for x in range(1750, 1811, 20):
             for y in range(200, 750, 50):
-                self.bluepositions.append((x,y))
+                self.redpositions.append((x,y))
+        self.positions = []
+        if self.team == 1:
+            self.positions = self.bluepositions
+        else:
+            self.positions = self.redpositions
 
     def update(self, tick, units):
         self.cycle_count += 1
@@ -247,7 +267,6 @@ class Base(object):
         """DOCSTRING
             given pressed key, changes currently spawning unit type based on
             which key is pressed"""
-        print(key)
         if key == '1' or key =='q':
             self.unit_type = 0
             print("MSG: Unit type changed to Teenie on base " + str(self.team))
@@ -262,102 +281,48 @@ class Base(object):
     def unit_generation(self, units):
         """DOCSTRING
             Checks unit type to spawn, creates new unit of current type
-            close to self, then passes message if verbose is true (TODO)"""
-        maxiters = 7
+            close to self, then passes message if verbose is true (TODO)
+            """
         if self.unit_type == 0:
-            new_unit = Teenie((self.pos[0]+300, self.pos[1]+300), self.team)
-            print(new_unit.pos)
-            if self.team  == 1:
-                spawnpos = random.choice(self.bluepositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.bluepositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            else:
-                spawnpos = random.choice(self.redpositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.redpositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            if not newpos:
+            spawninfo = self.spawn(units)
+            newpos = spawninfo[0]
+            spawnpos = spawninfo[1]
+            if newpos == True:
                 new_unit = Teenie((spawnpos[0],spawnpos[1]), self.team)
+                print(new_unit.pos)
             #print("MSG: New Teenie Unit on base " + str(self.team))
         elif self.unit_type == 1:
-            if self.team  == 1:
-                spawnpos = random.choice(self.bluepositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.bluepositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            else:
-                spawnpos = random.choice(self.redpositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.redpositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            if not newpos:
+            spawninfo = self.spawn(units)
+            newpos = spawninfo[0]
+            spawnpos = spawninfo[1]
+            if newpos == True:
                 new_unit = Speedie((spawnpos[0],spawnpos[1]), self.team)
             #print("MSG: New Speedie Unit on base " + str(self.team))
         else:
-            if self.team  == 1:
-                spawnpos = random.choice(self.bluepositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.bluepositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            else:
-                spawnpos = random.choice(self.redpositions)
-                i = 0
-                while i < maxiters:
-                    newpos = False
-                    for unit in units:
-                        if unit.rect.collidepoint(spawnpos):
-                            spawnpos = random.choice(self.redpositions)
-                            newpos = True
-                            break
-                    if not newpos:
-                        break
-                    i += 1
-            if not newpos:
+            spawninfo = self.spawn(units)
+            newpos = spawninfo[0]
+            spawnpos = spawninfo[1]
+            if newpos == True:
                 new_unit = Heavie((spawnpos[0],spawnpos[1]), self.team)
             #print("MSG: New Heavie Unit on base " + str(self.team))
-        if not newpos:
+        if newpos == True:
             return(new_unit)
+
+    def spawn(self, units):
+        spawnpos = random.choice(self.positions)
+        maxiters = 7
+        i = 0
+        while i < maxiters:
+            newpos = True
+            for unit in units:
+                if unit.rect.collidepoint(spawnpos):
+                    spawnpos = random.choice(self.positions)
+                    newpos = False
+                    break
+            if newpos == True:
+                break
+            i += 1
+        return(newpos, spawnpos)
 
     # TODO more methods here!
 

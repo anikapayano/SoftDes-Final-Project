@@ -11,13 +11,15 @@ import objects as obj
 import mvc
 import ai_rule
 from objects import TestUnit
+import numpy as np
 
 
 class CaptureGame(object):
-
-    """Class that defines a game of capture the flag.
-       Creates instancese of other important classes,
-       Uses Model View Controller Architecture"""
+    """ DOCSTRING:
+        Class that defines a game of capture the flag.
+        Creates instancese of other important classes,
+        Uses Model View Controller Architecture
+        """
     def __init__(self):
         pygame.init()                   # initialize pygame
 
@@ -32,7 +34,6 @@ class CaptureGame(object):
 
         self.model = mvc.Model(self.screen_size)
 
-
         self.model.set_up(1)
 
         self.view = mvc.View(self.model, self.screen, self.screen_sprite)
@@ -40,19 +41,20 @@ class CaptureGame(object):
         self.control = mvc.Controller(self.model)
 
         # Creates ai; passes in first info about board
-        self.ai1 = ai_rule.AIRule(1,[1,0.1,1,1,1])
+        self.ai1 = ai_rule.AIRule(1)
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-        self.ai2 = ai_rule.AIRule(2,[0.1,1,1,1,1])
+        self.ai2 = ai_rule.AIRule(2)
+
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
         self.running = True
         self.tick = 0 # Initializes world tick clock
 
 
-
     def run(self):
-
-        """ Eventually add pre-game setup stuff somewhere here"""
+        """ DOCSTRING:
+            implements game loop, win case, and transitions between them
+            """
         while self.running:
             """runs the game loop"""
             self.tick += 1 # Increments world tick clock
@@ -67,6 +69,7 @@ class CaptureGame(object):
                     new_pos = (event.pos[0], event.pos[1])
                     self.control.move_object(new_pos)
 
+                # Key controls for selecting units to generate at bases
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_1:
                         self.control.update_unit_type('1')
@@ -81,16 +84,26 @@ class CaptureGame(object):
                     elif event.key == pygame.K_e:
                         self.control.update_unit_type('e')
 
-                    # User Input May Eventually go here
-            self.control.drive_unit(event)
-            self.ai1.unit_command()
-            self.ai2.unit_command()
+            self.control.drive_unit(event) # Allows arrow key control of 1 unit
 
-            # AI Input WILL Go here
+            # Tells ais to give units direction commands
+            self.ai1.unit_command(self.control)
+            self.ai2.unit_command(self.control)
+
+            # Updates display
             self.view.draw_all()
             pygame.display.update()
 
-            self.control.updates(self.tick)
+            # Tells ais to update unit choices at bases if bases have made units
+            infolist = self.control.updates(self.tick)
+            if infolist[0][0] == 1:
+                if infolist[0][1] == True: self.control.update_unit_type(self.ai1.base_command())
+                if infolist[1][1] == True: self.control.update_unit_type(self.ai2.base_command())
+            elif infolist[0][0] == 2:
+                if infolist[0][1] == True: self.control.update_unit_type(self.ai2.base_command())
+                if infolist[1][1] == True: self.control.update_unit_type(self.ai1.base_command())
+
+            # Updates info that ais "know"
             self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
             self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
@@ -98,10 +111,9 @@ class CaptureGame(object):
                 self.running = False
                 self.winning = True
 
-        while self.winning:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
-                    self.winning = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:  # quits
+                self.winning = False
 
 
 if __name__ == "__main__":
