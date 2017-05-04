@@ -9,7 +9,7 @@ filename: iuserinstructions
 ### 1. Download code
 
 To get the source code for the Gods of Capture project, go to [the project
-github](https://github.com/anikapayano/SoftDes-Final-Project) and download 
+github](https://github.com/anikapayano/SoftDes-Final-Project) and download
 the following files from the `release` branch of the repository:
 - Main game file, holds CaptureGame class: `gods_of_capture.py`
 - Holds Unit class/subclasses, Flag class, Base class: `objects.py`
@@ -21,24 +21,20 @@ the following files from the `release` branch of the repository:
 The Gods of Capture project uses several other python libraries. To install
 these libraries, navigate to the main folder of the project and run
 
-`pip install -r requirements.txt`. 
+`pip install -r requirements.txt`.
 
 This command will install the DEAP, pygame,
 and numpy libraries.
 
 ### 3. Run the project
 
-The file containing the run file is 
+The file containing the run file is
 
-`gods_of_capture.py`. 
+`gods_of_capture.py`.
 
 To run the file, enter
 the following command in the Terminal:
 
-`python3 gods_of_capture.py` 
+`python3 gods_of_capture.py`
 
 This command will start the simulation.
-
-### 4. Change parameters
-
-TODO: document how to mess with parameters, interface with game
