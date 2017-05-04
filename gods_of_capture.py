@@ -47,6 +47,9 @@ class CaptureGame(object):
             weights1.append(random.random())
             weights2.append(random.random())
 
+        print('Weights of AI 1 are: %d', weights1)
+        print('Weights of AI 2 are: %d', weights2)
+
         # Creates ai; passes in first info about board
         self.ai1 = ai_rule.AIRule(1,weights1)
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
