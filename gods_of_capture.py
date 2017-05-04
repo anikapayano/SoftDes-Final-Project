@@ -84,7 +84,7 @@ class CaptureGame(object):
                     elif event.key == pygame.K_e:
                         self.control.update_unit_type('e')
 
-            self.control.drive_unit(event) # Allows arrow key control of 1 unit
+            #self.control.drive_unit(event) # Allows arrow key control of 1 unit
 
             # Tells ais to give units direction commands
             self.ai1.unit_command(self.control)

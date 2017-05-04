@@ -16,8 +16,8 @@ class AIRule(object):
         """
 
 
-    def __init__(self, team, weights=[-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
-                                      .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
+    def __init__(self, team, weights=[ -.1, -.1, -0.1, -.1, -.1, -.1, -.15, -0.1, -.1, .5, 0.8,
+                                      .5, .5, .5, .5, 0.8, .5, -.8, .8, .8,
                                       .5, 0.8, .5, .5, .15, .07]):  # 26 weights
 
         """ DOCSTRING:
@@ -27,10 +27,10 @@ class AIRule(object):
         self.team = team
         self.attack_weights = [weights[0:3], weights[3:6], weights[6:9]]
         self.defend_weights = [weights[9:12], weights[12:15], weights[15:18]]
-        self.flag_weights = weights[18:20]
-        self.attack_ratio = weights[20]
+        self.flag_weights = [abs(weights[18]), abs(weights[19])]
+        self.attack_ratio = abs(weights[20])
         produce_ratio = weights[21:24]
-        self.sensitivity_weights = weights[24:26]
+        self.sensitivity_weights =[abs(weights[24]), abs(weights[25])]
         s = sum(produce_ratio)
         self.input_ratio = [produce_ratio[0]/s, produce_ratio[1]/s,
                             produce_ratio[2]/s]  # teeny, big, speedy
@@ -39,6 +39,7 @@ class AIRule(object):
         for unit_type in self.input_ratio:
             self.desired_ratio.append(unit_type/sum(self.input_ratio))
         self.desired_ratio = np.array(self.desired_ratio)
+        print(self.desired_ratio)
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -93,7 +94,6 @@ class AIRule(object):
             f2 = []
             if unit.mission == None:
                 unit.mission = self.get_mission(self.attack_ratio, self.units)
-                unit.mission = 'attack'
                 print('Gave unit mission: ' + unit.mission)
             if unit.mission == 'attack': # If unit is attacking
                 if self.flag.pickedup == True: # If enemy flag is obtained
@@ -101,58 +101,54 @@ class AIRule(object):
                         f1 = self.get_direction(self.base.pos, unit.pos, "Normal")
                     else: # Other units follow flag unit
                         f1 = (self.get_direction(self.flag.unit.pos,
-                                unit.pos, "Normal") + .5*self.flag.unit.direction)  # leading unit
+                                unit.pos, "Normal") + self.flag.unit.direction*self.sensitivity_weights[1]*15 )  # leading unit
                 else:  # normal find flag
                     flag_weight = self.flag_weights[0] # charging weight
                     f1 = self.get_direction(self.flag.pos, unit.pos,"Normal")*flag_weight
                     force_list = []
                     for other_unit in self.other_units:
                         other_unit_dir = self.get_direction(other_unit.pos, unit.pos,"Inverse")  # straight line between units
-                        predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                        predict_dir = other_unit_dir + other_unit.direction*self.sensitivity_weights[1]*15     # leading the units    # leading the units
                         unit_weight = self.get_weight(unit, other_unit)
                         unit_force = predict_dir * unit_weight
                         force_list.append(unit_force)
                     f2 = sum(force_list)
-                    # print(f2,"----------F2----------")
-                    # print(f1,"----------F1----------")
-                    # try:
-                    #     print(other_unit_dir,"----------other_unit_dir----------")
-                    # except:
-                    #     print("___________________________there is no other_unit_dir")
-                    # print("")
                     all_force.append(f2)
                 all_force.append(f1)
                 # f2 = np.array([0, 0])
 
             elif unit.mission == 'defend':  # If unit is defending
-                if self.other_flag.pickedup:
-                    f1 = self.get_direction(self.other_flag.unit.pos, unit.pos, "Normal")
+                if self.other_flag.pickedup:  # get flag back!
+                    f1 = self.get_direction(self.other_flag.unit.pos, unit.pos, "Normal") + self.other_flag.unit.direction*self.sensitivity_weights[1]*15
                 else:  # normal find flag
                     flag_weight = self.flag_weights[1]  # puppy guarding weight
                     f1 = self.get_direction(self.other_flag.pos, unit.pos,"Normal")*flag_weight
                     force_list = []
                     for other_unit in self.other_units:
                         other_unit_dir = self.get_direction(other_unit.pos, unit.pos,"Inverse")  # straight line between units
-                        predict_dir = other_unit_dir + other_unit.direction     # leading the units
+                        predict_dir = other_unit_dir + other_unit.direction*self.sensitivity_weights[1]*15     # leading the units
                         unit_weight = self.get_weight(unit, other_unit)
                         unit_force = predict_dir * unit_weight
                         force_list.append(unit_force)
                     f2 = sum(force_list)
                     all_force.append(f2)
+                if self.flag.pickedup == True: # If enemy flag is obtained
+                    if unit == self.flag.unit: # Flag unit returns to base
+                        f1 = self.get_direction(self.base.pos, unit.pos, "Normal")
                 all_force.append(f1)
 
             elif unit.mission == 'return':  # If unit is returning
-                f1 = self.get_direction(self.base.pos,unit.pos,"Normal") # f1 towards base
+                f1 = self.get_direction(self.base.pos,unit.pos,"Normal")# f1 towards base
                 for enemy in self.other_units:
                     f2 += self.convert/self.get_distance(self.enemy.pos,unit.pos) * self.get_direction(self.enemy.pos,unit.pos,"Inverse")
 
             # Adds all force vectors; calculates movement vector
             direction = sum(all_force)
+            direction = direction / np.linalg.norm(direction)
 
             # Moves unit if it's not the one being used for debugging
-            if unit != control.driven_unit:
-                unit.move_direction(direction[0], direction[1])
-                unit.direction = direction
+            unit.move_direction(direction[0], direction[1])
+            unit.direction = direction
 
     def get_mission(self, weight, units):
         """ DOCSTRING:
