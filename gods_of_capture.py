@@ -21,13 +21,13 @@ class CaptureGame(object):
     def __init__(self, ai1, ai2, evolution=False):
         pygame.init()                   # initialize pygame
         self.evolution = evolution
-        
+
         self.screen_size = [1840, 920]
         # Initialize MVC classes
 
         self.model = mvc.Model(self.screen_size)
         self.model.set_up(1)
-        
+
         # Initializes screen and places background on it
           # size of screen
         '''
@@ -38,9 +38,9 @@ class CaptureGame(object):
 
         self.view = mvc.View(self.model, self.screen, self.screen_sprite)
         '''
-        
+
         self.tick = 0 # Initializes world tick clock
-        
+
 
         self.control = mvc.Controller(self.model)
 
@@ -52,7 +52,7 @@ class CaptureGame(object):
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list, self.tick)
 
         self.running = True
-       
+
 
 
     def run(self):
@@ -92,7 +92,7 @@ class CaptureGame(object):
             self.ai1.unit_command(self.control)
             self.ai2.unit_command(self.control)
 
-            
+
             #self.view.draw_all()
             #pygame.display.update()
 
@@ -135,7 +135,7 @@ class CaptureGame(object):
                 self.ai2.end_game()
                 #self.ai1.evaluate_state(True, ai1_state)
                 #self.ai2.evaluate_state(True, ai2_state)
-                
+
 
         if self.evolution == False:
             while self.winning:
@@ -144,12 +144,12 @@ class CaptureGame(object):
                         self.winning = False
         if self.evolution == True:
             self.winning = False
-            
+
 
 
 
 if __name__ == "__main__":
-    game = CaptureGame(ai_rule.AIRule())
+    game = CaptureGame(ai_rule.AIRule(), ai_rule.AIRule(weights=[-0.05, 0.39, 0.72, -0.67, -0.64, -0.8099999999999999, -0.52, 0.9, 0.63, 0.4, 0.11, -0.09, 0.56, 0.14, 0.26, 0.66, 0.5, -0.65, 0.71, 0.33999999999999997, -0.72, 0.24, -0.46, -0.73, 0.41, -0.88]))
     game.run()
 
     #TestUnit().run_tests()
