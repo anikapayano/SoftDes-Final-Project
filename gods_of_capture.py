@@ -12,6 +12,7 @@ import mvc
 import ai_rule
 from objects import TestUnit
 import numpy as np
+import random
 
 
 class CaptureGame(object):
@@ -40,10 +41,16 @@ class CaptureGame(object):
 
         self.control = mvc.Controller(self.model)
 
+        weights1 = []
+        weights2 = []
+        for i in range (1,27):
+            weights1.append(random.random())
+            weights2.append(random.random())
+
         # Creates ai; passes in first info about board
-        self.ai1 = ai_rule.AIRule(1)
+        self.ai1 = ai_rule.AIRule(1,weights1)
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-        self.ai2 = ai_rule.AIRule(2)
+        self.ai2 = ai_rule.AIRule(2,weights2)
 
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
