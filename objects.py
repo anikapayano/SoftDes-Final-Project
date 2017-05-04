@@ -253,7 +253,7 @@ class Base(object):
     def update(self, tick, units):
         self.cycle_count += 1
         self.current_unit_cycle = self.unit_cycles[self.unit_type]
-        if self.cycle_count == self.current_unit_cycle:
+        if self.cycle_count*4 >= self.current_unit_cycle:
             new_unit = self.unit_generation(units)
             self.cycle_count = 0
             if new_unit == None:

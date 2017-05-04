@@ -17,7 +17,7 @@ class AIRule(object):
 
 
     def __init__(self, team, weights=[ -.1, -.1, -0.1, -.1, -.1, -.1, -.15, -0.1, -.1, .5, 0.8,
-                                      .5, .5, .5, .5, 0.8, .5, -.8, .8, .8,
+                                      .5, .5, .5, .5, 0.8, .5, .8, -.8, .8,
                                       .5, 0.8, .5, .5, .15, .07]):  # 26 weights
 
         """ DOCSTRING:
@@ -29,8 +29,10 @@ class AIRule(object):
         self.defend_weights = [weights[9:12], weights[12:15], weights[15:18]]
         self.flag_weights = [abs(weights[18]), abs(weights[19])]
         self.attack_ratio = abs(weights[20])
+        self.sensitivity_weights = [abs(weights[24]), abs(weights[25])]
+        self.advantage_weights = [abs(weights(26)), abs(weights[27])]  # threshold, ratio
+
         produce_ratio = weights[21:24]
-        self.sensitivity_weights =[abs(weights[24]), abs(weights[25])]
         s = sum(produce_ratio)
         self.input_ratio = [produce_ratio[0]/s, produce_ratio[1]/s,
                             produce_ratio[2]/s]  # teeny, big, speedy
@@ -40,6 +42,7 @@ class AIRule(object):
             self.desired_ratio.append(unit_type/sum(self.input_ratio))
         self.desired_ratio = np.array(self.desired_ratio)
         print(self.desired_ratio)
+        self.power = 0
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -59,14 +62,14 @@ class AIRule(object):
         self.other_base = [base for base in bases if base.team != self.team]
         self.other_base = self.other_base[0]
 
-        teenies = [unit for unit in self.units if unit.species == 'teenie']
-        speedies = [unit for unit in self.units if unit.species == 'speedie']
-        heavies = [unit for unit in self.units if unit.species == 'heavie']
+        self.teenies = [unit for unit in self.units if unit.species == 'teenie']
+        self.speedies = [unit for unit in self.units if unit.species == 'speedie']
+        self.heavies = [unit for unit in self.units if unit.species == 'heavie']
         n = len(self.units)
         if n == 0:
             self.ratio = np.array([0, 0, 0])
         else:
-            self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
+            self.ratio = np.array([len(self.teenies)/n, len(self.speedies)/n, len(self.heavies)/n])
 
     def base_command(self):
         """ DOCSTRING:
@@ -88,6 +91,7 @@ class AIRule(object):
         """ DOCSTRING:
             Returns direction for movement of each unit on team
             """
+        self.update_strategy()
         for unit in self.units:  # Orders for all units
             all_force = []
             f1 = []
@@ -147,8 +151,32 @@ class AIRule(object):
             direction = direction / np.linalg.norm(direction)
 
             # Moves unit if it's not the one being used for debugging
+            #if unit != control.driven_unit:
             unit.move_direction(direction[0], direction[1])
             unit.direction = direction
+
+    def update_strategy(self):
+        """ DOCSTRING:
+            Updates missions of units based on advantage_weights
+            """
+        sum_attack = sum([unit.attack_ for unit in self.units])
+        sum_health = sum([unit.health for unit in self.units])
+        self.power = sum_attack * sum_health
+
+        if self.power >= self.advantage_weights[0]:
+            att_ratio = self.advantage_weights[1]
+        else:
+            att_ratio = self.attack_ratio
+
+        self.attack_units = [unit for unit in self.units if unit.mission == 'attack']
+        self.defend_units = [unit for unit in self.units if unit.mission == 'defend']
+        meas_att_ratio = (len(self.attack_units)+2)/len(self.units)
+        if meas_att_ratio <= att_ratio:
+            try:
+                switch_unit = self.defend_units[0]
+                switch_unit.mission = 'attack'
+            except:
+                pass
 
     def get_mission(self, weight, units):
         """ DOCSTRING:

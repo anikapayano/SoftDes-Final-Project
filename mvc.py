@@ -287,13 +287,13 @@ class Controller(object):
         y = unit.pos[1]
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
-            x += unit.speed+5
+            x += unit.speed
         if keys[pygame.K_LEFT]:
-            x -= unit.speed+5
+            x -= unit.speed
         if keys[pygame.K_UP]:
-            y -= unit.speed+5
+            y -= unit.speed
         if keys[pygame.K_DOWN]:
-            y += unit.speed+5
+            y += unit.speed
 
         self.model.unit_list[1].pos = x, y
         pass

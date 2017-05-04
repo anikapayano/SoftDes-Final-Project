@@ -41,9 +41,9 @@ class CaptureGame(object):
         self.control = mvc.Controller(self.model)
 
         # Creates ai; passes in first info about board
-        self.ai1 = ai_rule.AIRule(1)
+        self.ai1 = ai_rule.AIRule(2,[-0.05, 0.39, 0.72, -0.67, -0.64, -0.8099999999999999, -0.52, 0.9, 0.63, 0.4, 0.11, -0.09, 0.56, 0.14, 0.26, 0.66, 0.5, -0.65, 0.71, 0.33999999999999997, -0.72, 0.24, -0.46, -0.73, 0.41, -0.88])
         self.ai1.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
-        self.ai2 = ai_rule.AIRule(2)
+        self.ai2 = ai_rule.AIRule(1)
 
         self.ai2.update(self.model.unit_list,self.model.flag_list,self.model.base_list)
 
