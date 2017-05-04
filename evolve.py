@@ -37,6 +37,7 @@ class Evolution():
 		game = gods.CaptureGame(ai1, self.ai2, True)
 		game.run()
 		current_state = ai1.state_evaluation
+		print(current_state)
 		return(current_state)
 
 	def mutate(self, ai, insert_weights = 0.2, increment_weights = 0.2):

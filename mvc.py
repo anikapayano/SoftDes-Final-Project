@@ -189,6 +189,7 @@ class Controller(object):
         for flag in self.model.flag_list:
                 if flag.pickedup is True:
                     flag.pos = (flag.unit.pos[0] + 10, flag.unit.pos[1] - 50)
+                    flag.rect = pygame.Rect(flag.pos[0], flag.pos[1], 40, 60)
 
     def update_units(self):
         """ KILLs units that have no health
@@ -282,13 +283,13 @@ class Controller(object):
         y = unit.pos[1]
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
-            x += unit.speed
+            x += unit.speed+5
         if keys[pygame.K_LEFT]:
-            x -= unit.speed
+            x -= unit.speed+5
         if keys[pygame.K_UP]:
-            y -= unit.speed
+            y -= unit.speed+5
         if keys[pygame.K_DOWN]:
-            y += unit.speed
+            y += unit.speed+5
 
         self.model.unit_list[1].pos = x, y
         pass

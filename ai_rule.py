@@ -41,7 +41,7 @@ class AIRule(object):
         """
 
 
-    def __init__(self, team, weights=[ -.1, -.1, -0.1, -.1, -.1, -.1, -.15, -0.1, -.1, .5, 0.8,
+    def __init__(self, team=1, weights=[ -.1, -.1, -0.1, -.1, -.1, -.1, -.15, -0.1, -.1, .5, 0.8,
                                       .5, .5, .5, .5, 0.8, .5, -.8, .8, .8,
                                       .5, 0.8, .5, .5, .15, .07]):  # 26 weights
 
@@ -65,6 +65,23 @@ class AIRule(object):
             self.desired_ratio.append(unit_type/sum(self.input_ratio))
         self.desired_ratio = np.array(self.desired_ratio)
         print(self.desired_ratio)
+
+        # attributes for AI evolution
+        self.state_evaluation = (0, 0, 0)
+
+        self.other_loss = 0
+        self.previous_units = []
+        self.other_previous_units = []
+
+        # attributes for changing
+        self.distance_to_flag = 0
+        self.distance_to_other_flag = 0
+        # keeps track of distacne to own flag at last tick and current tick
+        self.new_distance = 0
+        self.old_distance = 0
+        # keeps track of distacne to other flag at last tick and current tick\
+        self.new_distance_other = 0
+        self.old_distance_other = 0
 
     def update(self, units, flags, bases):
         """ DOCSTRING:
@@ -92,6 +109,26 @@ class AIRule(object):
             self.ratio = np.array([0, 0, 0])
         else:
             self.ratio = np.array([len(teenies)/n, len(speedies)/n, len(heavies)/n])
+
+        # evolution
+        #self.evaluate_loss_during_game()
+        # Evlauates distances to flags
+        if not self.tick == 0:
+            self.old_distance = self.new_distance
+
+        distances = [((unit.pos[0] - self.flag.pos[0])**2 +
+                   (unit.pos[1] - self.flag.pos[1])**2)**(1/2)
+                   for unit in self.units]
+        self.new_distance = sum(distances)
+
+        distances_other = distances = [((unit.pos[0] - self.other_flag.pos[0])**2 +
+                                        (unit.pos[1] - self.other_flag.pos[1])**2)**(1/2)
+                                         for unit in self.units]
+        self.new_distance_other = sum(distances_other)
+
+        self.evaluate_flag_distance()
+
+        self.evaluate_loss_during_game()
 
     def base_command(self):
         """ DOCSTRING:
@@ -236,10 +273,54 @@ class AIRule(object):
         direction = np.array([pt1[0]-pt2[0], pt1[1]-pt2[1]])  # Build vector
         return np.linalg.norm(direction)
 
+    def evaluate_flag_distance(self):
+        """DOCSTRING:
+         evlauates distance_to_flag by taking the difference
+         """
+        if not self.tick == 0:
+            diff = self.old_distance - self.new_distance
+            self.distance_to_flag += diff
+
+            diff_other = self.old_distance_other - self.new_distance_other
+            self.distance_to_other_flag += diff_other
+
+    def evaluate_state(self, winning=False):
+        """ DOCSTRING:
+          evaluates AI at the end of game
+        """
+        lst = list(self.state_evaluation)
+
+        #final_total_own = len(self.units)
+        #final_total_rival = len(self.other_units)
+        won = 0
+        if winning==True:
+            won = 5000
+
+        ''' ratio of losses code
+        #lst[0] = won*50-self.loss*5+self.other_loss*5
+        if self.other_loss == 0:
+        self.other_loss = 1
+        lst[0] = float(won*50-float(self.loss/self.other_loss)*10)
+        self.state_evaluation = tuple(lst)
+        '''
+        # if it wins, add 5000 but subtract time. this prevents the ai from
+        # taking forever to win
+        lst[0] = won - self.tick
+        # how close the units are to their own flag
+        lst[1] = self.distance_to_flag
+        lst[2] = self.distance_to_other_flag
+        self.state_evaluation = tuple(lst)
+
+        return(self.state_evaluation)
+
+
 class AIOffensive(AIRule):
     def __init__(self):
-        AIRule.__init__(self, personality="offensive")
+        AIRule.__init__(self)
+        self.fitness = FitnessTrippleOffensive
+
 
 class AIDefensive(AIRule):
     def __init__(self):
-        AIRule.__init__(self, personality="defensive")
+        AIRule.__init__(self)
+        self.fitness = FitnessTrippleDefensive
