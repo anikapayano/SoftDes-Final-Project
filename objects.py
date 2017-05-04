@@ -147,8 +147,8 @@ class Unit(object):  # TODO Make uninstantiable
 
 class Teenie(Unit):
     """ The base unit in the game"""
-    def __init__(self, position, team):
-        Unit.__init__(self, position, team, [4, 4, 10, 2, 15, [30,30]])
+    def __init__(self, position, team):  # Strength Speed Health Attack Cooldown
+        Unit.__init__(self, position, team, [4, 4, 10, 2, 20, [30,30]])
         self.sprite_l = pygame.image.load("sprites/unit_1_"+str(team)+"_l.png")
         self.sprite_r = pygame.image.load("sprites/unit_1_"+str(team)+"_r.png")
         self.sprite = self.sprite_l
@@ -157,8 +157,8 @@ class Teenie(Unit):
 
 class Speedie(Unit):
     """ The fast unit in the game"""
-    def __init__(self, position, team):
-        Unit.__init__(self, position, team, [3, 10, 15, 2, 30, [50,50]])
+    def __init__(self, position, team):  # Strength Speed Health Attack Cooldown
+        Unit.__init__(self, position, team, [2, 7, 10, 2, 20, [50,50]])
         self.sprite_l = pygame.image.load("sprites/unit_2_"+str(team)+"_l.png")
         self.sprite_r = pygame.image.load("sprites/unit_2_"+str(team)+"_r.png")
         self.sprite = self.sprite_l
@@ -167,8 +167,8 @@ class Speedie(Unit):
 
 class Heavie(Unit):
     """The strong unit in the game"""
-    def __init__(self, position, team):
-        Unit.__init__(self, position, team, [8, 1, 14, 4, 75, [60,60]])
+    def __init__(self, position, team):  # Strength Speed Health Attack Cooldown
+        Unit.__init__(self, position, team, [8, 2, 20, 10, 75, [60,60]])
         self.sprite_l = pygame.image.load("sprites/unit_3_"+str(team)+"_l.png")
         self.sprite_r = pygame.image.load("sprites/unit_3_"+str(team)+"_r.png")
         self.sprite = self.sprite_l
