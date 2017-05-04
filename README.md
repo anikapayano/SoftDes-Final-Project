@@ -1,6 +1,7 @@
 # Gods of Capture: Evolved AI play Capture the Flag
 
 [Visit our website](https://anikapayano.github.io/SoftDes-Final-Project/)
+
 [Look at our poster](https://github.com/anikapayano/SoftDes-Final-Project/blob/master/documents/Final%20Poster.pdf)
 
 ## Description:
