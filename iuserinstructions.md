@@ -38,3 +38,7 @@ the following command in the Terminal:
 `python3 gods_of_capture.py`
 
 This command will start the simulation.
+
+### 4. Branches to look at
+
+The master branch will allow you to play the game. The final_evolution branch allows you to evolve the AI to play the game.
