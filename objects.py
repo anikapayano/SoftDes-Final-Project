@@ -82,7 +82,7 @@ class Unit(object):  # TODO Make uninstantiable
             updates unit attributes/methods that take more than one tick to run
             """
 
-        # If there is goal and unit isn't there, move towards goal
+       # If there is goal and unit isn't there, move towards goal
         if self.goal_pos != [None,None] and self.pos != self.goal_pos:
             self.move_direction(self.goal_pos[0] - self.pos[0], self.goal_pos[1]-self.pos[1])
 
@@ -102,7 +102,8 @@ class Unit(object):  # TODO Make uninstantiable
             # Sets rect pos to unit pos
             self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         except TypeError:
-            print(self.team, self.health, self.pos)
+            #print(self.team, self.health, self.pos)
+            pass
 
         # Updates sprite to move left or right
         try:
@@ -110,7 +111,7 @@ class Unit(object):  # TODO Make uninstantiable
             else: self.sprite = self.sprite_r
         except:
             self.sprite = self.sprite_l
-
+    
     def select(self):
         """DOCSTRING:
             flips selection state of unit and changes sprite
@@ -269,13 +270,13 @@ class Base(object):
             which key is pressed"""
         if key == '1' or key =='q':
             self.unit_type = 0
-            print("MSG: Unit type changed to Teenie on base " + str(self.team))
+            #print("MSG: Unit type changed to Teenie on base " + str(self.team))
         elif key == '2' or key == 'w':
             self.unit_type = 1
-            print("MSG: Unit type changed to Speedie on base " + str(self.team))
+            #print("MSG: Unit type changed to Speedie on base " + str(self.team))
         elif key == '3' or key == 'e':
             self.unit_type = 2
-            print("MSG: Unit type changed to Heavie on base " + str(self.team))
+            #print("MSG: Unit type changed to Heavie on base " + str(self.team))
 
     #TODO has to do with animations
     def unit_generation(self, units):
@@ -289,7 +290,7 @@ class Base(object):
             spawnpos = spawninfo[1]
             if newpos == True:
                 new_unit = Teenie((spawnpos[0],spawnpos[1]), self.team)
-                print(new_unit.pos)
+                #print(new_unit.pos)
             #print("MSG: New Teenie Unit on base " + str(self.team))
         elif self.unit_type == 1:
             spawninfo = self.spawn(units)

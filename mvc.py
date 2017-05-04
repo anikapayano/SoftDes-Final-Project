@@ -4,6 +4,7 @@ import math
 import objects as obj
 import numpy as np
 
+
 # UNIT TESTS
 class TestModel(unittest.TestCase):
     def setUp(self):
@@ -29,7 +30,6 @@ class Model(object):
             '''
 
         self.unit_list = []
-        self.wall_list = []
         self.flag_list = []
         self.base_list = []
 
@@ -77,15 +77,13 @@ class View(object):
 
     def draw_all(self):
         """DOCSTRING:
-        Draws all units, walls, flags, and bases in model
+        Draws all units, flags, and bases in model
         """
 
         self.screen.blit(self.screen_sprite, (0,0))
 
         for base in self.model.base_list:
             self.draw(base)
-        for wall in self.model.wall_list:
-            self.draw(wall)
         for unit in self.model.unit_list:
             self.draw(unit)
         for flag in self.model.flag_list:
@@ -133,7 +131,7 @@ class Controller(object):
                     return
                 else:
                     if not any(unit.team != u.team for u in self.selected_obj):
-                        print(unit.team for u in self.selected_obj)
+                        #print(unit.team for u in self.selected_obj)
                         unit.select()
                         self.selected_obj.append(unit)
                         return
@@ -148,6 +146,7 @@ class Controller(object):
             if flag.is_selected is True:
                 flag.move(mouse_pos)
                 pygame.display.update(flag.rect)
+
 
     def updates(self, tick):
         """ DOCSTRING:
@@ -204,7 +203,7 @@ class Controller(object):
                         flag.pickedup = False
                         flag.unit = None
                 self.model.unit_list.remove(unit)
-                print('death takes us all')
+                #print('death takes us all')
                 try:
                     self.selected_obj.remove(unit)
                 except:
@@ -270,10 +269,10 @@ class Controller(object):
 
                 if flag.unit != None:
                     if pygame.sprite.collide_rect(flag.unit, base) and base.team == flag.unit.team:
-                        print('MSG: Team ' + str(base.team) + ' is the winner!')
-                        return True
+                        #print('MSG: Team ' + str(base.team) + ' is the winner!')
+                        return (True, base.team)
 
-        return False
+        return (False, base.team)
 
     def drive_unit(self, event):
         # Moves selected object with arrow keys
@@ -281,7 +280,7 @@ class Controller(object):
             self.driven_unit = self.model.unit_list[1]
             unit = self.driven_unit
         except IndexError:
-            print('ERR: No unit to drive!')
+            #print('ERR: No unit to drive!')
             return
         x = unit.pos[0]
         y = unit.pos[1]
