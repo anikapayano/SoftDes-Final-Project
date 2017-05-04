@@ -231,6 +231,7 @@ class Controller(object):
                     # initiates attack
 
     def check_unit_bumps(self, unit):
+        
         for sec_unit in self.model.unit_list:
             if sec_unit != unit:
                 if unit.rect.colliderect(sec_unit.rect):
