@@ -23,7 +23,9 @@ class Evolution():
 	def __init__(self):
 		#self.ai2 is the ai that the ai we're evolving runs against and become better
 		# at beating. At the start this is simply a base AI
-		self.ai2 = AI.AIRule(2,[0.1,1,1,1,1])
+		self.ai2 = AI.AIRule(2,[-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
+                                .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5, .5, 0.8,
+								.5, .5, .15, .07])
 
 
 	def evaluate_ai(self, ai1):

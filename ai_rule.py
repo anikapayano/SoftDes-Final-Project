@@ -41,7 +41,9 @@ class AIRule(object):
         """
 
 
-    def __init__(self, team, weights=[], personality=None):# [-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
+    def __init__(self, team=1, weights=[ -.1, -.1, -0.1, -.1, -.1, -.1, -.15, -0.1, -.1, .5, 0.8,
+ +                                      .5, .5, .5, .5, 0.8, .5, -.8, .8, .8,
+                                        .5, 0.8, .5, .5, .15, .07], personality=None):# [-.5, -0.8, -.5, -.5, -.5, -.5, -0.8, -.5, -.5, .5,
         #                               .5, 0.8, .5, .5, .5, .5, 0.8, .5, .5, .5,
         #                               .5, 0.8, .5, .5, .15, .07]):  # 26 weights
 
@@ -174,7 +176,7 @@ class AIRule(object):
         self.previous_units = []
         self.other_previous_units = []
 
-        
+
 
     def base_command(self):
         """ DOCSTRING:
