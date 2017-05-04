@@ -46,9 +46,12 @@ Download the following files from the `release` branch of the repository:
 - `ai_rule.py`: Holds AIRule class
 
 ### Installing Packages:
-TODO Describe which packages to install and how
+Gods of Capture makes use of the deap library for evolutionary algorithms,
+pygame for the game portion, and numpy for the mathematics. The current versions
+of these libraries are stored in requirements.txt. To install the library, run:
+`sudo pip install -r requirements.txt`
 
-## Usage:
-TODO: instructions on how to install packages
+### Usage:
+To run the game, run `gods_of_capture.py` with python 3.
 
 ## License:
