@@ -47,7 +47,7 @@ class Model(object):
                                         self.screen_size[1]-110), 2))
         # Sets up flag positions
         self.flag_list.append(obj.Flag((50, 460), 1))
-        self.flag_list.append(obj.Flag((1790, 460), 2))
+        self.flag_list.append(obj.Flag((1730, 460), 2))
 
 
 class View(object):

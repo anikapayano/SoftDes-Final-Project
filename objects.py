@@ -185,7 +185,7 @@ class Flag(object):
         self.pos = x, y = position
         # One basic color for each side of team
         self.team = team
-        self.sprite = pygame.image.load("sprites/team"+str(team)+"flag.png")
+        self.sprite = pygame.image.load("sprites/flag"+ str(team)+".png")
         self.oldsprite = self.sprite
         self.is_selected = False
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 40, 60)
